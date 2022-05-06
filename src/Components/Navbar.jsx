@@ -1,6 +1,7 @@
 import Link from "next/link";
+import AddButton from "./Atoms/AddButton";
 
-export default function Navbar() {
+function Navbar(props) {
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
@@ -9,21 +10,26 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="flex-none gap-2">
-        <div className="form-control">
+        {/* <div className="form-control">
           <input
             type="text"
             placeholder="Search"
             className="input input-bordered"
           />
-        </div>
+        </div> */}
+        <Link href="/post/create">
+          <div>
+            <AddButton />
+          </div>
+        </Link>
         <div className="dropdown dropdown-end">
-          <label tabindex="0" className="btn btn-ghost btn-circle avatar">
+          <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
               <img src="https://api.lorem.space/image/face?hash=33791" />
             </div>
           </label>
           <ul
-            tabindex="0"
+            tabIndex="0"
             className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
           >
             <Link href="/profile">
@@ -48,3 +54,5 @@ export default function Navbar() {
     </div>
   );
 }
+
+export default Navbar

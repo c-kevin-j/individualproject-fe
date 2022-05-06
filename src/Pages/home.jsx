@@ -1,13 +1,12 @@
 import React from "react";
 import Navbar from "../Components/Navbar";
 import Form from "../Components/Form";
-import { Card, Button, Avatar } from "react-daisyui";
 import Image from "next/image";
 import Link from "next/link";
 // import { useDispatch } from "react-redux";
 // import { saveUserAction } from "../Redux/Actions/userAction";
 
-export default function HomePage() {
+function HomePage(props) {
   // const dispatch = useDispatch();
   const [count, setCount] = React.useState(0);
   const [textCoba, setTextCoba] = React.useState("");
@@ -30,7 +29,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       {/* <h2>Home Page</h2>
     <div>
       <button type="button" onClick={handleDecrement}> - </button>
@@ -60,40 +59,44 @@ export default function HomePage() {
     </div> */}
       <div className="container mx-auto pt-5">
         <div className="px-6 lg:px-40">
-          <Card>
-            <Card.Body className="p-2 bg-black \">
+          <div className="card">
+            <div className="card-body p-2 bg-black \">
               <div className="flex">
                 <label
                   className="btn btn-ghost btn-circle avatar mx-2 my-auto flex-none"
                 >
-                  <Avatar
-                    className="w-10 rounded-full"
+                  <img
+                    className="avatar w-10 rounded-full"
                     src="https://api.lorem.space/image/face?hash=33791"
                   />
                 </label>
-                <div className="mx-2 my-auto grow">@UsernameA</div>
+                <div className="mx-2 my-auto grow">
+                  @UsernameA
+                </div>
                 <div className="mx-2 my-auto text-sm text-slate-500">
                   Created at
                 </div>
               </div>
               <Link href="/post/post">
-                <Card.Image
-                  className="object-cover"
-                  src="https://media.istockphoto.com/photos/mountain-landscape-picture-id517188688?b=1&k=20&m=517188688&s=612x612&w=0&h=x8h70-SXuizg3dcqN4oVe9idppdt8FUVeBFemfaMU7w="
-                  alt="Shoes"
-                />
+                <figure>
+                  <img
+                    className="object-cover"
+                    src="https://media.istockphoto.com/photos/mountain-landscape-picture-id517188688?b=1&k=20&m=517188688&s=612x612&w=0&h=x8h70-SXuizg3dcqN4oVe9idppdt8FUVeBFemfaMU7w="
+                    alt="Shoes"
+                  />
+                </figure>
               </Link>
-            </Card.Body>
-          </Card>
+            </div>
+          </div>
           <div className="h-3" />
-          <Card>
-            <Card.Body className="p-2 bg-black \">
+          <div className="card">
+            <div className="card-body p-2 bg-black \">
               <div className="flex">
                 <label
                   className="btn btn-ghost btn-circle avatar mx-2 my-auto flex-none"
                 >
-                  <Avatar
-                    className="w-10 rounded-full "
+                  <img
+                    className="avatar w-10 rounded-full "
                     src="https://api.lorem.space/image/face?hash=33791"
                   />
                 </label>
@@ -103,16 +106,22 @@ export default function HomePage() {
                 </div>
               </div>
               <Link href="/post/post">
-              <Card.Image
-                className="object-cover"
-                src="https://api.lorem.space/image/shoes?w=400&h=225"
-                alt="Shoes"
-                />
+                <figure>
+                  <img
+                    className="object-cover"
+                    src="https://api.lorem.space/image/shoes?w=400&h=225"
+                    alt="Shoes"
+                  />
+                </figure>
               </Link>
-            </Card.Body>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+HomePage.layout = "L1";
+
+export default HomePage;
