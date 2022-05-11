@@ -124,7 +124,7 @@ function ProfilePage(props) {
           onChange={(e) => formEditProfile.bio=e.target.value}
         />
         <label className="label col-span-1">
-          <span className="label-text">Profile Picture{formEditProfile.profilePicture}</span>
+          <span className="label-text">Profile Picture</span>
         </label>
         <input type="file" ref={filePickerRef} class="block w-full text-sm text-slate-500
         file:mr-4 file:py-2 file:px-4

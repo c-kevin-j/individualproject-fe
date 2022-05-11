@@ -1,0 +1,38 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username":"tes",
+      "first_name":"tes",
+      "last_name":"user",
+      "email": "tes@mail.com",
+      "password":"1234",
+      "profile_picture":"https://api.lorem.space/image/face?hash=64318",
+      "bio":"hello",
+      "verified_status":true,
+      "created_at":"",
+      "updated_at":""
+    }
+  ],
+  "post": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "image":"",
+      "caption":"hello",
+      "likes":0,
+      "created_at":"",
+      "updated_at":""
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "post_id": 1,
+      "comment": "Anda dapat menggunakan panci ini dengan tutup di kompor dan oven, dan membawanya ke meja dan menyajikan makanan dari itu.",
+      "created_at": "",
+      "update_at": ""
+    }
+  ]
+}

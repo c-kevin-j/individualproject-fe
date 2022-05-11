@@ -17,7 +17,7 @@ function ModalForgotPass(props) {
           </label>
           <Input
             type="text"
-            placeholder="placeholder"
+            placeholder="Insert Email/Username..."
             className="input input-bordered w-full max-w-xs"
             onChange={(e) => setId(e.target.value)}
           ></Input>

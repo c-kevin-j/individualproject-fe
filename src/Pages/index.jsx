@@ -6,11 +6,13 @@ import React from "react";
 // import { Card, Button, Avatar } from "react-daisyui";
 import ModalRegister from "../Components/Login/ModalRegister.jsx";
 import ModalForgotPass from "../Components/Login/ModalForgotPass";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 // import styles from '../styles/Home.module.css'
 
 function LandingPage({ href }) {
   const [visible, setVisible] = React.useState(false);
   const [visiblePass, setVisiblePass] = React.useState(false);
+  const [showPass, setShowPass] = React.useState(false);
 
   const toggleVisible = (component) => {
     if (component === "pass") {
@@ -37,15 +39,15 @@ function LandingPage({ href }) {
             />
           </figure>
           <div className="card-body">
-            <h2 className="card-title">Sign in or die</h2>
-            <p>Sign up or die</p>
+            <h2 className="card-title">Sign in</h2>
+            {/* <p>Sign up or die</p> */}
             <div className="form-control w-full max-w-md">
               <label className="label">
                 <span className="label-text">Email/Username</span>
               </label>
               <input
                 type="text"
-                placeholder="Type here"
+                placeholder="Insert Email/Username..."
                 className="input input-bordered w-full max-w-xs"
               />
             </div>
@@ -53,11 +55,21 @@ function LandingPage({ href }) {
               <label className="label">
                 <span className="label-text">Password</span>
               </label>
-              <input
-                type="text"
-                placeholder="Type here"
-                className="input input-bordered w-full max-w-xs"
-              />
+              <label class="input-group">
+                <input
+                  type={showPass?"text":"password"}
+                  placeholder="Insert Password..."
+                  className="input input-bordered w-full max-w-xs"
+                />
+                <button className="btn btn-active btn-ghost text-white" onClick={()=>setShowPass(!showPass)}>
+                {showPass
+                ?
+                <AiFillEyeInvisible className="text-white"/>
+                :
+                <AiFillEye className="text-white" />
+                }
+            </button>
+              </label>
             </div>
             <div className="grid grid-cols-2 place-items-stretch">
               <div className="mt-4">

@@ -58,7 +58,7 @@ function HomePage(props) {
       />
     </div> */}
       <div className="container mx-auto pt-5">
-        <div className="px-6 lg:px-40">
+        <div className="px-6 lg:px-36 xl:px-96">
           <div className="card">
             <div className="card-body p-2 bg-black \">
               <div className="flex">
