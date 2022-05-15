@@ -2,17 +2,31 @@ import Head from "next/head";
 import Image from "next/image";
 import MyApp from "./_app.js";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 // import { Card, Button, Avatar } from "react-daisyui";
 import ModalRegister from "../Components/Login/ModalRegister.jsx";
 import ModalForgotPass from "../Components/Login/ModalForgotPass";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import Axios from "axios";
+import { API_URL } from "../../helper.js";
+
 // import styles from '../styles/Home.module.css'
 
 function LandingPage({ href }) {
+  //Visible state to open modal Register, and visiblePass to open modal Forgot Password 
   const [visible, setVisible] = React.useState(false);
   const [visiblePass, setVisiblePass] = React.useState(false);
   const [showPass, setShowPass] = React.useState(false);
+  const [inputForm, setInputForm] = React.useState({
+    emailUsername: '',
+    password: '',
+  });
+  const router = useRouter()
+
+  const handleInput = (value, property) => {
+    setInputForm({...inputForm,[property]: value})
+  }
 
   const toggleVisible = (component) => {
     if (component === "pass") {
@@ -21,6 +35,30 @@ function LandingPage({ href }) {
       setVisible(!visible);
     }
   };
+
+  const handleLogin = async () => {
+    try{
+      let queryBy =""
+      if(inputForm.emailUsername.includes("@")){
+        queryBy = "email"
+      } else {
+        queryBy = "username"
+      } 
+      let res = await Axios.get(`${API_URL}/users?${queryBy}=${inputForm.emailUsername}`)
+      if (res.data.length>0) {
+        if (inputForm.password === res.data[0].password){
+          localStorage.setItem("tokenIdUser", res.data[0].id)
+          router.push('/home')
+        } else {
+          alert("Password salah")
+        }
+      } else {
+        alert("Email/Username tidak terdaftar")
+      }
+    } catch(error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="md:container md:mx-auto">
@@ -49,6 +87,7 @@ function LandingPage({ href }) {
                 type="text"
                 placeholder="Insert Email/Username..."
                 className="input input-bordered w-full max-w-xs"
+                onChange={(e)=> handleInput(e.target.value,"emailUsername")}
               />
             </div>
             <div className="form-control w-full max-w-xs">
@@ -60,6 +99,7 @@ function LandingPage({ href }) {
                   type={showPass?"text":"password"}
                   placeholder="Insert Password..."
                   className="input input-bordered w-full max-w-xs"
+                  onChange={(e)=> handleInput(e.target.value,"password")}
                 />
                 <button className="btn btn-active btn-ghost text-white" onClick={()=>setShowPass(!showPass)}>
                 {showPass
@@ -98,9 +138,14 @@ function LandingPage({ href }) {
               </div>
               <div className="mt-4">
                 <div className="card-actions justify-end">
-                  <Link href="/home" passHref>
-                    <button className="btn btn-primary">Login</button>
-                  </Link>
+                  {/* <Link href="/home" passHref> */}
+                    <button 
+                      className="btn btn-primary"
+                      onClick={handleLogin}
+                    >
+                      Login
+                    </button>
+                  {/* </Link> */}
                 </div>
               </div>
             </div>

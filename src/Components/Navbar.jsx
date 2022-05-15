@@ -3,10 +3,48 @@ import React from "react";
 import AddButton from "./Atoms/AddButton";
 import ModalCreatePost from "./ModalCreatePost";
 import Image from "next/image"
+import axios from "axios"
+import { API_URL } from '../../helper'
+
+// export const getServerSideProps = async (ctx) => {
+//   try {
+//     let token = localStorage.getItem("tokenIdUser")
+//     console.log(token)
+//     let res = await axios.get(`${API_URL}/users?id=1`)
+//     console.log(res.data[0])
+//     return {
+//       props:{
+//         profilePicture:res.data[0].profile_picture
+//       }
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 function Navbar(props) {
   const [visible, setVisible] = React.useState(false)
-  
+  const handleLogout = () => {
+    localStorage.removeItem("tokenIdUser")
+  }
+  const [profilePicture, setProfilePicture] = React.useState("")
+
+  // React.useEffect = (()=>{
+  //   getProfilePicture()
+  // },[])
+
+  const getProfilePicture = async () => {
+    try{
+      let token = localStorage.getItem("tokenIdUser")
+      console.log(token)
+      let res = await axios.get(`${API_URL}/users?id=1`)
+      console.log(res.data[0])
+    } catch(error){
+      console.log(error)
+    }
+  }
+
+
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
@@ -38,14 +76,14 @@ function Navbar(props) {
         <div className="dropdown dropdown-end">
           <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <img src="https://api.lorem.space/image/face?hash=33791" />
+              <img src={props.profilePicture} />
             </div>
           </label>
           <ul
             tabIndex="0"
             className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
           >
-            <Link href="/profile/index">
+            <Link href="/profile">
               <li>
                 <a className="justify-between">
                   Profile
@@ -60,7 +98,7 @@ function Navbar(props) {
             </Link>
             <Link href="/">
               <li>
-                <a>Logout</a>
+                <a onClick={handleLogout}>Logout</a>
               </li>
             </Link>
           </ul>

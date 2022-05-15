@@ -6,6 +6,19 @@ import Link from "next/link";
 // import { useDispatch } from "react-redux";
 // import { saveUserAction } from "../Redux/Actions/userAction";
 
+export const getServerSideProps = async(ctx) => {
+  try {
+    console.log("haloooooooooooo")
+    return {
+      props:{
+        profilePicture:""
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function HomePage(props) {
   // const dispatch = useDispatch();
   const [count, setCount] = React.useState(0);

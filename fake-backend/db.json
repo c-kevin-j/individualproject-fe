@@ -2,27 +2,40 @@
   "users": [
     {
       "id": 1,
-      "username":"tes",
-      "first_name":"tes",
-      "last_name":"user",
+      "username": "tes",
+      "first_name": "tes",
+      "last_name": "user",
       "email": "tes@mail.com",
-      "password":"1234",
-      "profile_picture":"https://api.lorem.space/image/face?hash=64318",
-      "bio":"hello",
-      "verified_status":true,
-      "created_at":"",
-      "updated_at":""
+      "password": "1234",
+      "profile_picture": "https://api.lorem.space/image/face?hash=64318",
+      "bio": "hello",
+      "verified_status": true,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "username": "abc",
+      "email": "abc@mail.com",
+      "password": "1234",
+      "first_name": "",
+      "last_name": "",
+      "profile_picture": "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
+      "bio": "",
+      "verified_status": false,
+      "created_at": "",
+      "update_at": "",
+      "id": 2
     }
   ],
   "post": [
     {
       "id": 1,
       "user_id": 1,
-      "image":"",
-      "caption":"hello",
-      "likes":0,
-      "created_at":"",
-      "updated_at":""
+      "image": "",
+      "caption": "hello",
+      "likes": 0,
+      "created_at": "",
+      "updated_at": ""
     }
   ],
   "comments": [

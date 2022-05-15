@@ -1,5 +1,5 @@
 import '../styles/globals.css'
-import Layout1 from './layouts/layout'
+import Layout1 from '../layouts/layout'
 
 const layouts = {
   L1: Layout1

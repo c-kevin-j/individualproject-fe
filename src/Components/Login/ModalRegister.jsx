@@ -1,6 +1,8 @@
 import React from "react";
 import { Modal, Button, Input } from "react-daisyui";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import Axios from 'axios'
+import { API_URL } from '../../../helper'
 
 function ModalRegister(props) {
   const [email, setEmail] = React.useState("");
@@ -11,20 +13,49 @@ function ModalRegister(props) {
   const [showConfirmedPass, setShowConfirmedPass] = React.useState(false)
 
 
-  const handleRegister = () => {
-    if ( username === "" || email === "" || pass === "" || confirmedPass === ""){
-      alert("Fill in all form");
-    } else {
-      if ( pass !== confirmedPass) {
-        alert("Password not match");
-      } else if (email.includes("@")) {
-        alert("Registration success");
-        props.toggleVisible();
+  const handleRegister = async () => {
+    try{
+      
+      if ( username === "" || email === "" || pass === "" || confirmedPass === ""){
+        alert("Fill in all form");
       } else {
-        alert("Email wrong");
+        if ( pass !== confirmedPass) {
+          passwordMatch = false;
+          alert("Password not match");
+        } else if (email.includes("@")) {
+          let setDate = new Date();
+          let year = setDate.getFullYear()
+          let month = `00${setDate.getMonth()}`.slice(-2)
+          let date = `00${setDate.getDate()}`.slice(-2)
+          let hour = `00${setDate.getHours()}`.slice(-2)
+          let minute = `00${setDate.getMinutes()}`.slice(-2)
+          let second = `00${setDate.getSeconds()}`.slice(-2)
+          let millisecond = `000${setDate.getMilliseconds()}`.slice(-3)
+          console.log(`${year}-${month}-${date} ${hour}:${minute}:${second}.${millisecond}`)
+          alert("Registration success");
+          let res = await Axios.post(`${API_URL}/users`, {
+            username,
+            email,
+            password:pass,
+            first_name:"",
+            last_name:"",
+            profile_picture:"",
+            bio:"",
+            verified_status:false,
+            created_at:"",
+            update_at:"",
+          })
+          props.toggleVisible();
+        } else {
+          alert("Email wrong");
+        }
       }
+    } catch (error) {
+      console.log(error)
     }
   }
+
+
 
   return (
     <>
