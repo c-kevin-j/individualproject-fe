@@ -1,31 +1,33 @@
 // import { GET_USERS, USERS_ERROR } from "../types"
 
 const initialState = {
-    users:[],
-    loading:true
+    user:{
+        id: null,
+        username: "",
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: "",
+        profile_picture: "",
+        bio: "",
+        verified_status: null,
+        created_at: "",
+        updated_at: ""
+    }
 }
 
 export default function usersReducer (state = initialState, action){
 
     switch(action.type){
 
-        case "GET_USERS":
-        return {
-            ...state,
-            users:action.payload,
-            loading:false
-        }
-        case "USERS_ERROR":
-            return{
-                loading: false, 
-                error: action.payload 
-            }
-        case "ADD_USER":
-        console.log("DAPAT DARI ACTION",action.payload)
-        return {
-            ...state,
-            users:action.payload
-        }
+        case "LOGIN_SUCCESS":
+            console.log("DAPAT DATA DARI ACTION", action.payload)
+        return { ...state, ...action.payload };
+        case "LOGOUT":
+            return initialState;
+        case "EDIT_PROFILE":
+            console.log("form edit",action.payload)
+            return { ...state, ...action.payload }
         default: return state
     }
 

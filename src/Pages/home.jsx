@@ -1,79 +1,75 @@
 import React from "react";
-import Navbar from "../Components/Navbar";
-import Form from "../Components/Form";
 import Image from "next/image";
 import Link from "next/link";
-// import { useDispatch } from "react-redux";
-// import { saveUserAction } from "../Redux/Actions/userAction";
+import axios from "axios";
+import { API_URL } from "../../helper";
 
-export const getServerSideProps = async(ctx) => {
+export const getServerSideProps = async (ctx) => {
   try {
-    console.log("haloooooooooooo")
+    let resUsers = await axios.get(`${API_URL}/users`)
+    let resPosts = await axios.get(`${API_URL}/posts`)
     return {
       props:{
-        profilePicture:""
+        users:resUsers.data,
+        posts:resPosts.data.reverse(),
       }
     }
   } catch (error) {
-    console.log(error);
-  }
+    return{
+      props:{}
+    }
+  } 
 }
 
 function HomePage(props) {
   // const dispatch = useDispatch();
-  const [count, setCount] = React.useState(0);
-  const [textCoba, setTextCoba] = React.useState("");
+  let {users, posts} = props
 
-  const handleDecrement = () => {
-    let temp = count;
-    temp--;
-    setCount(temp);
-  };
-  const handleIncrement = () => {
-    let temp = count;
-    temp++;
-    setCount(temp);
-  };
-
-  const handleSubmit = (data) => {
-    setTextCoba(data);
-    // dispatch(saveUserAction(data))
-  };
+  const printPosts = () => {
+    return posts.map((val, idx)=>{
+      let idxUser = users.findIndex((user)=>{
+        return user.id === val.user_id
+      })
+      return<>
+        <div className="card rounded-md border-2 w-128">
+            <div className="card-body p-0 gap-0 bg-base-300 ">
+              <div className="flex bg-base-200">
+                <label
+                  className="btn btn-ghost btn-circle avatar mx-2 my-1 flex-none"
+                >
+                  <img
+                    className="avatar w-10 rounded-full"
+                    src={users[idxUser].profile_picture}
+                  />
+                </label>
+                <div className="mx-2 my-auto grow">
+                  {users[idxUser].username}
+                </div>
+                <div className="mx-2 my-auto text-sm text-slate-500">
+                  Created at
+                </div>
+              </div>
+              <Link href={`/post?id=${val.id}`}>
+                <figure className="py-2">
+                  <img
+                    className="object-cover"
+                    src={val.image}
+                  />
+                </figure>
+              </Link>
+            </div>
+          </div>
+          <div className="h-3" />
+      </>
+    })
+  }
 
   return (
-    <div>
-      {/* <Navbar /> */}
-      {/* <h2>Home Page</h2>
-    <div>
-      <button type="button" onClick={handleDecrement}> - </button>
-      <label className="px-2"> {count} </label>
-      <button type="button" onClick={handleIncrement}> + </button>
-    </div>
-    <div>
-      <label for="my-modal" className="btn modal-button">Open Modal</label>
-
-      <input type="checkbox" id="my-modal" className="modal-toggle" />
-      <label for="my-modal" className="modal cursor-pointer">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Congratulations random Interner user!</h3>
-          <p className="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
-          <div className="modal-action">
-            <label for="my-modal" className="btn">Yay!</label>
-          </div>
-        </div>
-      </label>
-    </div>
-    <div>
-      <h1>{textCoba}</h1>
-      <Form
-        title="Judul Form"
-        handleSubmit={handleSubmit}
-      />
-    </div> */}
-      <div className="container mx-auto pt-5">
-        <div className="px-6 lg:px-36 xl:px-96">
-          <div className="card">
-            <div className="card-body p-2 bg-black \">
+    <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-5">
+        <div className="grid justify-items-center">
+          {printPosts()}
+          {/* <div className="card rounded w-128">
+            <div className="card-body p-2 bg-base-300 ">
               <div className="flex">
                 <label
                   className="btn btn-ghost btn-circle avatar mx-2 my-auto flex-none"
@@ -90,20 +86,19 @@ function HomePage(props) {
                   Created at
                 </div>
               </div>
-              <Link href="/post/post">
+              <Link href="/post">
                 <figure>
                   <img
                     className="object-cover"
-                    src="https://media.istockphoto.com/photos/mountain-landscape-picture-id517188688?b=1&k=20&m=517188688&s=612x612&w=0&h=x8h70-SXuizg3dcqN4oVe9idppdt8FUVeBFemfaMU7w="
-                    alt="Shoes"
+                    src="https://picsum.photos/500/500"
                   />
                 </figure>
               </Link>
             </div>
-          </div>
-          <div className="h-3" />
-          <div className="card">
-            <div className="card-body p-2 bg-black \">
+          </div> */}
+          {/* <div className="h-3" />
+          <div className="card rounded w-128">
+            <div className="card-body p-2 bg-base-300">
               <div className="flex">
                 <label
                   className="btn btn-ghost btn-circle avatar mx-2 my-auto flex-none"
@@ -118,19 +113,18 @@ function HomePage(props) {
                   Created at
                 </div>
               </div>
-              <Link href="/post/post">
+              <Link href="/post">
                 <figure>
                   <img
                     className="object-cover"
-                    src="https://api.lorem.space/image/shoes?w=400&h=225"
+                    src="https://picsum.photos/500/500"
                     alt="Shoes"
                   />
                 </figure>
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
-      </div>
     </div>
   );
 }

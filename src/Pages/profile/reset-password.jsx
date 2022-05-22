@@ -1,4 +1,5 @@
 import React from "react";
+import {useDispatch, useSelector} from 'react-redux'
 
 function EditPage (props) {
 
@@ -16,6 +17,9 @@ function EditPage (props) {
       <button type="button" className="btn btn-sm">
         Reset
       </button>
+    </div>
+    <div>
+      
     </div>
   </div>
 }

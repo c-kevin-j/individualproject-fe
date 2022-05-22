@@ -2,18 +2,27 @@ import React from "react";
 import { Modal, Button } from "react-daisyui";
 import {AiFillCamera} from "react-icons/ai"
 import Link from "next/link";
+import axios from "axios";
+import { API_URL } from "../../helper";
+import { useSelector } from "react-redux";
 
 function ModalCreatePost(props) {
 
+  const { user } = useSelector((state)=>{
+    return{
+      user: state.usersReducer.user
+    }
+  })
+
   const filePickerRef = React.useRef(null);
-  const captionRef = React.useRef(null);
   const [selectedFile, setSelectedFile] = React.useState(null);
   const [inputKey, setInputKey] = React.useState(null);
   const [loading, setLoading] = React.useState(null)
-  
+  const [caption, setCaption] = React.useState("")
+  const [image, setImage] = React.useState(null)
+
   function addImageToPost(event){
     const reader = new FileReader()
-
     //cek apakah ada file yang diupload
     if(event.target.files[0]){
       reader.readAsDataURL(event.target.files[0])
@@ -31,14 +40,28 @@ function ModalCreatePost(props) {
   }
   
   async function uploadPost(event) {
-    if (loading) return;
-
-    setLoading(true);
+    try{
+      if (loading) return;
+      setLoading(true);
+      let formPost = {
+        user_id:user.id,
+        image:selectedFile,
+        caption:caption,
+        likes:0,
+        created_at:"",
+        updated_at:""
+      }
+      console.log(formPost)
+      await axios.post(`${API_URL}/posts`,formPost)
+      props.toggleVisible()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
   return <>
-    <Modal open={props.visible} onClickBackdrop={props.toggleVisible}>
+    <Modal className="bg-base-300" open={props.visible} onClickBackdrop={props.toggleVisible}>
     <div className="">
       
         <div className="flex place-content-center">
@@ -55,7 +78,8 @@ function ModalCreatePost(props) {
           </> }
             
         </div>
-        <input type="text" maxLength="150" placeholder="Insert your caption..." ref={captionRef} className="my-4 border-none text-center w-full input-lg focus:ring-0"/>
+        <input type="text" maxLength="150" placeholder="Insert your caption..." className="my-4 border-none text-center w-full input-lg focus:ring-0" onChange={(e)=>setCaption(e.target.value)}/>
+
         <input type="file" hidden ref={filePickerRef} key={inputKey || ''} onChange={addImageToPost}/>
         
         <Link href="/home">

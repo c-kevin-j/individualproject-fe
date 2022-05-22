@@ -33,13 +33,13 @@ function ModalRegister(props) {
           let millisecond = `000${setDate.getMilliseconds()}`.slice(-3)
           console.log(`${year}-${month}-${date} ${hour}:${minute}:${second}.${millisecond}`)
           alert("Registration success");
-          let res = await Axios.post(`${API_URL}/users`, {
+          await Axios.post(`${API_URL}/users`, {
             username,
             email,
             password:pass,
             first_name:"",
             last_name:"",
-            profile_picture:"",
+            profile_picture:"https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
             bio:"",
             verified_status:false,
             created_at:"",

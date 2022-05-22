@@ -1,8 +1,41 @@
+import axios from "axios";
 import React from "react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FiMoreVertical } from "react-icons/fi"; 
 
+export const getServerSideProps = async (ctx) => {
+  try {
+    let resPost = await axios.get(`http://localhost:5000/posts?id=${ctx.query.id}`)
+    let resUsers = await axios.get(`http://localhost:5000/users`)
+    return {
+      props:{
+        post:resPost.data[0],
+        users:resUsers.data
+      }
+    }
+  } catch (error) {
+    return{
+      props:{}
+    }
+  } 
+}
+
 function DetailPost (props) {
+
+  let { post, users } = props
+  const [poster, setPoster] = React.useState([])
+
+  React.useEffect(()=>{
+    getPoster()
+  },[users])
+
+  const getPoster = () => {
+    let posterIdx = users.findIndex((val)=>{
+      return val.id === post.user_id
+    })
+    setPoster(users[posterIdx])
+  }
+
   const [likeButton, setLikeButton] = React.useState(false)
   const [likes, setLikes] = React.useState(0)
   const [commentList, setCommentList] = React.useState([])
@@ -31,6 +64,7 @@ function DetailPost (props) {
   }
 
   const printComment = () => {
+    console.log(post.image)
     if (commentList.length) {
       return commentList.map((value)=>{
         return <div className="grid grid-cols-10">
@@ -55,37 +89,38 @@ function DetailPost (props) {
     }
   }
 
+
   return (
     <div>
-      <div className="mx-auto">
+      <div className="mx-auto pt-5">
         <div className="bg-base-100 shadow-xl rounded-none mx-auto py-1">
-          <div className="grid grid-cols-10">
-            <div className="col-span-12 lg:col-span-6">
-              <img className="w-auto h-auto mx-auto " src="https://api.lorem.space/image/movie" alt="Movie" />
+          <div className="grid grid-cols-10 bg-base-200">
+            <div className="col-span-12 lg:col-span-6 my-2">
+              <img className="w-auto h-auto mx-auto " src={post.image} alt="Movie" />
             </div>
-            <div className="col-span-12 lg:col-span-4 px-2 grid grid-rows-6">
+            <div className="col-span-12 lg:col-span-4 px-2 grid grid-rows lg:grid-rows-6 bg-base-200">
               <div className="grid grid-cols-10 row-span-1">
                 <div className="avatar m-auto col-span-1">
                   <div className="w-10 h-10 rounded-full">
-                    <img className="mt-0" src="https://api.lorem.space/image/face?hash=64318" />
+                    <img className="mt-0" src={poster.profile_picture} />
                   </div>
                 </div>
                 <div className="mx-2 my-auto col-span-7">
-                  @UsernameA
+                {poster.username}
                 </div>
                 <div className="mx-2 my-auto text-sm text-slate-500 col-span-1">
                   Date
                 </div>
                 <div className="mx-2 my-auto text-sm col-span-1">
                   <div className="dropdown dropdown-end">
-                    <label tabIndex="0" className="btn">
+                    <label tabIndex="0" className="w-10 btn rounded-sm bg-inherit border-inherit hover:bg-base-200">
                       <div className="w-10 rounded-full text-center">
                         <FiMoreVertical />
                       </div>
                     </label>
                     <ul
                       tabIndex="0"
-                      className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-300 w-52"
+                      className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 w-52"
                     >
                       <li>
                         <a>Delete</a>
@@ -101,10 +136,10 @@ function DetailPost (props) {
         
                 </div>
                 <div className="col-span-10 py-1">
-                  This is caption
+                  {post.caption}
                 </div>
               </div>
-              <div className="row-span-5">
+              <div className="row-auto lg:row-span-5">
                   {printComment()}
               </div>
                 <div className="row-span-1">
@@ -123,8 +158,8 @@ function DetailPost (props) {
                     </div>
                   </div>
                   <div className="pr-4">
-                    <textarea className="textarea textarea-bordered w-full" placeholder="Add comment..." value={comment} onChange={(e) => setComment(e.target.value)}/>
-                    <button type="button" className="btn btn-s" onClick={handleSubmitComment}>Submit</button>
+                    <textarea className="textarea textarea-bordered w-full rounded-sm" placeholder="Add comment..." value={comment} onChange={(e) => setComment(e.target.value)}/>
+                    <button type="button" className="btn btn-s rounded-sm" onClick={handleSubmitComment}>Submit</button>
                   </div>
                 </div>
             </div>

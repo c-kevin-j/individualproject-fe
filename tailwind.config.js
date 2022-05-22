@@ -1,7 +1,11 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      spacing: {
+        '128': '32rem' 
+      }
+    },
   },
   // add daisyUI plugin
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
@@ -15,6 +19,6 @@ module.exports = {
     logs: true,
     rtl: false,
     prefix: "",
-    darkTheme: "dark",
+    darkTheme: "pastel",
   },
 };

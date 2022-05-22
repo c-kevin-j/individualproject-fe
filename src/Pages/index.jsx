@@ -10,6 +10,8 @@ import ModalForgotPass from "../Components/Login/ModalForgotPass";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Axios from "axios";
 import { API_URL } from "../../helper.js";
+import { useDispatch } from "react-redux";
+import { loginAction } from "../Redux/Actions/userAction.js";
 
 // import styles from '../styles/Home.module.css'
 
@@ -23,6 +25,7 @@ function LandingPage({ href }) {
     password: '',
   });
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const handleInput = (value, property) => {
     setInputForm({...inputForm,[property]: value})
@@ -48,6 +51,8 @@ function LandingPage({ href }) {
       if (res.data.length>0) {
         if (inputForm.password === res.data[0].password){
           localStorage.setItem("tokenIdUser", res.data[0].id)
+          let data = {user:res.data[0]}
+          dispatch(loginAction(data))
           router.push('/home')
         } else {
           alert("Password salah")
@@ -69,7 +74,7 @@ function LandingPage({ href }) {
             <br></br>
           </article>
         </div>
-        <div className="card md:card-side bg-base-100 shadow-xl">
+        <div className="card md:card-side bg-base-100 shadow-xl bg-base-200">
           <figure>
             <img
               src="https://api.lorem.space/image/album?w=400&h=400"
