@@ -1,56 +1,69 @@
 import Link from "next/link";
 import React from "react";
 import AddButton from "./Atoms/AddButton";
-import ModalCreatePost from "./ModalCreatePost";
-import Image from "next/image"
-import axios from "axios"
-import { API_URL } from '../../helper'
-import { useDispatch,useSelector } from 'react-redux'
-import { loginAction } from "../Redux/Actions/userAction";
+import ModalCreatePost from "./Posts/ModalCreatePost";
+import Image from "next/image";
+import axios from "axios";
+import { API_URL } from "../../helper";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAction, logoutAction } from "../Redux/Actions/userAction";
+import { useRouter } from "next/router";
 
 function Navbar(props) {
-  const [visible, setVisible] = React.useState(false)
+  const [visible, setVisible] = React.useState(false);
+
   const handleLogout = () => {
-    localStorage.removeItem("tokenIdUser")
-  }
-  const [profilePicture, setProfilePicture] = React.useState("")
+    localStorage.removeItem("tokenIdUser");
+    dispatch(logoutAction());
+  };
 
-  const dispatch = useDispatch()
+  const [profilePicture, setProfilePicture] = React.useState("");
 
-  const { user } = useSelector((state)=>{
-    return{
-      user: state.usersReducer.user
-    }
-  })
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => {
+    return {
+      user: state.usersReducer.user,
+    };
+  });
 
   React.useEffect(() => {
     keepLogin();
-  }, [])
-  
+  }, []);
+
   const keepLogin = () => {
-    let token = localStorage.getItem("tokenIdUser")
+    let token = localStorage.getItem("tokenIdUser");
     if (token) {
-      axios.get(`${API_URL}/users?id=${token}`)
-      .then((res)=>{
-        localStorage.setItem("tokenIdUser", res.data[0].id)
-        let data = {user:res.data[0]}
-        dispatch(loginAction(data))
-      }).catch((error)=>{
-        console.log(error)
-      })
+      axios
+        .get(`${API_URL}/users?id=${token}`)
+        .then((res) => {
+          localStorage.setItem("tokenIdUser", res.data[0].id);
+          let data = { user: res.data[0] };
+          dispatch(loginAction(data));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      router.push('/login')
     }
-  }
+  };
 
   return (
-    <div className="px-10 bg-base-300">
+    <div className="px-10 md:px-32 lg:px-48 xl:px-80 bg-base-300">
       <div className="navbar">
         <div className="flex-1">
-          <Link href="/home">
-            <div className="btn btn-ghost">
-              <Image src={require("../../assets/logo.png")} width="40px" height="40px"  alt="logo" />
+          <Link href="/">
+            <div className="btn btn-ghost gap-2">
+              <Image
+                src={require("../../assets/logo.png")}
+                width="40px"
+                height="40px"
+                alt="logo"
+              />
               <a className="normal-case text-xl">Boo</a>
             </div>
-
           </Link>
         </div>
         <div className="flex-none gap-2">
@@ -62,13 +75,13 @@ function Navbar(props) {
             />
           </div> */}
           {/* <Link href="/post/create"> */}
-            <div onClick={()=>setVisible(!visible)}>
-              <AddButton />
-              <ModalCreatePost 
-                visible = {visible}
-                toggleVisible = {()=>setVisible(!visible)}
-              />
-            </div>
+          <div onClick={() => setVisible(!visible)}>
+            <AddButton />
+            <ModalCreatePost
+              visible={visible}
+              toggleVisible={() => setVisible(!visible)}
+            />
+          </div>
           {/* </Link> */}
           <div className="dropdown dropdown-end">
             <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
@@ -93,7 +106,7 @@ function Navbar(props) {
                   <a>Setting</a>
                 </li>
               </Link>
-              <Link href="/">
+              <Link href="/login">
                 <li>
                   <a onClick={handleLogout}>Logout</a>
                 </li>
@@ -106,4 +119,4 @@ function Navbar(props) {
   );
 }
 
-export default Navbar
+export default Navbar;

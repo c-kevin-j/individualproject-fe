@@ -3,10 +3,13 @@ import { Modal, Button } from "react-daisyui";
 import {AiFillCamera} from "react-icons/ai"
 import Link from "next/link";
 import axios from "axios";
-import { API_URL } from "../../helper";
+import { API_URL } from "../../../helper";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 function ModalCreatePost(props) {
+
+  const router = useRouter()
 
   const { user } = useSelector((state)=>{
     return{
@@ -51,9 +54,9 @@ function ModalCreatePost(props) {
         created_at:"",
         updated_at:""
       }
-      console.log(formPost)
       await axios.post(`${API_URL}/posts`,formPost)
       props.toggleVisible()
+      router.push('/home')
     } catch (error) {
       console.log(error)
     }
@@ -61,10 +64,9 @@ function ModalCreatePost(props) {
 
 
   return <>
-    <Modal className="bg-base-300" open={props.visible} onClickBackdrop={props.toggleVisible}>
-    <div className="">
+    <Modal className="bg-base-300 p-2" open={props.visible} onClickBackdrop={props.toggleVisible}>
       
-        <div className="flex place-content-center">
+        <div className="flex place-content-center bg-base-content">
           { selectedFile 
           ? <>
             <img onClick={removeUploadedFile} src={selectedFile} alt="Uploaded" className="max-w-[400px] max-h-[400px] object-cover cursor-pointer" />
@@ -78,18 +80,17 @@ function ModalCreatePost(props) {
           </> }
             
         </div>
-        <input type="text" maxLength="150" placeholder="Insert your caption..." className="my-4 border-none text-center w-full input-lg focus:ring-0" onChange={(e)=>setCaption(e.target.value)}/>
+        <input type="text" maxLength="150" placeholder="Insert your caption..." className="my-4 border-none text-center w-full input-md focus:ring-0" onChange={(e)=>setCaption(e.target.value)}/>
 
         <input type="file" hidden ref={filePickerRef} key={inputKey || ''} onChange={addImageToPost}/>
         
-        <Link href="/home">
+        <Link href="/">
           <button disabled={!selectedFile || loading} type="button" onClick={uploadPost} className="w-full bg-red-600 text-white p-2 shadow-md hover:brightness-125 
           disabled:bg-gray-200 disabled:cursor-not-allowed disabled:hover:brightness-100">
             Upload Post
           </button>
-
         </Link>
-      </div>
+        
     </Modal>
   </>
 }

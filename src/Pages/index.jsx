@@ -1,170 +1,139 @@
-import Head from "next/head";
-import Image from "next/image";
-import MyApp from "./_app.js";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
-// import { Card, Button, Avatar } from "react-daisyui";
-import ModalRegister from "../Components/Login/ModalRegister.jsx";
-import ModalForgotPass from "../Components/Login/ModalForgotPass";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import Axios from "axios";
-import { API_URL } from "../../helper.js";
-import { useDispatch } from "react-redux";
-import { loginAction } from "../Redux/Actions/userAction.js";
+import Image from "next/image";
+import Link from "next/link";
+import axios from "axios";
+import { API_URL } from "../../helper";
 
-// import styles from '../styles/Home.module.css'
-
-function LandingPage({ href }) {
-  //Visible state to open modal Register, and visiblePass to open modal Forgot Password 
-  const [visible, setVisible] = React.useState(false);
-  const [visiblePass, setVisiblePass] = React.useState(false);
-  const [showPass, setShowPass] = React.useState(false);
-  const [inputForm, setInputForm] = React.useState({
-    emailUsername: '',
-    password: '',
-  });
-  const router = useRouter()
-  const dispatch = useDispatch()
-
-  const handleInput = (value, property) => {
-    setInputForm({...inputForm,[property]: value})
-  }
-
-  const toggleVisible = (component) => {
-    if (component === "pass") {
-      setVisiblePass(!visiblePass);
-    } else {
-      setVisible(!visible);
-    }
-  };
-
-  const handleLogin = async () => {
-    try{
-      let queryBy =""
-      if(inputForm.emailUsername.includes("@")){
-        queryBy = "email"
-      } else {
-        queryBy = "username"
-      } 
-      let res = await Axios.get(`${API_URL}/users?${queryBy}=${inputForm.emailUsername}`)
-      if (res.data.length>0) {
-        if (inputForm.password === res.data[0].password){
-          localStorage.setItem("tokenIdUser", res.data[0].id)
-          let data = {user:res.data[0]}
-          dispatch(loginAction(data))
-          router.push('/home')
-        } else {
-          alert("Password salah")
-        }
-      } else {
-        alert("Email/Username tidak terdaftar")
+export const getServerSideProps = async (ctx) => {
+  try {
+    let resUsers = await axios.get(`${API_URL}/users`)
+    let resPosts = await axios.get(`${API_URL}/posts`)
+    return {
+      props:{
+        users:resUsers.data,
+        posts:resPosts.data.reverse(),
       }
-    } catch(error) {
-      console.log(error)
     }
+  } catch (error) {
+    return{
+      props:{}
+    }
+  } 
+}
+
+function HomePage(props) {
+  // const dispatch = useDispatch();
+  let {users, posts} = props
+
+  const printPosts = () => {
+    return posts.map((val, idx)=>{
+      let idxUser = users.findIndex((user)=>{
+        return user.id === val.user_id
+      })
+      return<>
+        <div className="card rounded-md border-2 border-base-300 w-128 shadow-lg">
+            <div className="card-body p-0 gap-0 bg-base-300 ">
+              <div className="flex bg-accent-200">
+                <label
+                  className="btn btn-ghost btn-circle avatar mx-2 my-1 flex-none"
+                >
+                  <img
+                    className="avatar w-10 rounded-full"
+                    src={users[idxUser].profile_picture}
+                  />
+                </label>
+                <div className="mx-2 my-auto grow font-bold">
+                  {users[idxUser].username}
+                </div>
+                <div className="mx-2 my-auto text-sm text-slate-500">
+                  Created at
+                </div>
+              </div>
+              <div className="min-h-fit">
+                <Link href={`/post?id=${val.id}`}>
+                  <figure>
+                    <img
+                      className="object-cover w-auto h-full"
+                      src={val.image}
+                    />
+                  </figure>
+                </Link>
+              </div>
+              <div className="flex justify-center py-1 bg-base-200 font-light">
+                <span>{val.caption}</span>
+              </div>
+            </div>
+          </div>
+          <div className="h-3" />
+      </>
+    })
   }
 
   return (
-    <div className="md:container md:mx-auto">
-      <div className="grid justify-items-center mt-8">
-        <div className="grid content-start mt-8">
-          <article className="prose">
-            <h1>Welcome, you right there!</h1>
-            <br></br>
-          </article>
-        </div>
-        <div className="card md:card-side bg-base-100 shadow-xl bg-base-200">
-          <figure>
-            <img
-              src="https://api.lorem.space/image/album?w=400&h=400"
-              alt="Album"
-            />
-          </figure>
-          <div className="card-body">
-            <h2 className="card-title">Sign in</h2>
-            {/* <p>Sign up or die</p> */}
-            <div className="form-control w-full max-w-md">
-              <label className="label">
-                <span className="label-text">Email/Username</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Insert Email/Username..."
-                className="input input-bordered w-full max-w-xs"
-                onChange={(e)=> handleInput(e.target.value,"emailUsername")}
-              />
-            </div>
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <label class="input-group">
-                <input
-                  type={showPass?"text":"password"}
-                  placeholder="Insert Password..."
-                  className="input input-bordered w-full max-w-xs"
-                  onChange={(e)=> handleInput(e.target.value,"password")}
-                />
-                <button className="btn btn-active btn-ghost text-white" onClick={()=>setShowPass(!showPass)}>
-                {showPass
-                ?
-                <AiFillEyeInvisible className="text-white"/>
-                :
-                <AiFillEye className="text-white" />
-                }
-            </button>
-              </label>
-            </div>
-            <div className="grid grid-cols-2 place-items-stretch">
-              <div className="mt-4">
-                <a
-                  className="link link-accent"
-                  onClick={() => toggleVisible("pass")}
+    <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-5">
+        <div className="grid justify-items-center">
+          {printPosts()}
+          {/* <div className="card rounded w-128">
+            <div className="card-body p-2 bg-base-300 ">
+              <div className="flex">
+                <label
+                  className="btn btn-ghost btn-circle avatar mx-2 my-auto flex-none"
                 >
-                  Forgot password?
-                </a>
-                <ModalForgotPass
-                  visible={visiblePass}
-                  toggleVisible={() => toggleVisible("pass")}
-                ></ModalForgotPass>
-                <br></br>
-                <a
-                  className="link link-secondary"
-                  onClick={() => toggleVisible("")}
-                >
-                  {" "}
-                  Register{" "}
-                </a>
-                <ModalRegister
-                  visible={visible}
-                  toggleVisible={() => toggleVisible("")}
-                ></ModalRegister>
-              </div>
-              <div className="mt-4">
-                <div className="card-actions justify-end">
-                  {/* <Link href="/home" passHref> */}
-                    <button 
-                      className="btn btn-primary"
-                      onClick={handleLogin}
-                    >
-                      Login
-                    </button>
-                  {/* </Link> */}
+                  <img
+                    className="avatar w-10 rounded-full"
+                    src="https://api.lorem.space/image/face?hash=33791"
+                  />
+                </label>
+                <div className="mx-2 my-auto grow">
+                  @UsernameA
+                </div>
+                <div className="mx-2 my-auto text-sm text-slate-500">
+                  Created at
                 </div>
               </div>
+              <Link href="/post">
+                <figure>
+                  <img
+                    className="object-cover"
+                    src="https://picsum.photos/500/500"
+                  />
+                </figure>
+              </Link>
             </div>
-          </div>
+          </div> */}
+          {/* <div className="h-3" />
+          <div className="card rounded w-128">
+            <div className="card-body p-2 bg-base-300">
+              <div className="flex">
+                <label
+                  className="btn btn-ghost btn-circle avatar mx-2 my-auto flex-none"
+                >
+                  <img
+                    className="avatar w-10 rounded-full "
+                    src="https://api.lorem.space/image/face?hash=33791"
+                  />
+                </label>
+                <div className="mx-2 my-auto grow">@UsernameA</div>
+                <div className="mx-2 my-auto text-sm text-slate-500">
+                  Created at
+                </div>
+              </div>
+              <Link href="/post">
+                <figure>
+                  <img
+                    className="object-cover"
+                    src="https://picsum.photos/500/500"
+                    alt="Shoes"
+                  />
+                </figure>
+              </Link>
+            </div>
+          </div> */}
         </div>
-        <div className="grid justify-items-center">
-          <div className="grow order-2">
-            <br></br>
-            <div className="flex flex-row-reverse"></div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
 
-export default LandingPage;
+HomePage.layout = "L1";
+
+export default HomePage;

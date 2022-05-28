@@ -4,7 +4,7 @@ function SaveButton(props) {
 
   return (
     <div>
-      <button type="button" class="btn btn-sm" onClick={props.clickSave}>
+      <button type="button" className="btn btn-sm" onClick={props.clickSave}>
         <FaSave /> Save 
       </button>
     </div>

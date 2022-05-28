@@ -4,8 +4,8 @@ function AddButton(props) {
 
   return (
     <div>
-      <button type="button" class="btn btn-sm btn-outline bg-gray-700" onClick={props.clickAdd}>
-        <MdOutlineAddPhotoAlternate className="text-white"/>
+      <button type="button" className="btn btn-sm btn-primary" onClick={props.clickAdd}>
+        <MdOutlineAddPhotoAlternate className="text-primary-content"/>
       </button>
     </div>
   );

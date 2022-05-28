@@ -58,7 +58,7 @@ function CreatePost (props) {
             <input type="file" hidden ref={filePickerRef} key={inputKey || ''} onChange={addImageToPost}/>
           </div>
           <div>
-            <Link href="/home">
+            <Link href="/">
               <button disabled={!selectedFile || loading} type="button" onClick={uploadPost} className="w-full bg-red-600 text-white p-2 shadow-md hover:brightness-125 
               disabled:bg-gray-200 disabled:cursor-not-allowed disabled:hover:brightness-100">
                 Upload Post
@@ -86,7 +86,7 @@ function CreatePost (props) {
         <input type="text" maxLength="150" placeholder="Insert your caption..." ref={captionRef} className="my-4 border-none text-center w-full focus:ring-0"/>
         <input type="file" hidden ref={filePickerRef} key={inputKey || ''} onChange={addImageToPost}/>
         
-        <Link href="/home">
+        <Link href="/">
           <button disabled={!selectedFile || loading} type="button" onClick={uploadPost} className="w-full bg-red-600 text-white p-2 shadow-md hover:brightness-125 
           disabled:bg-gray-200 disabled:cursor-not-allowed disabled:hover:brightness-100">
             Upload Post

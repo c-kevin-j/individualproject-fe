@@ -4,7 +4,7 @@ function EditButton(props) {
 
   return (
     <div>
-      <button type="button" class="btn btn-sm" startIcon={MdCancel} onClick={props.clickCancel}>
+      <button type="button" className="btn btn-sm" startIcon={MdCancel} onClick={props.clickCancel}>
         <MdCancel /> Cancel
       </button>
     </div>
