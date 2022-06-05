@@ -78,7 +78,7 @@ function ProfilePage(props) {
         <>
           <Link href={`/post?id=${val.id}`}>
             <div
-              className="card w-52 aspect-square bg-base-300 shadow-xl 
+              className="card w-full aspect-square bg-base-300 shadow-xl 
               rounded-none 
               col-span-1
               flex place-content-center"
@@ -124,14 +124,14 @@ function ProfilePage(props) {
         </div>
         <div className="tabs my-3 border-y-2 grid grid-cols-2 justify-items-center">
           <span
-            className={`tab gap-2 ${selectedTab === 1 && "tab-active text-secondary"}`}
+            className={`tab gap-2 ${selectedTab === 1 && "tab-active text-secondary font-bold"}`}
             onClick={() => setSelectedTab(1)}
           >
             <BsFillGridFill />
             POSTS
           </span>
           <span
-            className={`tab gap-2 ${selectedTab === 2 && "tab-active text-secondary"}`}
+            className={`tab gap-2 ${selectedTab === 2 && "tab-active text-secondary font-bold"}`}
             onClick={() => setSelectedTab(2)}
           >
             <AiFillHeart />

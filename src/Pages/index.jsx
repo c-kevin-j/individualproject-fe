@@ -6,49 +6,54 @@ import { API_URL } from "../../helper";
 
 export const getServerSideProps = async (ctx) => {
   try {
-    let resUsers = await axios.get(`${API_URL}/users`)
-    let resPosts = await axios.get(`${API_URL}/posts`)
+    let resUsers = await axios.get(`${API_URL}/users`);
+    let resPosts = await axios.get(`${API_URL}/posts`);
     return {
-      props:{
-        users:resUsers.data,
-        posts:resPosts.data.reverse(),
-      }
-    }
+      props: {
+        users: resUsers.data,
+        posts: resPosts.data.reverse(),
+      },
+    };
   } catch (error) {
-    return{
-      props:{}
-    }
-  } 
-}
+    return {
+      props: {},
+    };
+  }
+};
 
 function HomePage(props) {
   // const dispatch = useDispatch();
-  let {users, posts} = props
+  let { users, posts } = props;
 
   const printPosts = () => {
-    return posts.map((val, idx)=>{
-      let idxUser = users.findIndex((user)=>{
-        return user.id === val.user_id
-      })
-      return<>
-        <div className="card rounded-md border-2 border-base-300 w-128 shadow-lg">
+    return posts.map((val, idx) => {
+      let idxUser = users.findIndex((user) => {
+        return user.id === val.user_id;
+      });
+      return (
+        <>
+          <div className="card rounded-md w-128 shadow-md">
             <div className="card-body p-0 gap-0 bg-base-300 ">
-              <div className="flex bg-accent-200">
-                <label
-                  className="btn btn-ghost btn-circle avatar mx-2 my-1 flex-none"
-                >
-                  <img
-                    className="avatar w-10 rounded-full"
-                    src={users[idxUser].profile_picture}
-                  />
-                </label>
-                <div className="mx-2 my-auto grow font-bold">
-                  {users[idxUser].username}
+              <Link href={`/profile?id=${users[idxUser].id}`}>
+                <div className="flex bg-base-200">
+                  <label className="btn btn-ghost btn-circle avatar mx-2 my-1 flex-none">
+                    <Link href={`/profile?id=${users[idxUser].id}`}>
+                      <img
+                        className="avatar w-10 rounded-full"
+                        src={users[idxUser].profile_picture}
+                      />
+                    </Link>
+                  </label>
+                  <Link href={`/profile?id=${users[idxUser].id}`}>
+                    <div className="mx-2 my-auto grow font-bold">
+                      {users[idxUser].username}
+                    </div>
+                  </Link>
+                  <div className="mx-2 my-auto text-sm text-slate-500">
+                    Created at
+                  </div>
                 </div>
-                <div className="mx-2 my-auto text-sm text-slate-500">
-                  Created at
-                </div>
-              </div>
+              </Link>
               <div className="min-h-fit">
                 <Link href={`/post?id=${val.id}`}>
                   <figure>
@@ -65,15 +70,16 @@ function HomePage(props) {
             </div>
           </div>
           <div className="h-3" />
-      </>
-    })
-  }
+        </>
+      );
+    });
+  };
 
   return (
     <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-5">
-        <div className="grid justify-items-center">
-          {printPosts()}
-          {/* <div className="card rounded w-128">
+      <div className="grid justify-items-center">
+        {printPosts()}
+        {/* <div className="card rounded w-128">
             <div className="card-body p-2 bg-base-300 ">
               <div className="flex">
                 <label
@@ -101,7 +107,7 @@ function HomePage(props) {
               </Link>
             </div>
           </div> */}
-          {/* <div className="h-3" />
+        {/* <div className="h-3" />
           <div className="card rounded w-128">
             <div className="card-body p-2 bg-base-300">
               <div className="flex">
@@ -129,7 +135,7 @@ function HomePage(props) {
               </Link>
             </div>
           </div> */}
-        </div>
+      </div>
     </div>
   );
 }

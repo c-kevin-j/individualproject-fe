@@ -50,7 +50,6 @@ function ModalCreatePost(props) {
         user_id:user.id,
         image:selectedFile,
         caption:caption,
-        likes:0,
         created_at:"",
         updated_at:""
       }

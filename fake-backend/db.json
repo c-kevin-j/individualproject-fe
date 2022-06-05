@@ -81,7 +81,7 @@
       "id": 6,
       "user_id": 1,
       "image": "https://picsum.photos/200/300?random=5",
-      "caption": "test edit",
+      "caption": "test ",
       "likes": 2,
       "created_at": "",
       "updated_at": "",
@@ -120,6 +120,14 @@
       "created_at": "",
       "updated_at": "",
       "id": 4
+    },
+    {
+      "user_id": 1,
+      "comment": "tes comment",
+      "post_id": 6,
+      "created_at": "",
+      "updated_at": "",
+      "id": 5
     }
   ],
   "likes": [
@@ -150,6 +158,13 @@
       "created_at": "",
       "updated_at": "",
       "id": 4
+    },
+    {
+      "user_id": 1,
+      "post_id": 5,
+      "created_at": "",
+      "updated_at": "",
+      "id": 5
     }
   ]
 }

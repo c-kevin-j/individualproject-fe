@@ -78,7 +78,6 @@ function registerPage(props) {
             <div class="card w-96 bg-base-100 shadow-xl">
               <div class="card-body">
                 <h2 class="card-title">Register</h2>
-                <p>Wololo?</p>
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Email</span>

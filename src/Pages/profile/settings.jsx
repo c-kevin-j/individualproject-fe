@@ -2,6 +2,7 @@ import React, { Profiler } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { editUser, loginAction } from "../../Redux/Actions/userAction";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { FaUserCircle, FaLock } from "react-icons/fa";
 import axios from "axios";
 import { API_URL } from "../../../helper";
 
@@ -309,15 +310,17 @@ const EditProfilePage = (props) => {
         <div className="justify-center col-start-2 col-span-10 md:col-start-3 md:col-span-8">
           <div className="tabs my-3 border-b-2 grid grid-cols-2 justify-items-center">
             <a
-              className={`tab ${selectedTab === 1 && "tab-active"}`}
+              className={`text-lg tab ${selectedTab === 1 && "tab-active text-secondary font-bold"} gap-1`}
               onClick={() => selectTab(1)}
             >
+              <FaUserCircle />
               Edit Profile
             </a>
             <a
-              className={`tab ${selectedTab === 2 && "tab-active"}`}
+              className={`text-lg tab ${selectedTab === 2 && "tab-active text-secondary font-bold"} gap-1`}
               onClick={() => selectTab(2)}
             >
+              <FaLock />
               Change Password
             </a>
 

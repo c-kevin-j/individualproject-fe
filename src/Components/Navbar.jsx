@@ -51,7 +51,7 @@ function Navbar(props) {
   };
 
   return (
-    <div className="px-10 md:px-32 lg:px-48 xl:px-80 bg-base-300">
+    <div className="px-10 md:px-32 lg:px-48 xl:px-80 bg-base-300 sticky top-0 left-0 right-0 z-10 border-b-4 border-double border-neutral-100">
       <div className="navbar">
         <div className="flex-1">
           <Link href="/">
@@ -97,7 +97,6 @@ function Navbar(props) {
                 <li>
                   <a className="justify-between">
                     Profile
-                    <span className="badge">New</span>
                   </a>
                 </li>
               </Link>

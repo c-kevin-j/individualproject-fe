@@ -173,7 +173,7 @@ function DetailPost(props) {
   return (
     <div className="px-10 md:px-32 lg:px-48 xl:px-80">
       <div className="mx-auto">
-        <div className="bg-base-100 shadow-xl rounded-none mx-auto py-1">
+        <div className="bg-base-100 shadow-sm rounded-none mx-auto py-1">
           {/* grid untuk membagi bagian image dan detail */}
           <div className="grid grid-cols-10 bg-base-200">
             {/* image */}
