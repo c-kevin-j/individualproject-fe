@@ -11,8 +11,6 @@ const initialState = {
         profile_picture: "",
         bio: "",
         verified_status: null,
-        created_at: "",
-        updated_at: ""
     }
 }
 

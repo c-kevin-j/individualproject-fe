@@ -29,18 +29,9 @@ function registerPage(props) {
         if (valid === false) {
           alert("Password not match");
         } else if (email.includes("@")) {
-          let setDate = new Date();
-          let year = setDate.getFullYear();
-          let month = `00${setDate.getMonth()}`.slice(-2);
-          let date = `00${setDate.getDate()}`.slice(-2);
-          let hour = `00${setDate.getHours()}`.slice(-2);
-          let minute = `00${setDate.getMinutes()}`.slice(-2);
-          let second = `00${setDate.getSeconds()}`.slice(-2);
-          let millisecond = `000${setDate.getMilliseconds()}`.slice(-3);
-          console.log(
-            `${year}-${month}-${date} ${hour}:${minute}:${second}.${millisecond}`
-          );
           alert("Registration success");
+
+          ////// axios json server
           await Axios.post(`${API_URL}/users`, {
             username,
             email,
@@ -54,7 +45,18 @@ function registerPage(props) {
             created_at: "",
             update_at: "",
           });
-          router.push("/");
+
+          /////// axios backend
+          // await Axios.post(`${API_URL}/users/register`, {
+          //   username,
+          //   email,
+          //   password: pass,
+          //   profile_picture:
+          //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
+          //   verified_status: false,
+          // });
+
+          router.push("/login");
         } else {
           alert("Email wrong");
         }

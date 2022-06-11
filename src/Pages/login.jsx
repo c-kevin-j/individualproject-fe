@@ -60,6 +60,8 @@ function LandingPage({ href }) {
       } else {
         queryBy = "username";
       }
+
+      //////////// backend json server
       let res = await Axios.get(
         `${API_URL}/users?${queryBy}=${inputForm.emailUsername}`
       );
@@ -75,6 +77,19 @@ function LandingPage({ href }) {
       } else {
         alert("Email/Username tidak terdaftar");
       }
+
+      ///////////// backend sql
+
+      // const reqLogin = {
+      //   loginBy:queryBy,
+      //   loginByValue:inputForm.emailUsername,
+      //   password:inputForm.password
+      // }
+      // let login = await Axios.post(`${API_URL}/users/login`, reqLogin)
+      // if (login){
+      //   dispatch(loginAction(login));
+      //   router.push("/");
+      // }
     } catch (error) {
       console.log(error);
     }
