@@ -29,34 +29,34 @@ function registerPage(props) {
         if (valid === false) {
           alert("Password not match");
         } else if (email.includes("@")) {
-          alert("Registration success");
+          
+          // ////// axios json server
+          // await Axios.post(`${API_URL}/users`, {
+            //   username,
+            //   email,
+            //   password: pass,
+            //   first_name: "",
+            //   last_name: "",
+            //   profile_picture:
+            //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
+            //   bio: "",
+            //   verified_status: false,
+            //   created_at: "",
+            //   update_at: "",
+            // });
+            
+            /////// axios backend
+            await Axios.post(`${API_URL}/users/register`, {
+              username,
+              email,
+              password: pass,
+              //   profile_picture:
+              //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
+              //   verified_status: false,
+            });
+            alert("Registration success");
 
-          ////// axios json server
-          await Axios.post(`${API_URL}/users`, {
-            username,
-            email,
-            password: pass,
-            first_name: "",
-            last_name: "",
-            profile_picture:
-              "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
-            bio: "",
-            verified_status: false,
-            created_at: "",
-            update_at: "",
-          });
-
-          /////// axios backend
-          // await Axios.post(`${API_URL}/users/register`, {
-          //   username,
-          //   email,
-          //   password: pass,
-          //   profile_picture:
-          //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
-          //   verified_status: false,
-          // });
-
-          router.push("/login");
+            router.push("/login");
         } else {
           alert("Email wrong");
         }

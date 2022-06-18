@@ -1,14 +1,25 @@
 const { dbConf, dbQuery } = require("../config/database");
 const { hashPassword, createToken } = require("../config/encryption");
 const { uploader } = require("../config/uploader");
+const fs = require("fs");
 
 module.exports = {
   getUsers: async (req, res, next) => {
     try {
       let resultUsers = await dbQuery(
-        "select username, first_name, last_name, email, profile_picture, bio, verified_status from users"
+        "select id, username, first_name, last_name, email, profile_picture, bio, verified_status from users"
       );
       res.status(200).send(resultUsers);
+    } catch (error) {
+      return next(error);
+    }
+  },
+  getDetailUser: async (req, res, next) => {
+    try {
+      let resultUser = await dbQuery(
+        `select id, username, first_name, last_name, email, profile_picture, bio from users where id = ${req.query.id}`
+      );
+      res.status(200).send(resultUser);
     } catch (error) {
       return next(error);
     }
@@ -19,13 +30,13 @@ module.exports = {
       // verified status default 1 => false, nanti setelah verifikasi dibuat 0 => true
       // profile picture diisikan dengan gambar default
       // console.log(hashPassword(req.body.password))
-      const { email, username, password, profile_picture } = req.body;
+      const { email, username, password } = req.body;
       let registUser = await dbQuery(
         `insert into users (email, username, password, profile_picture) value (${dbConf.escape(
           email
         )},${dbConf.escape(username)},${dbConf.escape(
           hashPassword(password)
-        )},${dbConf.escape(profile_picture)})`
+        )},${dbConf.escape("/imgUsers/IMGUSERS-default.webp")})`
       );
       // console.log(registUser.insertId);
 
@@ -56,7 +67,8 @@ module.exports = {
           password
         )}'`
       );
-      console.log(hashPassword(password));
+      console.log(resultLogin)
+      // console.log(hashPassword(password));
       if (resultLogin.length) {
         let {
           id,
@@ -143,6 +155,9 @@ module.exports = {
   editUser: async (req, res, next) => {
     // untuk melakukan edit profile:
     // first_name, last_name, bio
+
+    // pengiriman data FE hanya token => masuk ke readtoken => untuk mendapatkan id, tidak dari req.body
+    // setelah itu create token ulang
     try {
       let userData = await dbQuery(
         `select * from users where id = ${req.body.id}`
@@ -172,16 +187,32 @@ module.exports = {
     }
   },
   editProfPict: async (req, res, next) => {
+    // pengiriman data FE hanya token => masuk ke readtoken => untuk mendapatkan id, tidak dari req.body
+    // setelah itu create token ulang
     try {
       const uploadFile = uploader("/imgUsers", "IMGUSERS").array("image", 1);
       // console.log(uploadFile);
       uploadFile(req, res, async (error) => {
         try {
-          // console.log(req.body.data);
-          // console.log("pengecekan file:", req.files);
+          console.log(req.body.data);
+          console.log("pengecekan file:", req.files);
           const { id } = JSON.parse(req.body.data);
+
+          // remove from directory
+          try {
+            let currentPicture = await dbQuery(
+              `select profile_picture from users where id = ${id}`
+            );
+            console.log(currentPicture[0].profile_picture)
+            if (currentPicture[0].profile_picture != '/imgUsers/IMGUSERS-default.webp'){
+              fs.unlinkSync(`./public/${currentPicture[0].profile_picture}`);
+            }
+          } catch (error) {
+            return next(error);
+          }
+
           let changePicture = await dbQuery(
-            `update users set profile_picture = '/imgPosts/${req.files[0].filename}' where id = ${id};`
+            `update users set profile_picture = '/imgUsers/${req.files[0].filename}' where id = ${id};`
           );
           if (changePicture) {
             return res.status(200).send(changePicture);
@@ -198,11 +229,15 @@ module.exports = {
     }
   },
   editPassword: async (req, res, next) => {
+    // pengiriman data FE hanya token => masuk ke readtoken => untuk mendapatkan id, tidak dari req.body
     try {
       const { id, oldPassword, newPassword } = req.body;
+      console.log(req.body)
       let password = await dbQuery(
         `select password from users where id = ${id}`
       );
+      console.log(hashPassword(oldPassword))
+      console.log(password[0].password)
       if (hashPassword(oldPassword) == password[0].password) {
         try {
           let update = await dbQuery(
@@ -211,13 +246,17 @@ module.exports = {
             )} where id = ${id}`
           );
           if (update) {
-            return res.status(200).send("Password berhasil diubah");
+            return res.status(200).send({
+              succes:true,
+              message:"Password berhasil diubah"});
           }
         } catch (error) {
           return next(error);
         }
       } else {
-        return res.status(400).send("Password lama tidak sesuai");
+        return res.status(400).send({
+          succes:false,
+          message:"Password lama tidak sesuai"});
       }
     } catch (error) {
       return next(error);

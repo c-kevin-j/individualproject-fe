@@ -1,18 +1,23 @@
 import axios from "axios";
+import { useRouter } from "next/router";
 import React from "react";
 import { Modal } from "react-daisyui";
 import { API_URL } from "../../../helper";
 
 const ModalEditPost = (props) => {
+  const router = useRouter()
 
   const [caption, setCaption] = React.useState(props.caption)
 
   const handleSave = async () => {
     try{
-      let res = await axios.patch(`${API_URL}/posts/${props.postId}`, {caption})
+      let res = await axios.patch(`${API_URL}/posts/edit`, {
+        id:props.postId,
+        caption})
       if (res){
         alert(`update berhasil`)
         props.toggleVisible()
+        router.push(`/post?id=${props.postId}`)
       }
     } catch (error) {
       console.log(error)

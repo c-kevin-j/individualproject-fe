@@ -9,29 +9,48 @@ import { API_URL } from "../../../helper";
 
 export const getServerSideProps = async (ctx) => {
   try {
-    let resPost = await axios.get(`${API_URL}/posts?id=${ctx.query.id}`);
-    let resUsers = await axios.get(`${API_URL}/users`);
-    let resComments = await axios.get(
-      `${API_URL}/comments?post_id=${ctx.query.id}`
-    );
-    let resLikes = await axios.get(`${API_URL}/likes?post_id=${ctx.query.id}`);
+    // // props json server
+    // let resPost = await axios.get(`${API_URL}/posts?id=${ctx.query.id}`);
+    // let resUsers = await axios.get(`${API_URL}/users`);
+    // let resComments = await axios.get(
+    //   `${API_URL}/comments?post_id=${ctx.query.id}`
+    // );
+    // let resLikes = await axios.get(`${API_URL}/likes?post_id=${ctx.query.id}`);
+    // return {
+    //   props: {
+    //     post: resPost.data[0],
+    //     users: resUsers.data,
+    //     comments: resComments.data,
+    //     likes: resLikes.data,
+    //   },
+    // };
+
+    // props backend
+
+    let resPost = await axios.get(`${API_URL}/posts/get/detail?id=${ctx.query.id}`);
+    let resUsers = await axios.get(`${API_URL}/users/get`);
     return {
       props: {
-        post: resPost.data[0],
+        post: resPost.data,
+        comments: resPost.data.comments,
+        likes: resPost.data.likes,
         users: resUsers.data,
-        comments: resComments.data,
-        likes: resLikes.data,
-      },
-    };
+      }
+    }
+
   } catch (error) {
     return {
-      props: {},
+      props: {
+        
+      },
     };
   }
 };
 
 function DetailPost(props) {
+  // json server
   let { post, users, comments, likes } = props;
+  console.log(post)
   let router = useRouter();
 
   // user => user who is viewing the post
@@ -91,11 +110,10 @@ function DetailPost(props) {
         user_id: user.id,
         comment,
         post_id: post.id,
-        created_at: "",
-        updated_at: "",
       };
       tempCommentList.push(newComment);
-      await axios.post(`${API_URL}/comments`, newComment);
+      // await axios.post(`${API_URL}/comments`, newComment);
+      await axios.post(`${API_URL}/posts/comment`, newComment);
       setCommentList(tempCommentList);
       setComment("");
     } catch (error) {
@@ -107,21 +125,21 @@ function DetailPost(props) {
     try{
       setIsLiked(!isLiked);
       let tempArray = likesList;
+      let form = {
+        user_id:user.id,
+        post_id:post.id,
+      }
       if (arg === "like") {
-        let form = {
-          user_id:user.id,
-          post_id:post.id,
-          created_at:"",
-          updated_at:""
-        }
         tempArray.push(form)
         setLikesList(tempArray);
-        await axios.post(`${API_URL}/likes`,form)
+        // await axios.post(`${API_URL}/likes`,form)
+        let like = await axios.post(`${API_URL}/posts/like`,form)
       } else if (arg === "unlike") {
         let likeIndex = tempArray.findIndex((val)=>{
           return val.user_id == user.id
         })
-        await axios.delete(`${API_URL}/likes/${tempArray[likeIndex].id}`)
+        // let unlike = await axios.delete(`${API_URL}/likes/${tempArray[likeIndex].id}`)
+        let like = await axios.delete(`${API_URL}/posts/unlike?user_id=${user.id}&post_id=${post.id}`)
         tempArray.splice(likeIndex,1)
         setLikesList(tempArray);
       }
@@ -140,7 +158,10 @@ function DetailPost(props) {
           <div className="grid grid-cols-10 items-start py-2">
             <div className="avatar col-span-1 self-start justify-self-center">
               <div className="w-7 rounded-full">
-                <img className="mt-0" src={`${commenter.profile_picture}`} />
+                {/* image json server */}
+                {/* <img className="mt-0" src={`${commenter.profile_picture}`} /> */}
+                {/* image backend */}
+                <img className="mt-0" src={`${API_URL}${commenter.profile_picture}`} />
               </div>
             </div>
             <div className="col-span-9">
@@ -157,7 +178,7 @@ function DetailPost(props) {
   const handleDelete = () => {
     try {
       if (confirm("Yakin ingin hapus?")) {
-        let res = axios.delete(`${API_URL}/posts/${post.id}`);
+        let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`);
         if (res) {
           alert(`Delete berhasil`);
           router.push(`/profile?id=${user.id}`);
@@ -168,7 +189,9 @@ function DetailPost(props) {
     }
   };
 
-  const handleShare = () => {};
+  const handleShare = () => {
+    
+  };
 
   return (
     <div className="px-10 md:px-32 lg:px-48 xl:px-80">
@@ -178,10 +201,17 @@ function DetailPost(props) {
           <div className="grid grid-cols-10 bg-base-200">
             {/* image */}
             <div className="col-span-12 lg:col-span-6 my-2 grid items-center">
-              <img
+              {/* image json server */}
+              {/* <img
                 className="object-contain w-auto h-full mx-auto "
                 src={post.image}
                 alt="Movie"
+              /> */}
+              {/* image backend */}
+              <img
+                className="object-contain w-auto h-full mx-auto "
+                src={`${API_URL}${post.image}`}
+                alt={`POST-${post.username}-${post.id}`}
               />
             </div>
             {/* detail */}
@@ -189,9 +219,12 @@ function DetailPost(props) {
               <div className="grid grid-cols-10 row-span-1">
                 <div className="avatar col-span-8 flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full">
-                    <img className="mt-0" src={poster.profile_picture} />
+                    {/* image json server */}
+                    {/* <img className="mt-0" src={post.profile_picture} /> */}
+                    {/* image backend */}
+                    <img className="mt-0" src={`${API_URL}${post.profile_picture}`} />
                   </div>
-                  {poster.username}
+                  {post.username}
                 </div>
                 <div className="mx-2 my-auto text-sm text-slate-500 col-span-1 grid justify-items-end">
                   Date

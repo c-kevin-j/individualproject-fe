@@ -23,6 +23,7 @@ function Navbar(props) {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => {
+    // console.log('selector',state.usersReducer.user)
     return {
       user: state.usersReducer.user,
     };
@@ -32,19 +33,35 @@ function Navbar(props) {
     keepLogin();
   }, []);
 
-  const keepLogin = () => {
+  const keepLogin = async () => {
     let token = localStorage.getItem("tokenIdUser");
     if (token) {
-      axios
-        .get(`${API_URL}/users?id=${token}`)
-        .then((res) => {
-          localStorage.setItem("tokenIdUser", res.data[0].id);
-          let data = { user: res.data[0] };
-          dispatch(loginAction(data));
+
+      // //backend json server
+      // await axios
+      //   .get(`${API_URL}/users?id=${token}`)
+      //   .then((res) => {
+      //     localStorage.setItem("tokenIdUser", res.data[0].id);
+      //     let data = { user: res.data[0] };
+      //     dispatch(loginAction(data));
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+
+      // backend
+        let res = await axios.get(`${API_URL}/users/login/keep`, {
+          headers:{
+            'Authorization':`Bearer ${token}`
+          }
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        localStorage.setItem("tokenIdUser", res.data.token);
+        // memperbarui reducer
+        // console.log('keeplogin',res.data)
+        // console.log('user BEFORE DISPATCH',user)
+        dispatch(loginAction(res.data));
+        // console.log('user AFTER DISPATCH',user)
+
     } else {
       router.push('/login')
     }
@@ -86,7 +103,11 @@ function Navbar(props) {
           <div className="dropdown dropdown-end">
             <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
-                <img src={user.profile_picture} />
+                {/* avatar fake backend */}
+                {/* <img src={user.profile_picture} /> */}
+                
+                {/* avatar backend */}
+                <img src={`${API_URL}${user.profile_picture}`} />
               </div>
             </label>
             <ul

@@ -5,10 +5,12 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { FaUserCircle, FaLock } from "react-icons/fa";
 import axios from "axios";
 import { API_URL } from "../../../helper";
+import { useRouter } from "next/router";
 
 const EditProfilePage = (props) => {
   const [selectedTab, setSelectedTab] = React.useState(1);
 
+  const router = useRouter()
   const { user } = useSelector((state) => {
     return {
       user: state.usersReducer.user,
@@ -16,20 +18,22 @@ const EditProfilePage = (props) => {
   });
 
   const filePickerRef = React.useRef(null);
-  const [selectedFile, setSelectedFile] = React.useState(null);
   const [inputKey, setInputKey] = React.useState(null);
   const [loading, setLoading] = React.useState(null);
 
   const [editFirstName, setEditFirstName] = React.useState("");
   const [editLastName, setEditLastName] = React.useState("");
   const [editUsername, setEditUsername] = React.useState("");
-  const [editEmail, setEditEmail] = React.useState("");
   const [oldPassword, setOldPassword] = React.useState("");
   const [newPassword, setNewPassword] = React.useState("");
   const [confNewPassword, setConfNewPassword] = React.useState("");
+
+  // selectedFile refers to profile picture
+  const [selectedFile, setSelectedFile] = React.useState(null);
   const [editProfilePicture, setEditProfilePicture] = React.useState("");
+  const [pictureChanged, setPictureChanged] = React.useState(false);
+
   const [editBio, setEditBio] = React.useState("");
-  const [updatedAt, setUpdatedAt] = React.useState(null);
 
   const [showPass, setShowPass] = React.useState(false);
   const [showNewPass, setShowNewPass] = React.useState(false);
@@ -44,13 +48,16 @@ const EditProfilePage = (props) => {
 
   //functions untuk mengubah profile photo
   function addImageToPost(event) {
+    setEditProfilePicture(event.target.files[0]);
+
     const reader = new FileReader();
     //cek apakah ada file yang diupload
     if (event.target.files[0]) {
       reader.readAsDataURL(event.target.files[0]);
     }
     reader.onload = (readerEvent) => {
-      setEditProfilePicture(readerEvent.target.result);
+      setPictureChanged(true);
+      setSelectedFile(readerEvent.target.result);
     };
   }
 
@@ -70,9 +77,8 @@ const EditProfilePage = (props) => {
     setEditFirstName(user.first_name);
     setEditLastName(user.last_name);
     setEditUsername(user.username);
-    setEditEmail(user.email);
     setEditBio(user.bio);
-    setEditProfilePicture(user.profile_picture);
+    setSelectedFile(user.profile_picture);
   };
 
   const handleSubmit = async () => {
@@ -80,57 +86,121 @@ const EditProfilePage = (props) => {
       let formEdit = {};
       if (selectedTab === 1) {
         formEdit = {
-          ...user,
           username: editUsername,
           first_name: editFirstName,
           last_name: editLastName,
-          email: editEmail,
-          profile_picture: editProfilePicture,
           bio: editBio,
         };
-      } else if (selectedTab === 2) {
-        if (oldPassword === user.password) {
-          if (newPassword === confNewPassword) {
-            setValidateForm(true);
-            formEdit = {
-              ...formEdit,
-              password: newPassword,
-            };
-          } else {
-            alert("konfirmasi password baru salah");
-            setValidateForm(false);
-          }
-        } else {
-          alert("Password lama tidak sesuai");
-          setValidateForm(false);
-        }
-      }
+        // // res fakeserver
+        // let res = await axios.patch(`${API_URL}/users/${user.id}`, {
+        //   id: user.id,
+        //   ...formEdit,
+        // });
 
-      if (validateForm === true) {
-        let res = await axios.patch(`${API_URL}/users/${user.id}`, {
+        // res backend
+        let res = await axios.patch(`${API_URL}/users/edit`, {
+          id: user.id,
           ...formEdit,
         });
         if (res) {
           alert("Update berhasil");
-          dispatch(editUser({ user: formEdit }));
+          dispatch(editUser({ user: { ...user, ...formEdit } }));
+        }
+      } else if (selectedTab === 2) {
+        // formEdit = {
+        //   profile_picture: profilePicture,
+        // };
+        // res backend
+        let formData = new FormData();
+        formData.append("data", JSON.stringify({ id: user.id }));
+        formData.append("image", editProfilePicture);
+
+        // // axios json server
+        // let res = await axios.patch(`${API_URL}/users/edit/profile_picture`, {
+        //   id: user.id,
+        //   profile_picture: editProfilePicture,
+        // });
+
+        //axios backend
+        let res = await axios.patch(
+          `${API_URL}/users/edit/profile_picture`,
+          formData
+        );
+
+        if (res) {
+          alert("Update berhasil");
+          dispatch(editUser({ user: { ...user, editProfilePicture } }));
+        }
+      } else if (selectedTab === 3) {
+        // // res fake backend
+        // if (oldPassword === user.password) {
+        //   if (newPassword === confNewPassword) {
+        //     setValidateForm(true);
+        //     formEdit = {
+        //       ...formEdit,
+        //       password: newPassword,
+        //     };
+        //   } else {
+        //     alert("konfirmasi password baru salah");
+        //     setValidateForm(false);
+        //   }
+        // } else {
+        //   alert("Password lama tidak sesuai");
+        //   setValidateForm(false);
+        // }
+
+        // res backend
+        let res = await axios.patch(`${API_URL}/users/edit/password`, {
+          id: user.id,
+          oldPassword,
+          newPassword,
+        });
+        console.log(res.data)
+        if (res.data.success) {
+          alert(res.data.message);
+          dispatch(editUser({ ...user, password }));
+        } else {
+          alert(res.data.message);
         }
       }
+      
+      // if (validateForm === true) {
+      //   let res = await axios.patch(`${API_URL}/users/${user.id}`, {
+      //     ...formEdit,
+      //   });
+      //   if (res) {
+      //     alert("Update berhasil");
+      //     dispatch(editUser({ user: formEdit }));
+      //   }
+      // }
+      router.push('/profile/settings')
     } catch (error) {
       console.log(error);
+      alert(error.response.data.message)
+    }
+  };
+
+  const printSetting = () => {
+    if (selectedTab === 1) {
+      return <>{userSetting()}</>;
+    } else if (selectedTab === 2) {
+      return <>{profilePictureSetting()}</>;
+    } else if (selectedTab === 3) {
+      return <>{passwordSetting()}</>;
     }
   };
 
   const userSetting = () => {
     return (
       <div className="grid grid-cols-12 items-center gap-2">
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
+        {/* <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
           Profile Picture
         </span>
         <div className="col-start-2 col-span-12 md:col-span-8 flex items-center">
           <label className="btn btn-ghost btn-circle avatar mx-2 my-auto">
             <img
               className="avatar w-10 rounded-full"
-              src={editProfilePicture}
+              src={selectedFile}
               onClick={() => filePickerRef.current.click()}
             />
           </label>
@@ -147,7 +217,7 @@ const EditProfilePage = (props) => {
             key={inputKey || ""}
             onChange={addImageToPost}
           />
-        </div>
+        </div> */}
 
         <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
           Username
@@ -197,8 +267,7 @@ const EditProfilePage = (props) => {
             type="text"
             placeholder="Email"
             className="inline input input-bordered w-full"
-            defaultValue={editEmail}
-            onChange={(e) => setEditEmail(e.target.value)}
+            defaultValue={user.email}
           />
         </div>
 
@@ -215,6 +284,55 @@ const EditProfilePage = (props) => {
         </div>
 
         <div className="col-start-10 md:col-start-4">
+          <button type="button" className="btn" onClick={handleSubmit}>
+            Submit
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const profilePictureSetting = () => {
+    return (
+      <div className="grid grid-cols-1 justify-items-center gap-y-2">
+        <div className="flex items-center h-min">
+          <div className="avatar">
+            <div className=" w-32 rounded-full my-auto mx-auto">
+              {/* <img
+                className=""
+                style={{ cursor: "pointer" }}
+                src={selectedFile}
+                onClick={() => filePickerRef.current.click()}
+              /> */}
+              <img
+                className=""
+                style={{ cursor: "pointer" }}
+                src={
+                  !pictureChanged
+                    ? `${API_URL}${selectedFile}`
+                    : `${selectedFile}`
+                }
+                onClick={() => filePickerRef.current.click()}
+              />
+            </div>
+          </div>
+        </div>
+        <div>
+          <a
+            className="link link-hover text-sky-400"
+            onClick={() => filePickerRef.current.click()}
+          >
+            Change Profile Photo
+          </a>
+        </div>
+        <input
+          hidden
+          type="file"
+          ref={filePickerRef}
+          key={inputKey || ""}
+          onChange={addImageToPost}
+        />
+        <div className="">
           <button type="button" className="btn" onClick={handleSubmit}>
             Submit
           </button>
@@ -296,7 +414,7 @@ const EditProfilePage = (props) => {
         </div>
 
         <div className="col-start-10 md:col-start-4">
-          <button type="button" className="btn" onClick={handleSubmit}>
+          <button type="button" className="btn" onClick={handleSubmit} disabled={!oldPassword || !newPassword || !confNewPassword}>
             Submit
           </button>
         </div>
@@ -308,28 +426,38 @@ const EditProfilePage = (props) => {
     <>
       <div className="grid grid-cols-12 pt-4">
         <div className="justify-center col-start-2 col-span-10 md:col-start-3 md:col-span-8">
-          <div className="tabs my-3 border-b-2 grid grid-cols-2 justify-items-center">
+          <div className="tabs my-3 border-b-2 grid grid-cols-3 justify-items-center">
             <a
-              className={`text-lg tab ${selectedTab === 1 && "tab-active text-secondary font-bold"} gap-1`}
+              className={`text-base tab ${
+                selectedTab === 1 && "tab-active text-secondary font-bold"
+              } gap-1`}
               onClick={() => selectTab(1)}
             >
               <FaUserCircle />
               Edit Profile
             </a>
             <a
-              className={`text-lg tab ${selectedTab === 2 && "tab-active text-secondary font-bold"} gap-1`}
+              className={`text-base tab ${
+                selectedTab === 2 && "tab-active text-secondary font-bold"
+              } gap-1`}
               onClick={() => selectTab(2)}
+            >
+              <FaUserCircle />
+              Profile Picture
+            </a>
+            <a
+              className={`text-base tab ${
+                selectedTab === 3 && "tab-active text-secondary font-bold"
+              } gap-1`}
+              onClick={() => selectTab(3)}
             >
               <FaLock />
               Change Password
             </a>
-
           </div>
         </div>
         <div className="col-start-2 col-span-10 md:col-start-3 md:col-span-8 pt-5">
-          <div className="form-control">
-            {selectedTab === 1 ? userSetting() : passwordSetting()}
-          </div>
+          <div className="form-control">{printSetting()}</div>
         </div>
       </div>
     </>

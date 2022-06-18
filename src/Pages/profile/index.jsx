@@ -14,20 +14,36 @@ import Link from "next/link";
 
 export const getServerSideProps = async (ctx) => {
   try {
-    let resUser = await axios.get(`${API_URL}/users?id=${ctx.query.id}`);
-    let resAllPosts = await axios.get(`${API_URL}/posts`);
-    let resPosts = await axios.get(`${API_URL}/posts?user_id=${ctx.query.id}`);
-    let resLikedPosts = await axios.get(
-      `${API_URL}/likes?user_id=${ctx.query.id}`
-    );
+    // // props json server
+    // let resUser = await axios.get(`${API_URL}/users?id=${ctx.query.id}`);
+    // let resAllPosts = await axios.get(`${API_URL}/posts`);
+    // let resPosts = await axios.get(`${API_URL}/posts?user_id=${ctx.query.id}`);
+    // let resLikedPosts = await axios.get(
+    //   `${API_URL}/likes?user_id=${ctx.query.id}`
+    // );
+    // return {
+    //   props: {
+    //     user: resUser.data[0],
+    //     allPosts: resAllPosts.data,
+    //     posts: resPosts.data.reverse(),
+    //     likedPosts: resLikedPosts.data.reverse(),
+    //   },
+    // };
+
+    // props backend
+    let resUser = await axios.get(`${API_URL}/users/get/detail?id=${ctx.query.id}`);
+    let resAllPosts = await axios.get(`${API_URL}/posts/get`);
+    let resUserPosts = await axios.get(`${API_URL}/posts/get/userPost?id=${ctx.query.id}`);
+    let resLikedPosts = await axios.get(`${API_URL}/posts/get/likedPost?id=${ctx.query.id}`);
     return {
       props: {
         user: resUser.data[0],
         allPosts: resAllPosts.data,
-        posts: resPosts.data.reverse(),
+        posts: resUserPosts.data.reverse(),
         likedPosts: resLikedPosts.data.reverse(),
       },
     };
+
   } catch (error) {
     return {
       props: {},
@@ -53,7 +69,7 @@ function ProfilePage(props) {
             <div className="col-span-full text-2xl font-light text-primary-content">
               {user.username}
             </div>
-            <div className="col-span-full font-bold">{`${user.first_name} ${user.last_name}`}</div>
+            <div className="col-span-full font-bold">{`${user.first_name ? user.first_name : ""} ${user.last_name ? user.last_name : ""}`}</div>
             <label className="label col-span-1">
               <span className="label-text">Bio</span>
             </label>
@@ -84,8 +100,14 @@ function ProfilePage(props) {
               flex place-content-center"
             >
               <div className="flex place-content-center h-full">
-                <img
+                {/* image json server */}
+                {/* <img
                   src={val.image}
+                  className="object-contain object-center h-full"
+                /> */}
+                {/* image backend */}
+                <img
+                  src={`${API_URL}${val.image}`}
                   className="object-contain object-center h-full"
                 />
               </div>
@@ -117,7 +139,10 @@ function ProfilePage(props) {
         <div className="container flex px-4">
           <div className="avatar m-auto basis-1/4 place-content-center image-full">
             <div className="w-40 rounded-full">
-              <img className="mt-0" src={user.profile_picture} />
+              {/* image json server */}
+              {/* <img className="mt-0" src={user.profile_picture} /> */}
+              {/* image backend */}
+              <img className="mt-0" src={`${API_URL}${user.profile_picture}`} />
             </div>
           </div>
           <div className="px-4 grow grid items-center">{printProfile()}</div>
@@ -139,7 +164,8 @@ function ProfilePage(props) {
           </span>
         </div>
         <div className="pt-2 grid grid-cols-3 gap-2 justify-items-center">
-          {selectedTab === 1 ? printPosts(posts) : printLikedPosts()}
+          {/* {selectedTab === 1 ? printPosts(posts) : printLikedPosts()} */}
+          {selectedTab === 1 ? printPosts(posts) : printPosts(likedPosts)}
         </div>
       </div>
     </>

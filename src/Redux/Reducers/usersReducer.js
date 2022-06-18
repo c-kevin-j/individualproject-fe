@@ -1,15 +1,17 @@
 // import { GET_USERS, USERS_ERROR } from "../types"
 
 const initialState = {
+    // password hanya untuk di json server
     user:{
         id: null,
         username: "",
         first_name: "",
         last_name: "",
         email: "",
-        password: "",
+        // password: "",
         profile_picture: "",
         bio: "",
+        token: "",
         verified_status: null,
     }
 }
@@ -20,7 +22,8 @@ export default function usersReducer (state = initialState, action){
 
         case "LOGIN_SUCCESS":
             console.log("DAPAT DATA DARI ACTION", action.payload)
-        return { ...state, ...action.payload };
+            // console.log({ ...state, ...action.payload })
+        return { user:{...state, ...action.payload} };
         case "LOGOUT":
             return initialState;
         case "EDIT_PROFILE":

@@ -3,6 +3,7 @@ const { usersController } = require("../controllers");
 const route = require("express").Router();
 
 route.get("/get", usersController.getUsers);
+route.get("/get/detail", usersController.getDetailUser);
 route.post("/login", usersController.userLogin);
 route.get("/login/keep", readToken, usersController.keepLogin);
 route.post("/register", usersController.registerUser);

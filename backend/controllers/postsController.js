@@ -1,5 +1,6 @@
 const { dbQuery } = require("../config/database");
 const { uploader } = require("../config/uploader");
+const fs = require("fs");
 
 module.exports = {
   getPosts: async (req, res, next) => {
@@ -66,12 +67,39 @@ module.exports = {
       );
       resultPost[0].comments = resultComments;
       resultPost[0].likes = resultLikes;
+      console.log(resultPost[0])
       res.status(200).send(resultPost[0]);
     } catch (error) {
       return next(error);
     }
   },
+  getUserPosts: async (req, res, next) => {
+    try {
+      let resultUserPosts = await dbQuery(
+        // `select p.id, p.image, p.created_at, p.user_id, u.username from posts p
+        // join users u on u.id = p.user_id where p.user_id = ${req.query.id};`
+        `select id, image, created_at, user_id from posts where user_id = ${req.query.id};`
+      );
+      res.status(200).send(resultUserPosts);
+    } catch (error) {
+      return next(error);
+    }
+  },
+  getLikedPosts: async (req, res, next) => {
+    try {
+      let resultLikedPosts = await dbQuery(
+        `select p.id, p.image, p.created_at, p.user_id from posts p
+        join likes l on p.id = l.post_id 
+        join users u on l.user_id = u.id
+        where l.user_id = ${req.query.id};`
+      );
+      res.status(200).send(resultLikedPosts);
+    } catch (error) {
+      return next(error);
+    }
+  },
   addPost: async (req, res, next) => {
+    // pengiriman data FE hanya token => masuk ke readtoken => untuk mendapatkan id, tidak dari req.body
     // data yang dikirimkan: user_id, caption, image file
     const uploadFile = uploader("/imgPosts", "IMGPOSTS").array("image", 1);
     // console.log(uploadFile);
@@ -95,6 +123,7 @@ module.exports = {
     });
   },
   editPost: async (req, res, next) => {
+    // pengiriman data FE hanya token => masuk ke readtoken => untuk mendapatkan id, tidak dari req.body
     // melakukan edit caption
     try {
       const { id, caption } = req.body;
@@ -109,11 +138,21 @@ module.exports = {
     }
   },
   deletePost: async (req, res, next) => {
+    // pengiriman data FE hanya token => masuk ke readtoken => untuk mendapatkan id, tidak dari req.body
     try {
+      // get id post from request
       const { id } = req.query;
-      let deletePost = await dbQuery(`delete from posts where id=${id}`);
-      if (deletePost) {
-        res.status(200).send(deletePost);
+      let fileName = await dbQuery(`select image from posts where id=${id}`);
+
+      // delete
+      try {
+        fs.unlinkSync(`./public/${fileName[0].image}`);
+        let deletePost = await dbQuery(`delete from posts where id=${id}`);
+        if (deletePost) {
+          res.status(200).send(deletePost);
+        }
+      } catch (error) {
+        return next(error);
       }
     } catch (error) {
       return next(error);
@@ -153,7 +192,8 @@ module.exports = {
   },
   removeLike: async (req, res, next) => {
     try {
-      const { user_id, post_id } = req.body;
+      console.log(req.query)
+      const { user_id, post_id } = req.query;
       let removeLike = await dbQuery(
         `delete from likes where user_id = ${user_id} and post_id=${post_id}`
       );

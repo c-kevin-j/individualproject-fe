@@ -61,35 +61,37 @@ function LandingPage({ href }) {
         queryBy = "username";
       }
 
-      //////////// backend json server
-      let res = await Axios.get(
-        `${API_URL}/users?${queryBy}=${inputForm.emailUsername}`
-      );
-      if (res.data.length > 0) {
-        if (inputForm.password === res.data[0].password) {
-          localStorage.setItem("tokenIdUser", res.data[0].id);
-          let data = { user: res.data[0] };
-          dispatch(loginAction(data));
-          router.push("/");
-        } else {
-          alert("Password salah");
-        }
-      } else {
-        alert("Email/Username tidak terdaftar");
-      }
+      // //////////// backend json server
+      // let res = await Axios.get(
+      //   `${API_URL}/users?${queryBy}=${inputForm.emailUsername}`
+      // );
+      // if (res.data.length > 0) {
+      //   if (inputForm.password === res.data[0].password) {
+      //     localStorage.setItem("tokenIdUser", res.data[0].id);
+      //     let data = { user: res.data[0] };
+      //     dispatch(loginAction(data));
+      //     router.push("/");
+      //   } else {
+      //     alert("Password salah");
+      //   }
+      // } else {
+      //   alert("Email/Username tidak terdaftar");
+      // }
 
       ///////////// backend sql
-
-      // const reqLogin = {
-      //   loginBy:queryBy,
-      //   loginByValue:inputForm.emailUsername,
-      //   password:inputForm.password
-      // }
-      // let login = await Axios.post(`${API_URL}/users/login`, reqLogin)
-      // if (login){
-      //   dispatch(loginAction(login));
-      //   router.push("/");
-      // }
+      const reqLogin = {
+        loginBy:queryBy,
+        loginByValue:inputForm.emailUsername,
+        password:inputForm.password
+      }
+      console.log(reqLogin)
+      let login = await Axios.post(`${API_URL}/users/login`, reqLogin)
+      if (login){
+        localStorage.setItem("tokenIdUser", login.data.token);
+        console.log("login",login.data)
+        dispatch(loginAction(login.data));
+        router.push("/");
+      }
     } catch (error) {
       console.log(error);
     }

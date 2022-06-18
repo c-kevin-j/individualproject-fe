@@ -25,6 +25,8 @@ function ModalCreatePost(props) {
   const [image, setImage] = React.useState(null)
 
   function addImageToPost(event){
+
+    setImage(event.target.files[0])
     const reader = new FileReader()
     //cek apakah ada file yang diupload
     if(event.target.files[0]){
@@ -46,16 +48,32 @@ function ModalCreatePost(props) {
     try{
       if (loading) return;
       setLoading(true);
-      let formPost = {
+
+      // // axios json server
+      // let formPost = {
+      //   user_id:user.id,
+      //   image:selectedFile,
+      //   caption:caption,
+      //   created_at:"",
+      //   updated_at:""
+      // }
+      // await axios.post(`${API_URL}/posts`,formPost)
+
+      // axios backend
+      let formPost = new FormData();
+      let data = {
         user_id:user.id,
-        image:selectedFile,
-        caption:caption,
-        created_at:"",
-        updated_at:""
+        caption:caption
       }
-      await axios.post(`${API_URL}/posts`,formPost)
+      ///////////////////
+      // menambahkan data ke dalam formPost
+      formPost.append('data',JSON.stringify(data))
+      // menambahkan image
+      formPost.append('image',image)
+      let res = await axios.post(`${API_URL}/posts/add`, formPost);
+
       props.toggleVisible()
-      router.push('/home')
+      router.push('/')
     } catch (error) {
       console.log(error)
     }

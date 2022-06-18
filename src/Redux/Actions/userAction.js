@@ -38,7 +38,7 @@ export const loginAction = (data) => {
   }
   
 export const logoutAction = () => {
-    // localStorage.removeItem("tokenIdUser")
+    localStorage.removeItem("tokenIdUser")
     return {
       type: "LOGOUT"
     }

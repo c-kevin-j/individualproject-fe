@@ -6,8 +6,13 @@ import { API_URL } from "../../helper";
 
 export const getServerSideProps = async (ctx) => {
   try {
-    let resUsers = await axios.get(`${API_URL}/users`);
-    let resPosts = await axios.get(`${API_URL}/posts`);
+    // // API JSON server
+    // let resUsers = await axios.get(`${API_URL}/users`);
+    // let resPosts = await axios.get(`${API_URL}/posts`);
+
+    // API Backend
+    let resUsers = await axios.get(`${API_URL}/users/get`);
+    let resPosts = await axios.get(`${API_URL}/posts/get`);
     return {
       props: {
         users: resUsers.data,
@@ -38,9 +43,16 @@ function HomePage(props) {
                 <div className="flex bg-base-200">
                   <label className="btn btn-ghost btn-circle avatar mx-2 my-1 flex-none">
                     <Link href={`/profile?id=${users[idxUser].id}`}>
-                      <img
+                      {/* image jsonserver */}
+                      {/* <img
                         className="avatar w-10 rounded-full"
                         src={users[idxUser].profile_picture}
+                      /> */}
+                      
+                      {/* image backend */}
+                      <img
+                        className="avatar w-10 rounded-full"
+                        src={`${API_URL}${users[idxUser].profile_picture}`}
                       />
                     </Link>
                   </label>
@@ -57,9 +69,16 @@ function HomePage(props) {
               <div className="min-h-fit">
                 <Link href={`/post?id=${val.id}`}>
                   <figure>
-                    <img
+                    {/* Image json server */}
+                    {/* <img
                       className="object-cover w-auto h-full"
                       src={val.image}
+                    /> */}
+
+                    {/* Image backend */}
+                    <img 
+                      className="object-cover w-auto h-full"
+                      src={`${API_URL}${val.image}`}
                     />
                   </figure>
                 </Link>
