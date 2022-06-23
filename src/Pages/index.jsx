@@ -116,7 +116,6 @@ function HomePage(props) {
 
   return (
     <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-5" >
-      aaaa
       <div className="grid justify-items-center" onScroll={infiniteScroll()} ref={listInnerRef}>
         {printPosts()}
         {/* <div className="card rounded w-128">
