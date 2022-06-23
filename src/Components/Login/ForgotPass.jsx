@@ -3,23 +3,34 @@ import { Button, Input } from "react-daisyui";
 import Axios from "axios";
 import { API_URL } from "../../../helper";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { route } from "next/dist/server/router";
 
 export default function CardForgotPass(props) {
   const [email, setEmail] = React.useState("");
   const [pass, setPass] = React.useState("");
   const [confirmedPass, setConfirmedPass] = React.useState("");
+  const router = useRouter();
 
   const handleForgotPassword = async () => {
     try {
-      let res = await Axios.get(`${API_URL}/users?email=${email}`)
-      if (res.data.length>0){
-        props.toggleVisible();
-        alert("Email konfirmasi telah terkirim ke alamat email Anda")
+      let res = await Axios.patch(`${API_URL}/users/forgot`, {email});
+      if (res.data.success){
+        router.push("/auth/login")
+        alert(res.data.message)
       } else {
-        alert("Email tidak terdaftar")
+        alert(res.data.message)
       }
+      
+
+      // if (res.data.length>0){
+      //   alert("Email konfirmasi telah terkirim ke alamat email Anda")
+      //   route.push("/auth/login")
+      // } else {
+      //   alert("Email tidak terdaftar")
+      // }
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
     }
   }
 
@@ -31,7 +42,6 @@ export default function CardForgotPass(props) {
             <div class="card w-96 bg-base-100 shadow-xl">
               <div class="card-body">
                 <h2 class="card-title">Forgot Password</h2>
-                <p>Wololo!</p>
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Email</span>
@@ -44,7 +54,7 @@ export default function CardForgotPass(props) {
                   />
                 </div>
                 <div class="card-actions justify-end mt-6">
-                  <Link href="/login" passHref>
+                  <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
                   </Link>
                   <Button onClick={handleForgotPassword} color="primary">

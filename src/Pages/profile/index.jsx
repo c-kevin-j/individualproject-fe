@@ -118,20 +118,20 @@ function ProfilePage(props) {
     });
   };
 
-  const printLikedPosts = () => {
-    let filtered = [];
-    for (let i = 0; i < likedPosts.length; i++) {
-      let j=0;
-      let check=false
-      while (!check && j<allPosts.length) {
-        if (likedPosts[i].post_id == allPosts[j].id){
-          filtered.push(allPosts[j])
-        }
-        j++
-      }
-    }
-    return printPosts(filtered)
-  };
+  // const printLikedPosts = () => {
+  //   let filtered = [];
+  //   for (let i = 0; i < likedPosts.length; i++) {
+  //     let j=0;
+  //     let check=false
+  //     while (!check && j<allPosts.length) {
+  //       if (likedPosts[i].post_id == allPosts[j].id){
+  //         filtered.push(allPosts[j])
+  //       }
+  //       j++
+  //     }
+  //   }
+  //   return printPosts(filtered)
+  // };
 
   return (
     <>

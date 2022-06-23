@@ -49,9 +49,10 @@ export const getServerSideProps = async (ctx) => {
 
 function DetailPost(props) {
   // json server
-  let { post, users, comments, likes } = props;
-  console.log(post)
   let router = useRouter();
+  let { post, users, comments, likes } = props;
+  let createdDate = post.created_at.slice(0,10)
+  // let token = localStorage.getItem("tokenIdUser");
 
   // user => user who is viewing the post
   const { user } = useSelector((state) => {
@@ -67,8 +68,13 @@ function DetailPost(props) {
   // poster => user who post the picture
   const [poster, setPoster] = React.useState([]);
   const [userIsPoster, setUserIsPoster] = React.useState(false);
+  
+  // to see if user has already liked the post
+  const [isLiked, setIsLiked] = React.useState(null);
+  // to get number of likes
+  const [likesList, setLikesList] = React.useState(likes);
 
-  //Poster = user who post the picture
+  // to check if user can edit / delete the post
   const getPoster = () => {
     let posterIdx = users.findIndex((val) => {
       if (val.id === post.user_id) {
@@ -93,11 +99,6 @@ function DetailPost(props) {
     setIsLiked(check);
   };
 
-  
-  const [isLiked, setIsLiked] = React.useState(null);
-  const [likesList, setLikesList] = React.useState(likes);
-
-
   React.useEffect(() => {
     getPoster();
     getIsLiked();
@@ -105,6 +106,7 @@ function DetailPost(props) {
 
   const handleSubmitComment = async () => {
     try {
+      let token = localStorage.getItem("tokenIdUser");
       let tempCommentList = [...commentList];
       const newComment = {
         user_id: user.id,
@@ -113,7 +115,11 @@ function DetailPost(props) {
       };
       tempCommentList.push(newComment);
       // await axios.post(`${API_URL}/comments`, newComment);
-      await axios.post(`${API_URL}/posts/comment`, newComment);
+      await axios.post(`${API_URL}/posts/comment`, newComment, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setCommentList(tempCommentList);
       setComment("");
     } catch (error) {
@@ -123,6 +129,7 @@ function DetailPost(props) {
 
   const handleLikeButton = async (arg) => {
     try{
+      let token = localStorage.getItem("tokenIdUser");
       setIsLiked(!isLiked);
       let tempArray = likesList;
       let form = {
@@ -133,7 +140,11 @@ function DetailPost(props) {
         tempArray.push(form)
         setLikesList(tempArray);
         // await axios.post(`${API_URL}/likes`,form)
-        let like = await axios.post(`${API_URL}/posts/like`,form)
+        let like = await axios.post(`${API_URL}/posts/like`,form, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
       } else if (arg === "unlike") {
         let likeIndex = tempArray.findIndex((val)=>{
           return val.user_id == user.id
@@ -154,6 +165,7 @@ function DetailPost(props) {
         let commenter = users.filter((val) => {
           return val.id == value.user_id;
         })[0];
+        let commentDate = value.created_at ? value.created_at.slice(0,10) : "a few seconds ago"
         return (
           <div className="grid grid-cols-10 items-start py-2">
             <div className="avatar col-span-1 self-start justify-self-center">
@@ -167,7 +179,7 @@ function DetailPost(props) {
             <div className="col-span-9">
               <a className="font-bold">{commenter.username}</a>
               <label className="pl-1">{value.comment}</label>
-              <div className="text-sm text-slate-500">Date</div>
+              <div className="text-sm text-slate-500">{commentDate}</div>
             </div>
           </div>
         );
@@ -177,8 +189,13 @@ function DetailPost(props) {
 
   const handleDelete = () => {
     try {
+      let token = localStorage.getItem("tokenIdUser");
       if (confirm("Yakin ingin hapus?")) {
-        let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`);
+        let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (res) {
           alert(`Delete berhasil`);
           router.push(`/profile?id=${user.id}`);
@@ -217,7 +234,7 @@ function DetailPost(props) {
             {/* detail */}
             <div className="col-span-12 lg:col-span-4 px-2 grid grid-rows lg:grid-rows-6 bg-base-200">
               <div className="grid grid-cols-10 row-span-1">
-                <div className="avatar col-span-8 flex items-center gap-2">
+                <div className="avatar col-span-7 lg:col-span-6 flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full">
                     {/* image json server */}
                     {/* <img className="mt-0" src={post.profile_picture} /> */}
@@ -226,11 +243,11 @@ function DetailPost(props) {
                   </div>
                   {post.username}
                 </div>
-                <div className="mx-2 my-auto text-sm text-slate-500 col-span-1 grid justify-items-end">
-                  Date
+                <div className="mx-2 my-auto text-xs text-slate-500 col-span-2 text-right">
+                  {createdDate}
                 </div>
-                <div className="mx-2 my-auto text-sm col-span-1 grid justify-items-end">
-                  <div className="dropdown dropdown-end">
+                <div className="my-auto text-sm col-span-1 grid justify-items-end lg:col-span-2">
+                  <div className="dropdown dropdown-end ">
                     <label
                       tabIndex="0"
                       className="w-10 btn rounded-sm bg-inherit border-transparent hover:bg-base-200 hover:border-transparent"

@@ -12,11 +12,11 @@ export const getServerSideProps = async (ctx) => {
 
     // API Backend
     let resUsers = await axios.get(`${API_URL}/users/get`);
-    let resPosts = await axios.get(`${API_URL}/posts/get`);
+    let resPosts = await axios.get(`${API_URL}/posts/get/0`);
     return {
       props: {
         users: resUsers.data,
-        posts: resPosts.data.reverse(),
+        posts: resPosts.data,
       },
     };
   } catch (error) {
@@ -28,13 +28,16 @@ export const getServerSideProps = async (ctx) => {
 
 function HomePage(props) {
   // const dispatch = useDispatch();
-  let { users, posts } = props;
+  let { users } = props;
+  const [posts, setPosts]= React.useState(props.posts)
+  const listInnerRef = React.useRef();
 
   const printPosts = () => {
     return posts.map((val, idx) => {
       let idxUser = users.findIndex((user) => {
         return user.id === val.user_id;
       });
+      let createdDate = val.created_at.slice(0, 10);
       return (
         <>
           <div className="card rounded-md w-128 shadow-md">
@@ -48,7 +51,7 @@ function HomePage(props) {
                         className="avatar w-10 rounded-full"
                         src={users[idxUser].profile_picture}
                       /> */}
-                      
+
                       {/* image backend */}
                       <img
                         className="avatar w-10 rounded-full"
@@ -62,7 +65,7 @@ function HomePage(props) {
                     </div>
                   </Link>
                   <div className="mx-2 my-auto text-sm text-slate-500">
-                    Created at
+                    {createdDate}
                   </div>
                 </div>
               </Link>
@@ -76,7 +79,7 @@ function HomePage(props) {
                     /> */}
 
                     {/* Image backend */}
-                    <img 
+                    <img
                       className="object-cover w-auto h-full"
                       src={`${API_URL}${val.image}`}
                     />
@@ -94,9 +97,27 @@ function HomePage(props) {
     });
   };
 
+  const infiniteScroll = async () => {
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      if (scrollTop + clientHeight === scrollHeight) {
+        let lastId = posts[posts.length-1].id
+        let res = await axios.get(`${API_URL}/posts/get/${lastId}`)
+        if (res){
+          let tempPosts = [...posts]
+          tempPosts.push(...res.data)
+          setPosts(tempPosts)
+          printPosts();
+        }
+      }
+    }
+  };
+
+
   return (
-    <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-5">
-      <div className="grid justify-items-center">
+    <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-5" >
+      aaaa
+      <div className="grid justify-items-center" onScroll={infiniteScroll()} ref={listInnerRef}>
         {printPosts()}
         {/* <div className="card rounded w-128">
             <div className="card-body p-2 bg-base-300 ">

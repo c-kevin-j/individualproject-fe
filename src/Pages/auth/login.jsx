@@ -1,16 +1,17 @@
 import Head from "next/head";
 import Image from "next/image";
-import MyApp from "./_app.js";
+import MyApp from "../_app.js";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 // import { Card, Button, Avatar } from "react-daisyui";
-import ModalForgotPass from "../Components/Login/ForgotPass";
+import ModalForgotPass from "../../Components/Login/ForgotPass";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Axios from "axios";
-import { API_URL } from "../../helper.js";
-import { useDispatch } from "react-redux";
-import { loginAction } from "../Redux/Actions/userAction.js";
+import { API_URL } from "../../../helper.js";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAction } from "../../Redux/Actions/userAction.js";
+import { route } from "next/dist/server/router";
 
 // import styles from '../styles/Home.module.css'
 
@@ -30,6 +31,19 @@ function LandingPage({ href }) {
     setInputForm({ ...inputForm, [property]: value });
   };
 
+  const { user } = useSelector((state) => {
+    return {
+      user: state.usersReducer.user,
+    };
+  });
+
+  React.useEffect(()=>{
+    let token = localStorage.getItem("tokenIdUser");
+    if (token) {
+      router.push("/")
+    }
+  },[])
+
   const toggleVisible = (component) => {
     if (component === "pass") {
       setVisiblePass(!visiblePass);
@@ -46,20 +60,37 @@ function LandingPage({ href }) {
       } else {
         queryBy = "username";
       }
-      let res = await Axios.get(
-        `${API_URL}/users?${queryBy}=${inputForm.emailUsername}`
-      );
-      if (res.data.length > 0) {
-        if (inputForm.password === res.data[0].password) {
-          localStorage.setItem("tokenIdUser", res.data[0].id);
-          let data = { user: res.data[0] };
-          dispatch(loginAction(data));
-          router.push("/");
-        } else {
-          alert("Password salah");
-        }
-      } else {
-        alert("Email/Username tidak terdaftar");
+
+      // //////////// backend json server
+      // let res = await Axios.get(
+      //   `${API_URL}/users?${queryBy}=${inputForm.emailUsername}`
+      // );
+      // if (res.data.length > 0) {
+      //   if (inputForm.password === res.data[0].password) {
+      //     localStorage.setItem("tokenIdUser", res.data[0].id);
+      //     let data = { user: res.data[0] };
+      //     dispatch(loginAction(data));
+      //     router.push("/");
+      //   } else {
+      //     alert("Password salah");
+      //   }
+      // } else {
+      //   alert("Email/Username tidak terdaftar");
+      // }
+
+      ///////////// backend sql
+      const reqLogin = {
+        loginBy:queryBy,
+        loginByValue:inputForm.emailUsername,
+        password:inputForm.password
+      }
+      console.log(reqLogin)
+      let login = await Axios.post(`${API_URL}/users/login`, reqLogin)
+      if (login){
+        localStorage.setItem("tokenIdUser", login.data.token);
+        console.log("login",login.data)
+        dispatch(loginAction(login.data));
+        router.push("/");
       }
     } catch (error) {
       console.log(error);

@@ -24,6 +24,7 @@ function ModalCreatePost(props) {
   const [caption, setCaption] = React.useState("")
   const [image, setImage] = React.useState(null)
 
+
   function addImageToPost(event){
 
     setImage(event.target.files[0])
@@ -46,6 +47,7 @@ function ModalCreatePost(props) {
   
   async function uploadPost(event) {
     try{
+      let token = localStorage.getItem("tokenIdUser");
       if (loading) return;
       setLoading(true);
 
@@ -70,7 +72,11 @@ function ModalCreatePost(props) {
       formPost.append('data',JSON.stringify(data))
       // menambahkan image
       formPost.append('image',image)
-      let res = await axios.post(`${API_URL}/posts/add`, formPost);
+      let res = await axios.post(`${API_URL}/posts/add`, formPost, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       props.toggleVisible()
       router.push('/')

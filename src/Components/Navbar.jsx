@@ -34,36 +34,53 @@ function Navbar(props) {
   }, []);
 
   const keepLogin = async () => {
-    let token = localStorage.getItem("tokenIdUser");
-    if (token) {
+    try {
+      let token = localStorage.getItem("tokenIdUser");
+      if (token) {
+        // //backend json server
+        // await axios
+        //   .get(`${API_URL}/users?id=${token}`)
+        //   .then((res) => {
+        //     localStorage.setItem("tokenIdUser", res.data[0].id);
+        //     let data = { user: res.data[0] };
+        //     dispatch(loginAction(data));
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //   });
 
-      // //backend json server
-      // await axios
-      //   .get(`${API_URL}/users?id=${token}`)
-      //   .then((res) => {
-      //     localStorage.setItem("tokenIdUser", res.data[0].id);
-      //     let data = { user: res.data[0] };
-      //     dispatch(loginAction(data));
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
-
-      // backend
+        // backend
         let res = await axios.get(`${API_URL}/users/login/keep`, {
-          headers:{
-            'Authorization':`Bearer ${token}`
-          }
-        })
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         localStorage.setItem("tokenIdUser", res.data.token);
         // memperbarui reducer
-        // console.log('keeplogin',res.data)
-        // console.log('user BEFORE DISPATCH',user)
         dispatch(loginAction(res.data));
-        // console.log('user AFTER DISPATCH',user)
+      }
+    } catch (error) {
+      console.log(error);
+      localStorage.removeItem("tokenIdUser");
+      router.push("/auth/login");
+    }
+  };
 
-    } else {
-      router.push('/login')
+  const handleReverify = async () => {
+    let token = localStorage.getItem("tokenIdUser");
+    try {
+      console.log(token);
+      let res = await axios.get(`${API_URL}/users/verify/send`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res);
+      if (res.data.success) {
+        alert(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -105,7 +122,7 @@ function Navbar(props) {
               <div className="w-10 rounded-full">
                 {/* avatar fake backend */}
                 {/* <img src={user.profile_picture} /> */}
-                
+
                 {/* avatar backend */}
                 <img src={`${API_URL}${user.profile_picture}`} />
               </div>
@@ -114,11 +131,19 @@ function Navbar(props) {
               tabIndex="0"
               className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-box w-52"
             >
+              {user.verified_status === 1 && (
+                <>
+                  <li>
+                    <a onClick={handleReverify}>
+                      Not Verified
+                      <p>Re-Send Verification</p>
+                    </a>
+                  </li>
+                </>
+              )}
               <Link href={`/profile?id=${user.id}`}>
                 <li>
-                  <a className="justify-between">
-                    Profile
-                  </a>
+                  <a className="justify-between">Profile</a>
                 </li>
               </Link>
               <Link href="/profile/settings">
@@ -126,7 +151,7 @@ function Navbar(props) {
                   <a>Setting</a>
                 </li>
               </Link>
-              <Link href="/login">
+              <Link href="/auth/login">
                 <li>
                   <a onClick={handleLogout}>Logout</a>
                 </li>

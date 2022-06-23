@@ -4,14 +4,16 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Axios from "axios";
 import { API_URL } from "../../../helper";
 import Link from "next/link";
-import UpdatePasswordContainer from "./UpdatePasswordContainer";
+import UpdatePasswordContainer from "../../components/login/UpdatePasswordContainer";
 import { useRouter } from "next/router";
 
-function CardRegister(props) {
+function registerPage(props) {
   const [email, setEmail] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [pass, setPass] = React.useState("");
   const [valid, setValid] = React.useState(false);
+  const [showPass, setShowPass] = React.useState(false);
+  const [showConfPass, setShowConfPass] = React.useState(false);
 
   const router = useRouter();
 
@@ -27,33 +29,35 @@ function CardRegister(props) {
         if (valid === false) {
           alert("Password not match");
         } else if (email.includes("@")) {
-          let setDate = new Date();
-          let year = setDate.getFullYear();
-          let month = `00${setDate.getMonth()}`.slice(-2);
-          let date = `00${setDate.getDate()}`.slice(-2);
-          let hour = `00${setDate.getHours()}`.slice(-2);
-          let minute = `00${setDate.getMinutes()}`.slice(-2);
-          let second = `00${setDate.getSeconds()}`.slice(-2);
-          let millisecond = `000${setDate.getMilliseconds()}`.slice(-3);
-          console.log(
-            `${year}-${month}-${date} ${hour}:${minute}:${second}.${millisecond}`
-          );
-          alert("Registration success");
-          await Axios.post(`${API_URL}/users`, {
-            username,
-            email,
-            password: pass,
-            first_name: "",
-            last_name: "",
-            profile_picture:
-              "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
-            bio: "",
-            verified_status: false,
-            created_at: "",
-            update_at: "",
-          });
-          props.toggleVisible();
-          router.push("/auth/login");
+          
+          // ////// axios json server
+          // await Axios.post(`${API_URL}/users`, {
+            //   username,
+            //   email,
+            //   password: pass,
+            //   first_name: "",
+            //   last_name: "",
+            //   profile_picture:
+            //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
+            //   bio: "",
+            //   verified_status: false,
+            //   created_at: "",
+            //   update_at: "",
+            // });
+            
+            /////// axios backend
+            let res = await Axios.post(`${API_URL}/users/register`, {
+              username,
+              email,
+              password: pass,
+              //   profile_picture:
+              //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
+              //   verified_status: false,
+            });
+            console.log(res)
+            alert("Registration success");
+
+            router.push("/");
         } else {
           alert("Email wrong");
         }
@@ -77,7 +81,6 @@ function CardRegister(props) {
             <div class="card w-96 bg-base-100 shadow-xl">
               <div class="card-body">
                 <h2 class="card-title">Register</h2>
-                <p>Wololo?</p>
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Email</span>
@@ -125,6 +128,10 @@ function CardRegister(props) {
                 </div>{" "} */}
                 <UpdatePasswordContainer
                   handlePassword={handlePassword}
+                  showPass={showPass}
+                  toggleShowPass={()=>setShowPass(!showPass)}
+                  showConfPass={showConfPass}
+                  toggleShowConfPass={()=>setShowConfPass(!showConfPass)}
                 ></UpdatePasswordContainer>
                 
                 <div>
@@ -154,7 +161,7 @@ function CardRegister(props) {
                   </label>
                 </div> */}
                 <div class="card-actions justify-end mt-6">
-                  <Link href="/" passHref>
+                  <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
                   </Link>
                   <Button onClick={handleRegister} color="primary">
@@ -170,4 +177,4 @@ function CardRegister(props) {
   );
 }
 
-export default CardRegister;
+export default registerPage;

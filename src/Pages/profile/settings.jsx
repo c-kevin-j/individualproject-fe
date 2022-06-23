@@ -6,11 +6,12 @@ import { FaUserCircle, FaLock } from "react-icons/fa";
 import axios from "axios";
 import { API_URL } from "../../../helper";
 import { useRouter } from "next/router";
+import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContainer";
 
 const EditProfilePage = (props) => {
   const [selectedTab, setSelectedTab] = React.useState(1);
 
-  const router = useRouter()
+  const router = useRouter();
   const { user } = useSelector((state) => {
     return {
       user: state.usersReducer.user,
@@ -39,6 +40,7 @@ const EditProfilePage = (props) => {
   const [showNewPass, setShowNewPass] = React.useState(false);
   const [showConfirmedPass, setShowConfirmedPass] = React.useState(false);
   const [validateForm, setValidateForm] = React.useState(true);
+  const [valid, setValid] = React.useState(false);
 
   const selectTab = (tab) => {
     setSelectedTab(tab);
@@ -83,6 +85,7 @@ const EditProfilePage = (props) => {
 
   const handleSubmit = async () => {
     try {
+      let token = localStorage.getItem("tokenIdUser");
       let formEdit = {};
       if (selectedTab === 1) {
         formEdit = {
@@ -98,13 +101,23 @@ const EditProfilePage = (props) => {
         // });
 
         // res backend
-        let res = await axios.patch(`${API_URL}/users/edit`, {
-          id: user.id,
-          ...formEdit,
-        });
+        let res = await axios.patch(
+          `${API_URL}/users/edit`,
+          {
+            id: user.id,
+            ...formEdit,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (res) {
           alert("Update berhasil");
           dispatch(editUser({ user: { ...user, ...formEdit } }));
+          console.log(res.data.token)
+          localStorage.setItem("tokenIdUser", res.data.token);
         }
       } else if (selectedTab === 2) {
         // formEdit = {
@@ -124,12 +137,19 @@ const EditProfilePage = (props) => {
         //axios backend
         let res = await axios.patch(
           `${API_URL}/users/edit/profile_picture`,
-          formData
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         if (res) {
           alert("Update berhasil");
           dispatch(editUser({ user: { ...user, editProfilePicture } }));
+          console.log(res.data.token)
+          localStorage.setItem("tokenIdUser", res.data.token);
         }
       } else if (selectedTab === 3) {
         // // res fake backend
@@ -150,12 +170,20 @@ const EditProfilePage = (props) => {
         // }
 
         // res backend
-        let res = await axios.patch(`${API_URL}/users/edit/password`, {
-          id: user.id,
-          oldPassword,
-          newPassword,
-        });
-        console.log(res.data)
+        let res = await axios.patch(
+          `${API_URL}/users/edit/password`,
+          {
+            id: user.id,
+            oldPassword,
+            newPassword,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(res.data);
         if (res.data.success) {
           alert(res.data.message);
           dispatch(editUser({ ...user, password }));
@@ -163,7 +191,7 @@ const EditProfilePage = (props) => {
           alert(res.data.message);
         }
       }
-      
+
       // if (validateForm === true) {
       //   let res = await axios.patch(`${API_URL}/users/${user.id}`, {
       //     ...formEdit,
@@ -173,10 +201,10 @@ const EditProfilePage = (props) => {
       //     dispatch(editUser({ user: formEdit }));
       //   }
       // }
-      router.push('/profile/settings')
+      router.push("/profile/settings");
     } catch (error) {
       console.log(error);
-      alert(error.response.data.message)
+      // alert(error.response.data.message);
     }
   };
 
@@ -218,11 +246,10 @@ const EditProfilePage = (props) => {
             onChange={addImageToPost}
           />
         </div> */}
-
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          Username
-        </span>
-        <div className="col-start-2 col-span-10 md:col-span-8">
+        <div className="col-start-2 col-span-10 lg:col-start-3 lg:col-span-8 font-bold">
+          <label className="label">
+            <span className="label-text">Username</span>
+          </label>
           <input
             type="text"
             placeholder="Username"
@@ -232,10 +259,10 @@ const EditProfilePage = (props) => {
           />
         </div>
 
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          First Name
-        </span>
-        <div className="col-start-2 col-span-10 md:col-span-8">
+        <div className="col-start-2 col-span-10 lg:col-start-3 lg:col-span-8 font-bold">
+          <label className="label">
+            <span className="label-text">First Name</span>
+          </label>
           <input
             type="text"
             placeholder="First Name"
@@ -245,10 +272,10 @@ const EditProfilePage = (props) => {
           />
         </div>
 
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          Last Name
-        </span>
-        <div className="col-start-2 col-span-10 md:col-span-8">
+        <div className="col-start-2 col-span-10 lg:col-start-3 lg:col-span-8 font-bold">
+          <label className="label">
+            <span className="label-text">Last Name</span>
+          </label>
           <input
             type="text"
             placeholder="Last Name"
@@ -258,10 +285,10 @@ const EditProfilePage = (props) => {
           />
         </div>
 
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          Email
-        </span>
-        <div className="col-start-2 col-span-10 md:col-span-8">
+        <div className="col-start-2 col-span-10 lg:col-start-3 lg:col-span-8 font-bold">
+          <label className="label">
+            <span className="label-text">Email</span>
+          </label>
           <input
             disabled
             type="text"
@@ -271,10 +298,10 @@ const EditProfilePage = (props) => {
           />
         </div>
 
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          Bio
-        </span>
-        <div className="col-start-2 col-span-10 md:col-span-8">
+        <div className="col-start-2 col-span-10 lg:col-start-3 lg:col-span-8 font-bold">
+          <label className="label">
+            <span className="label-text">Bio</span>
+          </label>
           <textarea
             className="textarea textarea-bordered w-full"
             placeholder="Bio"
@@ -341,18 +368,26 @@ const EditProfilePage = (props) => {
     );
   };
 
+  const handlePassword = (childData) => {
+    const password = childData["password"];
+    const valid = childData["valid"];
+    setNewPassword(password);
+    setValid(valid);
+  };
+
   const passwordSetting = () => {
     return (
       <div className="grid grid-cols-12 items-center gap-3">
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          Old Password
-        </span>
-        <div className="col-start-2 col-span-10 md:col-span-8">
+        <div className="col-start-2 col-span-10 lg:col-start-3 lg:col-span-8 font-bold">
+          <label className="label">
+            <span className="label-text">Old Password</span>
+          </label>
           <label className="input-group">
             <input
               type={showPass ? "text" : "password"}
               className="inline input input-bordered w-full"
               onChange={(e) => setOldPassword(e.target.value)}
+              placeholder="Input your old Password..."
             />
             <button
               className="btn btn-active btn-ghost text-white"
@@ -367,7 +402,11 @@ const EditProfilePage = (props) => {
           </label>
         </div>
 
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
+        <span className="col-start-2 col-span-10 lg:col-start-3 lg:col-span-8 font-bold">
+          <UpdatePasswordContainer handlePassword={handlePassword} />
+        </span>
+
+        {/* <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
           New Password
         </span>
         <div className="col-start-2 col-span-10 md:col-span-8">
@@ -411,10 +450,15 @@ const EditProfilePage = (props) => {
               )}
             </button>
           </label>
-        </div>
+        </div> */}
 
         <div className="col-start-10 md:col-start-4">
-          <button type="button" className="btn" onClick={handleSubmit} disabled={!oldPassword || !newPassword || !confNewPassword}>
+          <button
+            type="button"
+            className="btn"
+            onClick={handleSubmit}
+            disabled={!oldPassword || !newPassword || !valid}
+          >
             Submit
           </button>
         </div>

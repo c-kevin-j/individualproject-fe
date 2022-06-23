@@ -84,9 +84,9 @@ const UpdatePasswordContainer = (props) => {
   // }
 
   return (
-    <div className="UpdatePasswordContainer cfb">
+    <div>
       {/* update password form */}
-      <form className="password-form cfb">
+      <form>
         {/* password one */}
         <label className="label">
           <span className="label-text">Password</span>
@@ -144,7 +144,7 @@ const UpdatePasswordContainer = (props) => {
       </form>
 
       {/* create an MustContainItem for each password validation with props of label and boolean of state */}
-      <div className="must-container cfb mt-4">
+      <div className="mt-4">
       <h4>Must contain:</h4>
         {mustContainData.map((data) => (
           <MustContainItem data={data} />

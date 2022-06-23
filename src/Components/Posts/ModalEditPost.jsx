@@ -5,29 +5,39 @@ import { Modal } from "react-daisyui";
 import { API_URL } from "../../../helper";
 
 const ModalEditPost = (props) => {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [caption, setCaption] = React.useState(props.caption)
+  const [caption, setCaption] = React.useState(props.caption);
 
   const handleSave = async () => {
-    try{
-      let res = await axios.patch(`${API_URL}/posts/edit`, {
-        id:props.postId,
-        caption})
-      if (res){
-        alert(`update berhasil`)
-        props.toggleVisible()
-        router.push(`/post?id=${props.postId}`)
+    try {
+      let token = localStorage.getItem("tokenIdUser");
+      let res = await axios.patch(
+        `${API_URL}/posts/edit`,
+        {
+          id: props.postId,
+          caption,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res) {
+        alert(`update berhasil`);
+        props.toggleVisible();
+        router.push(`/post?id=${props.postId}`);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const handleCancel = () => {
-    setCaption(props.caption)
-    props.toggleVisible()
-  }
+    setCaption(props.caption);
+    props.toggleVisible();
+  };
 
   return (
     <Modal
@@ -44,7 +54,7 @@ const ModalEditPost = (props) => {
           placeholder="Insert caption"
           class="input input-bordered w-full max-w-xs"
           defaultValue={caption}
-          onChange={(e)=>setCaption(e.target.value)}
+          onChange={(e) => setCaption(e.target.value)}
         />
       </div>
       <div>
