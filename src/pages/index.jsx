@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
@@ -29,7 +29,7 @@ export const getServerSideProps = async (ctx) => {
 function HomePage(props) {
   // const dispatch = useDispatch();
   let { users } = props;
-  const [posts, setPosts]= React.useState(props.posts)
+  const [posts, setPosts]= useState(props.posts)
   const listInnerRef = React.useRef();
 
   const printPosts = () => {

@@ -31,8 +31,8 @@ const UpdatePasswordContainer = (props) => {
     ["At least 8 characters", contains8C],
     ["Passwords match", passwordMatch],
   ];
-  const [showPass, setShowPass] = React.useState(false);
-  const [showConfirmedPass, setShowConfirmedPass] = React.useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmedPass, setShowConfirmedPass] = useState(false);
 
   const validatePassword = () => {
     // has uppercase letter

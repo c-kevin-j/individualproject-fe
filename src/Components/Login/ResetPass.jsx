@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Button, Input } from "react-daisyui";
 import Axios from "axios";
 import { API_URL } from "../../../helper";
@@ -8,10 +8,10 @@ import { route } from "next/dist/server/router";
 import UpdatePasswordContainer from "./UpdatePasswordContainer";
 
 export default function CardResetPass(props) {
-  const [pass, setPass] = React.useState("");
-  const [valid, setValid] = React.useState(false);
-  const [showPass, setShowPass] = React.useState(false);
-  const [showConfPass, setShowConfPass] = React.useState(false);
+  const [pass, setPass] = useState("");
+  const [valid, setValid] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [showConfPass, setShowConfPass] = useState(false);
 
   const router = useRouter();
 
@@ -45,9 +45,9 @@ export default function CardResetPass(props) {
       <div className="md:container md:mx-auto">
         <div className="grid justify-items-center mt-8">
           <div className="grid content-start mt-8">
-            <div class="card w-96 bg-base-100 shadow-xl">
-              <div class="card-body">
-                <h2 class="card-title">Reset Password</h2>
+            <div className="card w-96 bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title">Reset Password</h2>
                 {/* <div className="form-control">
                   <label className="label">
                     <span className="label-text">New Password</span>
@@ -67,7 +67,7 @@ export default function CardResetPass(props) {
                   toggleShowConfPass={()=>setShowConfPass(!showConfPass)}
                 ></UpdatePasswordContainer>
 
-                <div class="card-actions justify-end mt-6">
+                <div className="card-actions justify-end mt-6">
                   <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
                   </Link>

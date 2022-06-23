@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, {useState} from "react";
 import AddButton from "./Atoms/AddButton";
 import ModalCreatePost from "./Posts/ModalCreatePost";
 import Image from "next/image";
@@ -10,14 +10,14 @@ import { loginAction, logoutAction } from "../Redux/Actions/userAction";
 import { useRouter } from "next/router";
 
 function Navbar(props) {
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("tokenIdUser");
     dispatch(logoutAction());
   };
 
-  const [profilePicture, setProfilePicture] = React.useState("");
+  const [profilePicture, setProfilePicture] = useState("");
 
   const router = useRouter();
   const dispatch = useDispatch();

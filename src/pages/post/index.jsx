@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, {useState} from "react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FiMoreVertical } from "react-icons/fi";
 import { useSelector } from "react-redux";
@@ -61,18 +61,18 @@ function DetailPost(props) {
     };
   });
   
-  const [commentList, setCommentList] = React.useState(comments);
-  const [comment, setComment] = React.useState("");
-  // const [commentDate, setCommentDate] = React.useState("");
-  const [editVisible, setEditVisible] = React.useState(false);
+  const [commentList, setCommentList] = useState(comments);
+  const [comment, setComment] = useState("");
+  // const [commentDate, setCommentDate] = useState("");
+  const [editVisible, setEditVisible] = useState(false);
   // poster => user who post the picture
-  const [poster, setPoster] = React.useState([]);
-  const [userIsPoster, setUserIsPoster] = React.useState(false);
+  const [poster, setPoster] = useState([]);
+  const [userIsPoster, setUserIsPoster] = useState(false);
   
   // to see if user has already liked the post
-  const [isLiked, setIsLiked] = React.useState(null);
+  const [isLiked, setIsLiked] = useState(null);
   // to get number of likes
-  const [likesList, setLikesList] = React.useState(likes);
+  const [likesList, setLikesList] = useState(likes);
 
   // to check if user can edit / delete the post
   const getPoster = () => {

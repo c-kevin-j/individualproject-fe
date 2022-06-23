@@ -3,7 +3,7 @@ import Image from "next/image";
 import MyApp from "./_app.js";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, {useState} from "react";
 // import { Card, Button, Avatar } from "react-daisyui";
 import ModalForgotPass from "../Components/Login/ForgotPass";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
@@ -17,10 +17,10 @@ import { route } from "next/dist/server/router";
 
 function LandingPage({ href }) {
   //Visible state to open modal Register, and visiblePass to open modal Forgot Password
-  const [visible, setVisible] = React.useState(false);
-  const [visiblePass, setVisiblePass] = React.useState(false);
-  const [showPass, setShowPass] = React.useState(false);
-  const [inputForm, setInputForm] = React.useState({
+  const [visible, setVisible] = useState(false);
+  const [visiblePass, setVisiblePass] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [inputForm, setInputForm] = useState({
     emailUsername: "",
     password: "",
   });

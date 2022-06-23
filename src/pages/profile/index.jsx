@@ -1,10 +1,5 @@
-// import React from "react";
-import React from "react";
-import { Textarea, Input, Avatar } from "react-daisyui";
-import EditButton from "../../Components/Atoms/EditButton";
-import SaveButton from "../../Components/Atoms/SaveButton";
-import CancelButton from "../../Components/Atoms/CancelButton";
-import { useState } from "react";
+// import React, {useState} from "react";
+import React, {useState} from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { AiFillHeart } from "react-icons/ai";
@@ -32,13 +27,14 @@ export const getServerSideProps = async (ctx) => {
 
     // props backend
     let resUser = await axios.get(`${API_URL}/users/get/detail?id=${ctx.query.id}`);
-    let resAllPosts = await axios.get(`${API_URL}/posts/get`);
+    console.log(resUser.data[0])
+    // let resAllPosts = await axios.get(`${API_URL}/posts/get`);
     let resUserPosts = await axios.get(`${API_URL}/posts/get/userPost?id=${ctx.query.id}`);
     let resLikedPosts = await axios.get(`${API_URL}/posts/get/likedPost?id=${ctx.query.id}`);
     return {
       props: {
         user: resUser.data[0],
-        allPosts: resAllPosts.data,
+        // allPosts: resAllPosts.data,
         posts: resUserPosts.data.reverse(),
         likedPosts: resLikedPosts.data.reverse(),
       },
@@ -58,8 +54,8 @@ function ProfilePage(props) {
   //   }
   // })
 
-  let { user, allPosts, posts, likedPosts } = props;
-  const [selectedTab, setSelectedTab] = React.useState(1);
+  let { user, posts, likedPosts } = props;
+  const [selectedTab, setSelectedTab] = useState(1);
 
   const printProfile = () => {
     return (

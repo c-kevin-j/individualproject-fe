@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Card, Button, Input } from "react-daisyui";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Axios from "axios";
@@ -8,12 +8,12 @@ import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContai
 import { useRouter } from "next/router";
 
 function registerPage(props) {
-  const [email, setEmail] = React.useState("");
-  const [username, setUsername] = React.useState("");
-  const [pass, setPass] = React.useState("");
-  const [valid, setValid] = React.useState(false);
-  const [showPass, setShowPass] = React.useState(false);
-  const [showConfPass, setShowConfPass] = React.useState(false);
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [pass, setPass] = useState("");
+  const [valid, setValid] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [showConfPass, setShowConfPass] = useState(false);
 
   const router = useRouter();
 
@@ -78,9 +78,9 @@ function registerPage(props) {
       <div className="md:container md:mx-auto">
         <div className="grid justify-items-center mt-8">
           <div className="grid content-start mt-8">
-            <div class="card w-96 bg-base-100 shadow-xl">
-              <div class="card-body">
-                <h2 class="card-title">Register</h2>
+            <div className="card w-96 bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title">Register</h2>
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Email</span>
@@ -160,7 +160,7 @@ function registerPage(props) {
                     </button>
                   </label>
                 </div> */}
-                <div class="card-actions justify-end mt-6">
+                <div className="card-actions justify-end mt-6">
                   <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
                   </Link>

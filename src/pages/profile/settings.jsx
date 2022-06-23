@@ -1,4 +1,4 @@
-import React, { Profiler } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { editUser, loginAction } from "../../Redux/Actions/userAction";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContainer";
 
 const EditProfilePage = (props) => {
-  const [selectedTab, setSelectedTab] = React.useState(1);
+  const [selectedTab, setSelectedTab] = useState(1);
 
   const router = useRouter();
   const { user } = useSelector((state) => {
@@ -19,28 +19,28 @@ const EditProfilePage = (props) => {
   });
 
   const filePickerRef = React.useRef(null);
-  const [inputKey, setInputKey] = React.useState(null);
-  const [loading, setLoading] = React.useState(null);
+  const [inputKey, setInputKey] = useState(null);
+  const [loading, setLoading] = useState(null);
 
-  const [editFirstName, setEditFirstName] = React.useState("");
-  const [editLastName, setEditLastName] = React.useState("");
-  const [editUsername, setEditUsername] = React.useState("");
-  const [oldPassword, setOldPassword] = React.useState("");
-  const [newPassword, setNewPassword] = React.useState("");
-  const [confNewPassword, setConfNewPassword] = React.useState("");
+  const [editFirstName, setEditFirstName] = useState("");
+  const [editLastName, setEditLastName] = useState("");
+  const [editUsername, setEditUsername] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confNewPassword, setConfNewPassword] = useState("");
 
   // selectedFile refers to profile picture
-  const [selectedFile, setSelectedFile] = React.useState(null);
-  const [editProfilePicture, setEditProfilePicture] = React.useState("");
-  const [pictureChanged, setPictureChanged] = React.useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [editProfilePicture, setEditProfilePicture] = useState("");
+  const [pictureChanged, setPictureChanged] = useState(false);
 
-  const [editBio, setEditBio] = React.useState("");
+  const [editBio, setEditBio] = useState("");
 
-  const [showPass, setShowPass] = React.useState(false);
-  const [showNewPass, setShowNewPass] = React.useState(false);
-  const [showConfirmedPass, setShowConfirmedPass] = React.useState(false);
-  const [validateForm, setValidateForm] = React.useState(true);
-  const [valid, setValid] = React.useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [showConfirmedPass, setShowConfirmedPass] = useState(false);
+  const [validateForm, setValidateForm] = useState(true);
+  const [valid, setValid] = useState(false);
 
   const selectTab = (tab) => {
     setSelectedTab(tab);

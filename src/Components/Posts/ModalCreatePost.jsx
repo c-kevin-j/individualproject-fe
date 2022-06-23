@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Modal, Button } from "react-daisyui";
 import {AiFillCamera} from "react-icons/ai"
 import Link from "next/link";
@@ -18,11 +18,11 @@ function ModalCreatePost(props) {
   })
 
   const filePickerRef = React.useRef(null);
-  const [selectedFile, setSelectedFile] = React.useState(null);
-  const [inputKey, setInputKey] = React.useState(null);
-  const [loading, setLoading] = React.useState(null)
-  const [caption, setCaption] = React.useState("")
-  const [image, setImage] = React.useState(null)
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [inputKey, setInputKey] = useState(null);
+  const [loading, setLoading] = useState(null)
+  const [caption, setCaption] = useState("")
+  const [image, setImage] = useState(null)
 
 
   function addImageToPost(event){

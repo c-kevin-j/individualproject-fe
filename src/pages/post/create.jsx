@@ -1,13 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 import {AiFillCamera} from "react-icons/ai"
 import Link from "next/link";
 
 function CreatePost (props) {
   const filePickerRef = React.useRef(null);
   const captionRef = React.useRef(null);
-  const [selectedFile, setSelectedFile] = React.useState(null);
-  const [inputKey, setInputKey] = React.useState(null);
-  const [loading, setLoading] = React.useState(null)
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [inputKey, setInputKey] = useState(null);
+  const [loading, setLoading] = useState(null)
   
   function addImageToPost(event){
     const reader = new FileReader()

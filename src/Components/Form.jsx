@@ -1,8 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 
 export default function Form(props) {
 
-  const [input, setInput] = React.useState('')
+  const [input, setInput] = useState('')
 
   return <div>
     <fieldset>
