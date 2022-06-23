@@ -4,7 +4,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Axios from "axios";
 import { API_URL } from "../../../helper";
 import Link from "next/link";
-import UpdatePasswordContainer from "../../Components/login/UpdatePasswordContainer";
+import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContainer";
 import { useRouter } from "next/router";
 
 function registerPage(props) {
