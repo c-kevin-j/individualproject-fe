@@ -7,7 +7,7 @@ import Link from "next/link";
 import UpdatePasswordContainer from "../Components/Login/UpdatePasswordContainer";
 import { useRouter } from "next/router";
 
-function registerPage(props) {
+function RegisterPage(props) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
@@ -176,4 +176,4 @@ function registerPage(props) {
   );
 }
 
-export default registerPage;
+export default RegisterPage;

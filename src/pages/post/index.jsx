@@ -167,7 +167,7 @@ function DetailPost(props) {
         })[0];
         let commentDate = value.created_at ? value.created_at.slice(0,10) : "a few seconds ago"
         return (
-          <div className="grid grid-cols-10 items-start py-2">
+          <div key={commenter.id} className="grid grid-cols-10 items-start py-2">
             <div className="avatar col-span-1 self-start justify-self-center">
               <div className="w-7 rounded-full">
                 {/* image json server */}

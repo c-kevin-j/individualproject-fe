@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import { useSelector } from "react-redux";
 import { API_URL } from "../../../helper";
 
-const verifyAccountPage = () => {
+const VerifyAccountPage = () => {
 
   const { user } = useSelector((state)=>{
       return{
@@ -37,6 +37,6 @@ const verifyAccountPage = () => {
   );
 };
 
-verifyAccountPage.layout = "L1";
+VerifyAccountPage.layout = "L1";
 
-export default verifyAccountPage;
+export default VerifyAccountPage;

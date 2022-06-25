@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import { useSelector } from "react-redux";
 import { API_URL } from "../../../../helper";
 
-const verifyAccountPage = () => {
+const VerifyAccountPage = () => {
 
   const router = useRouter();
   const { token }=router.query;
@@ -46,6 +46,6 @@ const verifyAccountPage = () => {
   );
 };
 
-verifyAccountPage.layout = "L1";
+VerifyAccountPage.layout = "L1";
 
-export default verifyAccountPage;
+export default VerifyAccountPage;
