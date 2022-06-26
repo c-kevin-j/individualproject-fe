@@ -1,38 +1,40 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Button, Input } from "react-daisyui";
 import Axios from "axios";
 import { API_URL } from "../../../helper";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { route } from "next/dist/server/router";
+import { FaSpinner } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 export default function CardForgotPass(props) {
   const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
-  const [confirmedPass, setConfirmedPass] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const handleForgotPassword = async () => {
     try {
-      let res = await Axios.patch(`${API_URL}/users/forgot`, {email});
-      if (res.data.success){
-        router.push("/auth/login")
-        alert(res.data.message)
+      setIsSubmitting(true);
+      let res = await Axios.patch(`${API_URL}/users/forgot`, { email });
+      if (res.data.success) {
+        setIsSubmitting(false);
+        Swal.fire({
+          icon: "success",
+          title: res.data.message,
+          text: "Please check your email to reset your password",
+        });
+        router.push("/auth/login");
       } else {
-        alert(res.data.message)
+        setIsSubmitting(false);
+        Swal.fire({
+          icon: "error",
+          text: res.data.message,
+        });
       }
-      
-
-      // if (res.data.length>0){
-      //   alert("Email konfirmasi telah terkirim ke alamat email Anda")
-      //   route.push("/auth/login")
-      // } else {
-      //   alert("Email tidak terdaftar")
-      // }
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
+  };
 
   return (
     <>
@@ -57,8 +59,16 @@ export default function CardForgotPass(props) {
                   <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
                   </Link>
-                  <Button onClick={handleForgotPassword} color="primary">
-                    Submit 
+                  <Button
+                    onClick={handleForgotPassword}
+                    color="primary"
+                    disabled={!email || isSubmitting}
+                  >
+                    {!isSubmitting ? (
+                      "Submit"
+                    ) : (
+                      <FaSpinner className="icon-spin" />
+                    )}
                   </Button>
                 </div>
               </div>

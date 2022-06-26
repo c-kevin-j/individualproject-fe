@@ -1,11 +1,12 @@
-import React, {useState} from "react";
-import { Card, Button, Input } from "react-daisyui";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import React, { useState } from "react";
+import { Button, Input } from "react-daisyui";
 import Axios from "axios";
 import { API_URL } from "../../../helper";
 import Link from "next/link";
 import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContainer";
 import { useRouter } from "next/router";
+import { FaSpinner } from "react-icons/fa";
+import Swal from 'sweetalert2'
 
 function RegisterPage(props) {
   const [email, setEmail] = useState("");
@@ -14,68 +15,85 @@ function RegisterPage(props) {
   const [valid, setValid] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConfPass, setShowConfPass] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     let token = localStorage.getItem("tokenIdUser");
     if (token) {
-      router.push("/")
+      router.push("/");
     }
-  },[])
+  }, []);
 
   const handleRegister = async () => {
     try {
-      if (
-        username === "" ||
-        email === "" ||
-        pass === ""
-      ) {
+      setIsSubmitting(true)
+      if (username === "" || email === "" || pass === "") {
         alert("Fill in all form");
+        Swal.fire({
+          icon: 'error',
+          text: 'Please fill in all form',
+        })
       } else {
         if (email.includes("@")) {
-          
           // ////// axios json server
           // await Axios.post(`${API_URL}/users`, {
-            //   username,
-            //   email,
-            //   password: pass,
-            //   first_name: "",
-            //   last_name: "",
+          //   username,
+          //   email,
+          //   password: pass,
+          //   first_name: "",
+          //   last_name: "",
+          //   profile_picture:
+          //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
+          //   bio: "",
+          //   verified_status: false,
+          //   created_at: "",
+          //   update_at: "",
+          // });
+
+          /////// axios backend
+          let res = await Axios.post(`${API_URL}/users/register`, {
+            username,
+            email,
+            password: pass,
             //   profile_picture:
             //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
-            //   bio: "",
             //   verified_status: false,
-            //   created_at: "",
-            //   update_at: "",
-            // });
-            
-            /////// axios backend
-            let res = await Axios.post(`${API_URL}/users/register`, {
-              username,
-              email,
-              password: pass,
-              //   profile_picture:
-              //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
-              //   verified_status: false,
-            });
-            if (res.data.success){
-              alert("Registration success");
-              router.push("/");
-            } else {
-              alert(res.data.message)
-            }
+          });
+          if (res.data.success) {
+            setIsSubmitting(false)
+            Swal.fire({
+              icon: 'success',
+              title: 'Registration Success',
+              text: 'Please check your email to verify your account',
+            })
+            router.push("/auth/login");
+          } else {
+            setIsSubmitting(false)
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: res.data.message,
+            })
+          }
         } else {
-          alert("Email wrong");
+          setIsSubmitting(false)
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: "Your email input is wrong",
+          })
         }
       }
     } catch (error) {
+      setIsSubmitting(false)
       console.log(error);
     }
   };
   const handlePassword = (childData) => {
     const password = childData["password"];
-    const valid = childData["valid"]
+    const valid = childData["valid"];
     setPass(password);
     setValid(valid);
   };
@@ -136,14 +154,12 @@ function RegisterPage(props) {
                 <UpdatePasswordContainer
                   handlePassword={handlePassword}
                   showPass={showPass}
-                  toggleShowPass={()=>setShowPass(!showPass)}
+                  toggleShowPass={() => setShowPass(!showPass)}
                   showConfPass={showConfPass}
-                  toggleShowConfPass={()=>setShowConfPass(!showConfPass)}
+                  toggleShowConfPass={() => setShowConfPass(!showConfPass)}
                 ></UpdatePasswordContainer>
-                
-                <div>
-                 
-                </div>
+
+                <div></div>
                 {/* <div className="form-control">
                   <label className="label">
                     <span className="label-text">Confirm Password</span>
@@ -171,8 +187,12 @@ function RegisterPage(props) {
                   <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
                   </Link>
-                  <Button onClick={handleRegister} color="primary" disabled={!email || !username || !pass || !valid}>
-                    Register
+                  <Button
+                    onClick={handleRegister}
+                    color="primary"
+                    disabled={!email || !username || !pass || !valid || isSubmitting}
+                  >
+                    {!isSubmitting ? "Register" : <FaSpinner className="icon-spin"/>}
                   </Button>
                 </div>
               </div>
