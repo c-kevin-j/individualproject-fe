@@ -62,27 +62,8 @@ function Navbar(props) {
   // }, [user]);
 
   const checkVerified = () => {
-    console.log("check verified")
     if (user.verified_status === 1) {
       router.push("/auth/resend-verification");
-    }
-  };
-
-  const handleReverify = async () => {
-    let token = localStorage.getItem("tokenIdUser");
-    try {
-      console.log(token);
-      let res = await axios.get(`${API_URL}/users/verify/send`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(res);
-      if (res.data.success) {
-        alert(res.data.message);
-      }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -103,13 +84,6 @@ function Navbar(props) {
           </Link>
         </div>
         <div className="flex-none gap-2">
-          {/* <div className="form-control">
-            <input
-              type="text"
-              placeholder="Search"
-              className="input input-bordered"
-            />
-          </div> */}
           {user.verified_status === 0 && (
             <div onClick={() => setVisible(!visible)}>
               <AddButton />
@@ -122,10 +96,6 @@ function Navbar(props) {
           <div className="dropdown dropdown-end">
             <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
-                {/* avatar fake backend */}
-                {/* <img src={user.profile_picture} /> */}
-
-                {/* avatar backend */}
                 <img src={`${API_URL}${user.profile_picture}`} />
               </div>
             </label>
@@ -133,16 +103,20 @@ function Navbar(props) {
               tabIndex="0"
               className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-box w-52"
             >
-              <Link href={`/profile?id=${user.id}`}>
-                <li>
-                  <a className="justify-between">Profile</a>
-                </li>
-              </Link>
-              <Link href="/profile/settings">
-                <li>
-                  <a>Setting</a>
-                </li>
-              </Link>
+              {user.verified_status === 0 && (
+                <>
+                  <Link href={`/profile?id=${user.id}`}>
+                    <li>
+                      <a className="justify-between">Profile</a>
+                    </li>
+                  </Link>
+                  <Link href="/profile/settings">
+                    <li>
+                      <a>Setting</a>
+                    </li>
+                  </Link>
+                </>
+              )}
               <Link href="/auth/login">
                 <li>
                   <a onClick={handleLogout}>Logout</a>
