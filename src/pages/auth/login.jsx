@@ -144,7 +144,7 @@ function LandingPage() {
             and other erros. */}
             <div className="grid grid-cols-2 place-items-stretch">
               <div className="mt-4">
-                <Link href="/forgot" passHref>
+                <Link href="/auth/forgot" passHref>
                   <a className="link link-accent">Forgot password?</a>
                 </Link>
                 <br></br>
