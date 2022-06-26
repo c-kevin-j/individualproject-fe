@@ -1,5 +1,5 @@
 // import React, {useState} from "react";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { AiFillHeart } from "react-icons/ai";
@@ -26,11 +26,17 @@ export const getServerSideProps = async (ctx) => {
     // };
 
     // props backend
-    let resUser = await axios.get(`${API_URL}/users/get/detail?id=${ctx.query.id}`);
-    console.log(resUser.data[0])
+    let resUser = await axios.get(
+      `${API_URL}/users/get/detail?id=${ctx.query.id}`
+    );
+    console.log(resUser.data[0]);
     // let resAllPosts = await axios.get(`${API_URL}/posts/get`);
-    let resUserPosts = await axios.get(`${API_URL}/posts/get/userPost?id=${ctx.query.id}`);
-    let resLikedPosts = await axios.get(`${API_URL}/posts/get/likedPost?id=${ctx.query.id}`);
+    let resUserPosts = await axios.get(
+      `${API_URL}/posts/get/userPost?id=${ctx.query.id}`
+    );
+    let resLikedPosts = await axios.get(
+      `${API_URL}/posts/get/likedPost?id=${ctx.query.id}`
+    );
     return {
       props: {
         user: resUser.data[0],
@@ -39,7 +45,6 @@ export const getServerSideProps = async (ctx) => {
         likedPosts: resLikedPosts.data.reverse(),
       },
     };
-
   } catch (error) {
     return {
       props: {},
@@ -65,7 +70,9 @@ function ProfilePage(props) {
             <div className="col-span-full text-2xl font-light text-primary-content">
               {user.username}
             </div>
-            <div className="col-span-full font-bold">{`${user.first_name ? user.first_name : ""} ${user.last_name ? user.last_name : ""}`}</div>
+            <div className="col-span-full font-bold">{`${
+              user.first_name ? user.first_name : ""
+            } ${user.last_name ? user.last_name : ""}`}</div>
             <label className="label col-span-1">
               <span className="label-text">Bio</span>
             </label>
@@ -85,49 +92,36 @@ function ProfilePage(props) {
   };
 
   const printPosts = (data) => {
-    return data.map((val, idx) => {
-      return (
-        <>
-          <Link href={`/post?id=${val.id}`}>
-            <div
-              className="card w-full aspect-square bg-base-300 shadow-xl 
-              rounded-none 
-              col-span-1
-              flex place-content-center"
-            >
-              <div className="flex place-content-center h-full">
-                {/* image json server */}
-                {/* <img
-                  src={val.image}
-                  className="object-contain object-center h-full"
-                /> */}
-                {/* image backend */}
-                <img
-                  src={`${API_URL}${val.image}`}
-                  className="object-contain object-center h-full"
-                />
+    if (data.length > 0) {
+      return data.map((val, idx) => {
+        return (
+          <>
+            <Link href={`/post?id=${val.id}`}>
+              <div
+                className="card w-full aspect-square bg-base-300 shadow-xl 
+                rounded-none 
+                col-span-1
+                flex place-content-center"
+              >
+                <div className="flex place-content-center h-full">
+                  <img
+                    src={`${API_URL}${val.image}`}
+                    className="object-contain object-center h-full"
+                  />
+                </div>
               </div>
-            </div>
-          </Link>
-        </>
-      );
-    });
+            </Link>
+          </>
+        );
+      });
+    } else {
+      return (
+        <div className="m-auto col-span-3">
+          Nothing to see here...
+        </div>
+      )
+    }
   };
-
-  // const printLikedPosts = () => {
-  //   let filtered = [];
-  //   for (let i = 0; i < likedPosts.length; i++) {
-  //     let j=0;
-  //     let check=false
-  //     while (!check && j<allPosts.length) {
-  //       if (likedPosts[i].post_id == allPosts[j].id){
-  //         filtered.push(allPosts[j])
-  //       }
-  //       j++
-  //     }
-  //   }
-  //   return printPosts(filtered)
-  // };
 
   return (
     <>
@@ -145,14 +139,18 @@ function ProfilePage(props) {
         </div>
         <div className="tabs my-3 border-y-2 grid grid-cols-2 justify-items-center">
           <span
-            className={`tab gap-2 ${selectedTab === 1 && "tab-active text-secondary font-bold"}`}
+            className={`tab gap-2 ${
+              selectedTab === 1 && "tab-active text-secondary font-bold"
+            }`}
             onClick={() => setSelectedTab(1)}
           >
             <BsFillGridFill />
             POSTS
           </span>
           <span
-            className={`tab gap-2 ${selectedTab === 2 && "tab-active text-secondary font-bold"}`}
+            className={`tab gap-2 ${
+              selectedTab === 2 && "tab-active text-secondary font-bold"
+            }`}
             onClick={() => setSelectedTab(2)}
           >
             <AiFillHeart />
@@ -160,7 +158,6 @@ function ProfilePage(props) {
           </span>
         </div>
         <div className="pt-2 grid grid-cols-3 gap-2 justify-items-center">
-          {/* {selectedTab === 1 ? printPosts(posts) : printLikedPosts()} */}
           {selectedTab === 1 ? printPosts(posts) : printPosts(likedPosts)}
         </div>
       </div>
