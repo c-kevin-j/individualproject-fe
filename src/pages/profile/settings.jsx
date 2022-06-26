@@ -7,6 +7,7 @@ import axios from "axios";
 import { API_URL } from "../../../helper";
 import { useRouter } from "next/router";
 import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContainer";
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 const EditProfilePage = (props) => {
   const [selectedTab, setSelectedTab] = useState(1);
@@ -27,7 +28,7 @@ const EditProfilePage = (props) => {
   const [editUsername, setEditUsername] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [confNewPassword, setConfNewPassword] = useState("");
+  const [formChanged, setFormChanged] = useState(false)
 
   // selectedFile refers to profile picture
   const [selectedFile, setSelectedFile] = useState(null);
@@ -94,13 +95,7 @@ const EditProfilePage = (props) => {
           last_name: editLastName,
           bio: editBio,
         };
-        // // res fakeserver
-        // let res = await axios.patch(`${API_URL}/users/${user.id}`, {
-        //   id: user.id,
-        //   ...formEdit,
-        // });
 
-        // res backend
         let res = await axios.patch(
           `${API_URL}/users/edit`,
           {
@@ -116,23 +111,13 @@ const EditProfilePage = (props) => {
         if (res) {
           alert("Update berhasil");
           dispatch(editUser({ user: { ...user, ...formEdit } }));
-          console.log(res.data.token)
           localStorage.setItem("tokenIdUser", res.data.token);
         }
       } else if (selectedTab === 2) {
-        // formEdit = {
-        //   profile_picture: profilePicture,
-        // };
         // res backend
         let formData = new FormData();
         formData.append("data", JSON.stringify({ id: user.id }));
         formData.append("image", editProfilePicture);
-
-        // // axios json server
-        // let res = await axios.patch(`${API_URL}/users/edit/profile_picture`, {
-        //   id: user.id,
-        //   profile_picture: editProfilePicture,
-        // });
 
         //axios backend
         let res = await axios.patch(
@@ -148,27 +133,10 @@ const EditProfilePage = (props) => {
         if (res) {
           alert("Update berhasil");
           dispatch(editUser({ user: { ...user, editProfilePicture } }));
-          console.log(res.data.token)
           localStorage.setItem("tokenIdUser", res.data.token);
+          location.reload()
         }
       } else if (selectedTab === 3) {
-        // // res fake backend
-        // if (oldPassword === user.password) {
-        //   if (newPassword === confNewPassword) {
-        //     setValidateForm(true);
-        //     formEdit = {
-        //       ...formEdit,
-        //       password: newPassword,
-        //     };
-        //   } else {
-        //     alert("konfirmasi password baru salah");
-        //     setValidateForm(false);
-        //   }
-        // } else {
-        //   alert("Password lama tidak sesuai");
-        //   setValidateForm(false);
-        // }
-
         // res backend
         let res = await axios.patch(
           `${API_URL}/users/edit/password`,
@@ -183,7 +151,6 @@ const EditProfilePage = (props) => {
             },
           }
         );
-        console.log(res.data);
         if (res.data.success) {
           alert(res.data.message);
           dispatch(editUser({ ...user, password }));
@@ -201,7 +168,8 @@ const EditProfilePage = (props) => {
       //     dispatch(editUser({ user: formEdit }));
       //   }
       // }
-      router.push("/profile/settings");
+      // router.push("/profile/settings");
+      location.reload()
     } catch (error) {
       console.log(error);
       // alert(error.response.data.message);
@@ -221,31 +189,6 @@ const EditProfilePage = (props) => {
   const userSetting = () => {
     return (
       <div className="grid grid-cols-12 items-center gap-2">
-        {/* <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          Profile Picture
-        </span>
-        <div className="col-start-2 col-span-12 md:col-span-8 flex items-center">
-          <label className="btn btn-ghost btn-circle avatar mx-2 my-auto">
-            <img
-              className="avatar w-10 rounded-full"
-              src={selectedFile}
-              onClick={() => filePickerRef.current.click()}
-            />
-          </label>
-          <a
-            className="link link-hover text-sky-400"
-            onClick={() => filePickerRef.current.click()}
-          >
-            Change Profile Photo
-          </a>
-          <input
-            hidden
-            type="file"
-            ref={filePickerRef}
-            key={inputKey || ""}
-            onChange={addImageToPost}
-          />
-        </div> */}
         <div className="col-start-2 col-span-10 lg:col-start-3 lg:col-span-8 font-bold">
           <label className="label">
             <span className="label-text">Username</span>
@@ -310,7 +253,7 @@ const EditProfilePage = (props) => {
           ></textarea>
         </div>
 
-        <div className="col-start-10 md:col-start-4">
+        <div className="col-start-10 text-end">
           <button type="button" className="btn" onClick={handleSubmit}>
             Submit
           </button>
@@ -325,12 +268,6 @@ const EditProfilePage = (props) => {
         <div className="flex items-center h-min">
           <div className="avatar">
             <div className=" w-32 rounded-full my-auto mx-auto">
-              {/* <img
-                className=""
-                style={{ cursor: "pointer" }}
-                src={selectedFile}
-                onClick={() => filePickerRef.current.click()}
-              /> */}
               <img
                 className=""
                 style={{ cursor: "pointer" }}
@@ -360,7 +297,7 @@ const EditProfilePage = (props) => {
           onChange={addImageToPost}
         />
         <div className="">
-          <button type="button" className="btn" onClick={handleSubmit}>
+          <button className="btn" onClick={handleSubmit} disabled={!pictureChanged}>
             Submit
           </button>
         </div>
@@ -406,53 +343,7 @@ const EditProfilePage = (props) => {
           <UpdatePasswordContainer handlePassword={handlePassword} />
         </span>
 
-        {/* <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          New Password
-        </span>
-        <div className="col-start-2 col-span-10 md:col-span-8">
-          <label className="input-group">
-            <input
-              type={showNewPass ? "text" : "password"}
-              className="inline input input-bordered w-full"
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <button
-              className="btn btn-active btn-ghost text-white"
-              onClick={() => setShowNewPass(!showNewPass)}
-            >
-              {showNewPass ? (
-                <AiFillEyeInvisible className="text-white" />
-              ) : (
-                <AiFillEye className="text-white" />
-              )}
-            </button>
-          </label>
-        </div>
-
-        <span className="col-span-12 md:col-start-2 md:col-span-2 font-bold">
-          Confirm New Password
-        </span>
-        <div className="col-start-2 col-span-10 md:col-span-8">
-          <label className="input-group">
-            <input
-              type={showConfirmedPass ? "text" : "password"}
-              className="input input-bordered w-full"
-              onChange={(e) => setConfNewPassword(e.target.value)}
-            />
-            <button
-              className="btn btn-active btn-ghost text-white"
-              onClick={() => setShowConfirmedPass(!showConfirmedPass)}
-            >
-              {showConfirmedPass ? (
-                <AiFillEyeInvisible className="text-white" />
-              ) : (
-                <AiFillEye className="text-white" />
-              )}
-            </button>
-          </label>
-        </div> */}
-
-        <div className="col-start-10 md:col-start-4">
+        <div className="col-start-10 text-end">
           <button
             type="button"
             className="btn"
