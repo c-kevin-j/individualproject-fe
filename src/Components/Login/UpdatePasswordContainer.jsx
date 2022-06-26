@@ -48,7 +48,7 @@ const UpdatePasswordContainer = (props) => {
     else setContainsN(false);
 
     // has special character
-    if (/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(passwordOne))
+    if (/[~`!@#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(passwordOne))
       setContainsSC(true);
     else setContainsSC(false);
 
