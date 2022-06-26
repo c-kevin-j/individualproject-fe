@@ -17,6 +17,13 @@ function RegisterPage(props) {
 
   const router = useRouter();
 
+  React.useEffect(()=>{
+    let token = localStorage.getItem("tokenIdUser");
+    if (token) {
+      router.push("/")
+    }
+  },[])
+
   const handleRegister = async () => {
     try {
       if (
@@ -26,9 +33,7 @@ function RegisterPage(props) {
       ) {
         alert("Fill in all form");
       } else {
-        if (valid === false) {
-          alert("Password not match");
-        } else if (email.includes("@")) {
+        if (email.includes("@")) {
           
           // ////// axios json server
           // await Axios.post(`${API_URL}/users`, {
@@ -54,10 +59,12 @@ function RegisterPage(props) {
               //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
               //   verified_status: false,
             });
-            console.log(res)
-            alert("Registration success");
-
-            router.push("/");
+            if (res.data.success){
+              alert("Registration success");
+              router.push("/");
+            } else {
+              alert(res.data.message)
+            }
         } else {
           alert("Email wrong");
         }
@@ -164,8 +171,8 @@ function RegisterPage(props) {
                   <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
                   </Link>
-                  <Button onClick={handleRegister} color="primary">
-                    Accept
+                  <Button onClick={handleRegister} color="primary" disabled={!email || !username || !pass || !valid}>
+                    Register
                   </Button>
                 </div>
               </div>

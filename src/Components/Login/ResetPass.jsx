@@ -71,7 +71,7 @@ export default function CardResetPass(props) {
                   <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
                   </Link>
-                  <Button onClick={handleSubmit} color="primary">
+                  <Button onClick={handleSubmit} color="primary" disabled={!valid}>
                     Submit 
                   </Button>
                 </div>
