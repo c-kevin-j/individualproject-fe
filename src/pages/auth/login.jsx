@@ -11,14 +11,10 @@ import Axios from "axios";
 import { API_URL } from "../../../helper.js";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../../Redux/Actions/userAction.js";
-import { route } from "next/dist/server/router";
 
 // import styles from '../styles/Home.module.css'
 
-function LandingPage({ href }) {
-  //Visible state to open modal Register, and visiblePass to open modal Forgot Password
-  const [visible, setVisible] = useState(false);
-  const [visiblePass, setVisiblePass] = useState(false);
+function LandingPage() {
   const [showPass, setShowPass] = useState(false);
   const [inputForm, setInputForm] = useState({
     emailUsername: "",
@@ -43,14 +39,6 @@ function LandingPage({ href }) {
       router.push("/")
     }
   },[])
-
-  const toggleVisible = (component) => {
-    if (component === "pass") {
-      setVisiblePass(!visiblePass);
-    } else {
-      setVisible(!visible);
-    }
-  };
 
   const handleLogin = async () => {
     try {
@@ -166,7 +154,7 @@ function LandingPage({ href }) {
               </div>
               <div className="mt-4">
                 <div className="card-actions justify-end">
-                  <button className="btn btn-primary" onClick={handleLogin}>
+                  <button className="btn btn-primary" onClick={handleLogin} disabled={!inputForm.emailUsername || !inputForm.password}>
                     Login
                   </button>
                 </div>
