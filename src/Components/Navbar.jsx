@@ -34,34 +34,24 @@ function Navbar(props) {
   }, []);
 
   const keepLogin = async () => {
-    try {
-      let token = localStorage.getItem("tokenIdUser");
-      if (token) {
-        // //backend json server
-        // await axios
-        //   .get(`${API_URL}/users?id=${token}`)
-        //   .then((res) => {
-        //     localStorage.setItem("tokenIdUser", res.data[0].id);
-        //     let data = { user: res.data[0] };
-        //     dispatch(loginAction(data));
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //   });
-
-        // backend
-        let res = await axios.get(`${API_URL}/users/login/keep`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        localStorage.setItem("tokenIdUser", res.data.token);
-        // memperbarui reducer
-        dispatch(loginAction(res.data));
+    let token = localStorage.getItem("tokenIdUser");
+    if (token){
+      try {
+          // backend
+          let res = await axios.get(`${API_URL}/users/login/keep`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          localStorage.setItem("tokenIdUser", res.data.token);
+          // memperbarui reducer
+          dispatch(loginAction(res.data));
+      } catch (error) {
+        console.log(error);
+        localStorage.removeItem("tokenIdUser");
+        router.push("/auth/login");
       }
-    } catch (error) {
-      console.log(error);
-      localStorage.removeItem("tokenIdUser");
+    } else {
       router.push("/auth/login");
     }
   };
