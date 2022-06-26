@@ -159,17 +159,7 @@ const EditProfilePage = (props) => {
         }
       }
 
-      // if (validateForm === true) {
-      //   let res = await axios.patch(`${API_URL}/users/${user.id}`, {
-      //     ...formEdit,
-      //   });
-      //   if (res) {
-      //     alert("Update berhasil");
-      //     dispatch(editUser({ user: formEdit }));
-      //   }
-      // }
-      // router.push("/profile/settings");
-      location.reload()
+      router.push(`/profile?id=${user.id}`);
     } catch (error) {
       console.log(error);
       // alert(error.response.data.message);
@@ -198,7 +188,7 @@ const EditProfilePage = (props) => {
             placeholder="Username"
             className="inline input input-bordered w-full"
             defaultValue={editUsername}
-            onChange={(e) => setEditUsername(e.target.value)}
+            onChange={(e) => {setEditUsername(e.target.value); setFormChanged(true)}}
           />
         </div>
 
@@ -211,7 +201,7 @@ const EditProfilePage = (props) => {
             placeholder="First Name"
             className="inline input input-bordered w-full"
             defaultValue={editFirstName}
-            onChange={(e) => setEditFirstName(e.target.value)}
+            onChange={(e) => {setEditFirstName(e.target.value); setFormChanged(true)}}
           />
         </div>
 
@@ -224,7 +214,7 @@ const EditProfilePage = (props) => {
             placeholder="Last Name"
             className="inline input input-bordered w-full"
             defaultValue={editLastName}
-            onChange={(e) => setEditLastName(e.target.value)}
+            onChange={(e) => {setEditLastName(e.target.value); setFormChanged(true)}}
           />
         </div>
 
@@ -249,12 +239,12 @@ const EditProfilePage = (props) => {
             className="textarea textarea-bordered w-full"
             placeholder="Bio"
             defaultValue={editBio}
-            onChange={(e) => setEditBio(e.target.value)}
+            onChange={(e) => {setEditBio(e.target.value); formChanged=true}}
           ></textarea>
         </div>
 
         <div className="col-start-10 text-end">
-          <button type="button" className="btn" onClick={handleSubmit}>
+          <button type="button" className="btn" onClick={handleSubmit} disabled={!formChanged}>
             Submit
           </button>
         </div>
