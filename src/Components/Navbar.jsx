@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import AddButton from "./Atoms/AddButton";
 import ModalCreatePost from "./Posts/ModalCreatePost";
 import Image from "next/image";
@@ -17,13 +17,10 @@ function Navbar(props) {
     dispatch(logoutAction());
   };
 
-  const [profilePicture, setProfilePicture] = useState("");
-
   const router = useRouter();
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => {
-    // console.log('selector',state.usersReducer.user)
     return {
       user: state.usersReducer.user,
     };
@@ -31,21 +28,25 @@ function Navbar(props) {
 
   React.useEffect(() => {
     keepLogin();
-  }, []);
+    checkVerified();
+  }, [router.pathname]);
 
   const keepLogin = async () => {
     let token = localStorage.getItem("tokenIdUser");
-    if (token){
+    if (token) {
       try {
-          // backend
-          let res = await axios.get(`${API_URL}/users/login/keep`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          localStorage.setItem("tokenIdUser", res.data.token);
-          // memperbarui reducer
-          dispatch(loginAction(res.data));
+        // backend
+        let res = await axios.get(`${API_URL}/users/login/keep`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        localStorage.setItem("tokenIdUser", res.data.token);
+        // memperbarui reducer
+        dispatch(loginAction(res.data));
+        if (user.verified_status === 1) {
+          router.push("/auth/resend-verification");
+        }
       } catch (error) {
         console.log(error);
         localStorage.removeItem("tokenIdUser");
@@ -53,6 +54,17 @@ function Navbar(props) {
       }
     } else {
       router.push("/auth/login");
+    }
+  };
+
+  // React.useEffect(() => {
+  //   checkVerified();
+  // }, [user]);
+
+  const checkVerified = () => {
+    console.log("check verified")
+    if (user.verified_status === 1) {
+      router.push("/auth/resend-verification");
     }
   };
 
@@ -98,15 +110,15 @@ function Navbar(props) {
               className="input input-bordered"
             />
           </div> */}
-          {/* <Link href="/post/create"> */}
-          <div onClick={() => setVisible(!visible)}>
-            <AddButton />
-            <ModalCreatePost
-              visible={visible}
-              toggleVisible={() => setVisible(!visible)}
-            />
-          </div>
-          {/* </Link> */}
+          {user.verified_status === 0 && (
+            <div onClick={() => setVisible(!visible)}>
+              <AddButton />
+              <ModalCreatePost
+                visible={visible}
+                toggleVisible={() => setVisible(!visible)}
+              />
+            </div>
+          )}
           <div className="dropdown dropdown-end">
             <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
@@ -121,16 +133,6 @@ function Navbar(props) {
               tabIndex="0"
               className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-box w-52"
             >
-              {user.verified_status === 1 && (
-                <>
-                  <li>
-                    <a onClick={handleReverify}>
-                      Not Verified
-                      <p>Re-Send Verification</p>
-                    </a>
-                  </li>
-                </>
-              )}
               <Link href={`/profile?id=${user.id}`}>
                 <li>
                   <a className="justify-between">Profile</a>
