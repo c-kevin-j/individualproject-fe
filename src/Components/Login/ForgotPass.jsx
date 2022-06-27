@@ -5,12 +5,25 @@ import { API_URL } from "../../../helper";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaSpinner } from "react-icons/fa";
-import Swal from "sweetalert2";
+import ModalAlert from "../ModalAlert";
 
 export default function CardForgotPass(props) {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
+  // modal alert visiblity
+  const [visible, setVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    icon:"",
+    title:"",
+    text:"",
+    onClick:null
+  })
+
+  const toggleVisible = () => {
+    setVisible(!visible);
+  };
 
   const handleForgotPassword = async () => {
     try {
@@ -18,18 +31,22 @@ export default function CardForgotPass(props) {
       let res = await Axios.patch(`${API_URL}/users/forgot`, { email });
       if (res.data.success) {
         setIsSubmitting(false);
-        Swal.fire({
-          icon: "success",
-          title: res.data.message,
-          text: "Please check your email to reset your password",
-        });
-        router.push("/auth/login");
+        setModalContent({
+          icon:"success",
+          title:res.data.message,
+          text:"Please check your email to reset your password",
+          onClick:()=>router.push("/auth/login")
+        })
+        toggleVisible();
+        // router.push("/auth/login");
       } else {
         setIsSubmitting(false);
-        Swal.fire({
-          icon: "error",
-          text: res.data.message,
-        });
+        setModalContent({
+          icon:"error",
+          title:"ERROR!",
+          text:res.data.message
+        })
+        toggleVisible();
       }
     } catch (error) {
       console.log(error.message);
@@ -70,6 +87,15 @@ export default function CardForgotPass(props) {
                       <FaSpinner className="icon-spin" />
                     )}
                   </Button>
+
+                  <ModalAlert
+                    visible={visible}
+                    toggleVisible={() => toggleVisible()}
+                    icon={modalContent.icon}
+                    title={modalContent.title}
+                    text={modalContent.text}
+                    onClick={modalContent.onClick}
+                  />
                 </div>
               </div>
             </div>

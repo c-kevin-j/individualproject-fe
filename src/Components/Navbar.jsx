@@ -85,13 +85,15 @@ function Navbar(props) {
         </div>
         <div className="flex-none gap-2">
           {user.verified_status === 0 && (
-            <div onClick={() => setVisible(!visible)}>
-              <AddButton />
+            <>
+              <div onClick={() => setVisible(!visible)}>
+                <AddButton />
+              </div>
               <ModalCreatePost
                 visible={visible}
                 toggleVisible={() => setVisible(!visible)}
               />
-            </div>
+            </>
           )}
           <div className="dropdown dropdown-end">
             <label tabIndex="0" className="btn btn-ghost btn-circle avatar">

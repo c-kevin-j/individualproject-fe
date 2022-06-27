@@ -6,9 +6,11 @@ import Link from "next/link";
 import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContainer";
 import { useRouter } from "next/router";
 import { FaSpinner } from "react-icons/fa";
-import Swal from 'sweetalert2'
+import ModalAlert from "../../Components/ModalAlert";
 
 function RegisterPage(props) {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
@@ -17,7 +19,17 @@ function RegisterPage(props) {
   const [showConfPass, setShowConfPass] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const router = useRouter();
+  // modal alert visiblity
+  const [visible, setVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    icon: "",
+    title: "",
+    text: "",
+    onClick: null,
+  });
+  const toggleVisible = () => {
+    setVisible(!visible);
+  };
 
   React.useEffect(() => {
     let token = localStorage.getItem("tokenIdUser");
@@ -28,66 +40,58 @@ function RegisterPage(props) {
 
   const handleRegister = async () => {
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
       if (username === "" || email === "" || pass === "") {
-        alert("Fill in all form");
-        Swal.fire({
-          icon: 'error',
-          text: 'Please fill in all form',
-        })
+        setModalContent({
+          icon: "Error",
+          title: "Error!",
+          text: "Please fill in all form",
+        });
+        toggleVisible();
       } else {
         if (email.includes("@")) {
-          // ////// axios json server
-          // await Axios.post(`${API_URL}/users`, {
-          //   username,
-          //   email,
-          //   password: pass,
-          //   first_name: "",
-          //   last_name: "",
-          //   profile_picture:
-          //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
-          //   bio: "",
-          //   verified_status: false,
-          //   created_at: "",
-          //   update_at: "",
-          // });
-
           /////// axios backend
           let res = await Axios.post(`${API_URL}/users/register`, {
             username,
             email,
             password: pass,
-            //   profile_picture:
-            //     "https://i.pinimg.com/originals/a6/f3/c5/a6f3c55ace829310723adcb7a468869b.png",
-            //   verified_status: false,
           });
           if (res.data.success) {
-            setIsSubmitting(false)
-            Swal.fire({
-              icon: 'success',
-              title: 'Registration Success',
-              text: 'Please check your email to verify your account',
-            })
-            router.push("/auth/login");
+            setIsSubmitting(false);
+            setModalContent({
+              icon: "success",
+              title: "Success!",
+              text: "Your account is created, please check your email to verify your account",
+              onClick: () => router.push("/auth/login"),
+            });
+            toggleVisible();
           } else {
-            setIsSubmitting(false)
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
+            setIsSubmitting(false);
+            setModalContent({
+              icon: "error",
+              title: "Error!",
               text: res.data.message,
-            })
+            });
+            toggleVisible();
           }
         } else {
-          setIsSubmitting(false)
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
+          setIsSubmitting(false);
+          setModalContent({
+            icon: "error",
+            title: "Error!",
             text: "Your email input is wrong",
-          })
+          });
+          toggleVisible();
         }
       }
     } catch (error) {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
+      setModalContent({
+        icon: "error",
+        title: "Error!",
+        text: "Please try again",
+      });
+      toggleVisible();
       console.log(error);
     }
   };
@@ -160,29 +164,6 @@ function RegisterPage(props) {
                 ></UpdatePasswordContainer>
 
                 <div></div>
-                {/* <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Confirm Password</span>
-                  </label>
-                  <label className="input-group">
-                    <Input
-                      type={showConfirmedPass ? "text" : "password"}
-                      placeholder="Confirm password..."
-                      className="input input-bordered w-full"
-                      onChange={(e) => setConfirmedPass(e.target.value)}
-                    />
-                    <button
-                      className="btn btn-active btn-ghost text-white"
-                      onClick={() => setShowConfirmedPass(!showConfirmedPass)}
-                    >
-                      {showConfirmedPass ? (
-                        <AiFillEyeInvisible className="text-white" />
-                      ) : (
-                        <AiFillEye className="text-white" />
-                      )}
-                    </button>
-                  </label>
-                </div> */}
                 <div className="card-actions justify-end mt-6">
                   <Link href="/auth/login" passHref>
                     <Button>Cancel</Button>
@@ -190,10 +171,24 @@ function RegisterPage(props) {
                   <Button
                     onClick={handleRegister}
                     color="primary"
-                    disabled={!email || !username || !pass || !valid || isSubmitting}
+                    disabled={
+                      !email || !username || !pass || !valid || isSubmitting
+                    }
                   >
-                    {!isSubmitting ? "Register" : <FaSpinner className="icon-spin"/>}
+                    {!isSubmitting ? (
+                      "Register"
+                    ) : (
+                      <FaSpinner className="icon-spin" />
+                    )}
                   </Button>
+                  <ModalAlert
+                    visible={visible}
+                    toggleVisible={() => toggleVisible()}
+                    icon={modalContent.icon}
+                    title={modalContent.title}
+                    text={modalContent.text}
+                    onClick={modalContent.onClick}
+                  />
                 </div>
               </div>
             </div>

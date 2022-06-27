@@ -7,7 +7,7 @@ import axios from "axios";
 import { API_URL } from "../../../helper";
 import { useRouter } from "next/router";
 import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContainer";
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import ModalAlert from "../../Components/ModalAlert";
 
 const EditProfilePage = (props) => {
   const [selectedTab, setSelectedTab] = useState(1);
@@ -28,7 +28,7 @@ const EditProfilePage = (props) => {
   const [editUsername, setEditUsername] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [formChanged, setFormChanged] = useState(false)
+  const [formChanged, setFormChanged] = useState(false);
 
   // selectedFile refers to profile picture
   const [selectedFile, setSelectedFile] = useState(null);
@@ -38,10 +38,19 @@ const EditProfilePage = (props) => {
   const [editBio, setEditBio] = useState("");
 
   const [showPass, setShowPass] = useState(false);
-  const [showNewPass, setShowNewPass] = useState(false);
-  const [showConfirmedPass, setShowConfirmedPass] = useState(false);
-  const [validateForm, setValidateForm] = useState(true);
   const [valid, setValid] = useState(false);
+
+  // modal alert visiblity
+  const [visible, setVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    icon: "",
+    title: "",
+    text: "",
+    onClick: null,
+  });
+  const toggleVisible = () => {
+    setVisible(!visible);
+  };
 
   const selectTab = (tab) => {
     setSelectedTab(tab);
@@ -109,9 +118,15 @@ const EditProfilePage = (props) => {
           }
         );
         if (res) {
-          alert("Update berhasil");
           dispatch(editUser({ user: { ...user, ...formEdit } }));
           localStorage.setItem("tokenIdUser", res.data.token);
+          setModalContent({
+            icon: "success",
+            title: "Success!",
+            text: "Your profile has been updated",
+            onClick: () => router.push(`/profile?id=${user.id}`),
+          });
+          toggleVisible();
         }
       } else if (selectedTab === 2) {
         // res backend
@@ -131,10 +146,15 @@ const EditProfilePage = (props) => {
         );
 
         if (res) {
-          alert("Update berhasil");
           dispatch(editUser({ user: { ...user, editProfilePicture } }));
           localStorage.setItem("tokenIdUser", res.data.token);
-          location.reload()
+          setModalContent({
+            icon: "success",
+            title: "Success!",
+            text: "Your profile picture has been updated",
+            onClick: () => router.push(`/profile?id=${user.id}`),
+          });
+          toggleVisible();
         }
       } else if (selectedTab === 3) {
         // res backend
@@ -151,18 +171,32 @@ const EditProfilePage = (props) => {
             },
           }
         );
+        console.log(res);
         if (res.data.success) {
-          alert(res.data.message);
-          dispatch(editUser({ ...user, password }));
+          setModalContent({
+            icon: "success",
+            title: "Success!",
+            text: "Your password has been updated",
+            onClick: () => router.push(`/profile?id=${user.id}`),
+          });
+          toggleVisible();
         } else {
-          alert(res.data.message);
+          setModalContent({
+            icon: "error",
+            title: "Error!",
+            text: res.data.message,
+          });
+          toggleVisible();
         }
       }
-
-      router.push(`/profile?id=${user.id}`);
     } catch (error) {
       console.log(error);
-      // alert(error.response.data.message);
+      setModalContent({
+        icon: "error",
+        title: "Error!",
+        text: "Please try again",
+      });
+      toggleVisible();
     }
   };
 
@@ -188,7 +222,10 @@ const EditProfilePage = (props) => {
             placeholder="Username"
             className="inline input input-bordered w-full"
             defaultValue={editUsername}
-            onChange={(e) => {setEditUsername(e.target.value); setFormChanged(true)}}
+            onChange={(e) => {
+              setEditUsername(e.target.value);
+              setFormChanged(true);
+            }}
           />
         </div>
 
@@ -201,7 +238,10 @@ const EditProfilePage = (props) => {
             placeholder="First Name"
             className="inline input input-bordered w-full"
             defaultValue={editFirstName}
-            onChange={(e) => {setEditFirstName(e.target.value); setFormChanged(true)}}
+            onChange={(e) => {
+              setEditFirstName(e.target.value);
+              setFormChanged(true);
+            }}
           />
         </div>
 
@@ -214,7 +254,10 @@ const EditProfilePage = (props) => {
             placeholder="Last Name"
             className="inline input input-bordered w-full"
             defaultValue={editLastName}
-            onChange={(e) => {setEditLastName(e.target.value); setFormChanged(true)}}
+            onChange={(e) => {
+              setEditLastName(e.target.value);
+              setFormChanged(true);
+            }}
           />
         </div>
 
@@ -239,12 +282,20 @@ const EditProfilePage = (props) => {
             className="textarea textarea-bordered w-full"
             placeholder="Bio"
             defaultValue={editBio}
-            onChange={(e) => {setEditBio(e.target.value); formChanged=true}}
+            onChange={(e) => {
+              setEditBio(e.target.value);
+              setFormChanged(true);
+            }}
           ></textarea>
         </div>
 
         <div className="col-start-10 text-end">
-          <button type="button" className="btn" onClick={handleSubmit} disabled={!formChanged}>
+          <button
+            type="button"
+            className="btn"
+            onClick={handleSubmit}
+            disabled={!formChanged}
+          >
             Submit
           </button>
         </div>
@@ -287,7 +338,11 @@ const EditProfilePage = (props) => {
           onChange={addImageToPost}
         />
         <div className="">
-          <button className="btn" onClick={handleSubmit} disabled={!pictureChanged}>
+          <button
+            className="btn"
+            onClick={handleSubmit}
+            disabled={!pictureChanged}
+          >
             Submit
           </button>
         </div>
@@ -380,6 +435,14 @@ const EditProfilePage = (props) => {
               Change Password
             </a>
           </div>
+          <ModalAlert
+            visible={visible}
+            toggleVisible={() => toggleVisible()}
+            icon={modalContent.icon}
+            title={modalContent.title}
+            text={modalContent.text}
+            onClick={modalContent.onClick}
+          />
         </div>
         <div className="col-start-2 col-span-10 md:col-start-3 md:col-span-8 pt-5">
           <div className="form-control">{printSetting()}</div>

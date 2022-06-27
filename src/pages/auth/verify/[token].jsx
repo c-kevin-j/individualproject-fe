@@ -4,10 +4,23 @@ import React, { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { API_URL } from "../../../../helper";
-import Swal from 'sweetalert2'
+import ModalAlert from "../../../Components/ModalAlert";
 
 const VerifyAccountPage = () => {
   const router = useRouter();
+
+  // modal alert visiblity
+  const [visible, setVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    icon: "",
+    title: "",
+    text: "",
+    onClick: null,
+  });
+  const toggleVisible = () => {
+    setVisible(!visible);
+  };
+
   const { token } = router.query;
   const { user } = useSelector((state) => {
     return {
@@ -27,16 +40,16 @@ const VerifyAccountPage = () => {
           },
         }
       );
-      // menyimpan ulang data
-      localStorage.setItem("tokenIdUser", res.data.token);
       if (res) {
-        Swal.fire({
-          title: 'Success!',
-          text: 'Your account has been verified',
-          icon: 'success',
-          confirmButtonText: 'Continue'
-        })
-        router.push("/");
+        // menyimpan ulang data
+        localStorage.setItem("tokenIdUser", res.data.token);
+        setModalContent({
+          icon: "success",
+          title: "Success!",
+          text: "Your account has been verified",
+          onClick: () => router.push("/auth/login"),
+        });
+        toggleVisible();
       }
     } catch (error) {
       console.log(error);
@@ -49,8 +62,18 @@ const VerifyAccountPage = () => {
 
   return (
     <div className="px-10 md:px-32 lg:px-48 xl:px-80 pt-5 text-center space-y-4">
-      <div className="flex justify-center"><FaSpinner className="icon-spin" size={56}/></div>
+      <div className="flex justify-center">
+        <FaSpinner className="icon-spin" size={56} />
+      </div>
       <div>Verifying Your Account...</div>
+      <ModalAlert
+        visible={visible}
+        toggleVisible={() => toggleVisible()}
+        icon={modalContent.icon}
+        title={modalContent.title}
+        text={modalContent.text}
+        onClick={modalContent.onClick}
+      />
     </div>
   );
 };
