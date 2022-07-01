@@ -71,8 +71,8 @@ function HomePage(props) {
                   </figure>
                 </Link>
               </div>
-              <div className="flex justify-center py-1 bg-base-200 font-light">
-                <span>{val.caption}</span>
+              <div className="flex justify-center py-1 bg-base-200 font-light break-normal">
+                {val.caption}
               </div>
             </div>
           </div>

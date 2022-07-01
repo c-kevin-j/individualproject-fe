@@ -4,8 +4,10 @@ import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FiMoreVertical } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import ModalEditPost from "../../Components/Posts/ModalEditPost";
+import ModalConfirm from "../../Components/ModalConfirm";
 import { useRouter } from "next/router";
 import { API_URL } from "../../../helper";
+import ModalAlert from "../../Components/ModalAlert";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -48,7 +50,6 @@ function DetailPost(props) {
   const [comment, setComment] = useState("");
   const [commentLength, setCommentLength] = useState(0);
   const [hasMoreComment, setHasMoreComment] = useState(hasMoreComments);
-  const [isLoading, setIsLoading] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   // poster => user who post the picture
   const [poster, setPoster] = useState([]);
@@ -58,6 +59,25 @@ function DetailPost(props) {
   const [isLiked, setIsLiked] = useState(null);
   // to get number of likes
   const [likesList, setLikesList] = useState(likes);
+
+  // to confirm delete
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const toggleConfirm = () => {
+    setOpenConfirm(!openConfirm);
+  };
+
+  // modal alert
+  const [visible, setVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    icon: "",
+    title: "",
+    text: "",
+    onClick: null,
+  });
+  const toggleVisible = () => {
+    setVisible(!visible);
+  };
 
   // to check if user can edit / delete the post
   const getPoster = () => {
@@ -179,22 +199,102 @@ function DetailPost(props) {
     }
   };
 
+  if (confirmDelete) {
+    // try{
+    let token = localStorage.getItem("tokenIdUser");
+
+    axios
+      .delete(`${API_URL}/posts/delete?id=${post.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res)
+        setModalContent({
+          icon: "success",
+          title: "Success!",
+          text: "Your post is deleted",
+          onClick: () => {
+            router.push(`/profile?id=${user.id}`);
+          },
+        });
+        toggleVisible()
+        setConfirmDelete(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setModalContent({
+          icon: "error",
+          title: "Error!",
+          text: "Please try again",
+        });
+        toggleVisible();
+        setConfirmDelete(false);
+      });
+
+    //   let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`, {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     });
+    //     console.log(res)
+    //     if (res) {
+    //       setModalContent({
+    //         icon: "success",
+    //         title: "Success!",
+    //         text: "Your post is deleted",
+    //         onClick: () => {
+    //           router.push(`/profile?id=${user.id}`);
+    //         },
+    //       });
+    //     }
+    //   setConfirmDelete(false);
+    // }
+    // catch (error) {
+    //   console.log(error)
+    //   setModalContent({
+    //     icon: "error",
+    //     title: "Error!",
+    //     text: "Please try again",
+    //   });
+    //   toggleVisible();
+    //   setConfirmDelete(false);
+    // }
+  }
   const handleDelete = () => {
     try {
       let token = localStorage.getItem("tokenIdUser");
-      if (confirm("Yakin ingin hapus?")) {
-        let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (res) {
-          alert(`Delete berhasil`);
-          router.push(`/profile?id=${user.id}`);
-        }
+      console.log(confirmDelete);
+      console.log(confirmDelete);
+
+      if (confirmDelete) {
+        console.log("ok");
+        // let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`, {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
+        // if (res) {
+        //   setModalContent({
+        //     icon: "success",
+        //     title: "Success!",
+        //     text: "Your post is deleted",
+        //     onClick: () => {
+        //       window.location.reload();
+        //     },
+        //   });
+        //   router.push(`/profile?id=${user.id}`);
+        // }
       }
     } catch (error) {
       console.log(error);
+      setModalContent({
+        icon: "error",
+        title: "Error!",
+        text: "Please try again",
+      });
+      toggleVisible();
     }
   };
 
@@ -227,11 +327,11 @@ function DetailPost(props) {
   return (
     <div className="px-10 md:px-32 lg:px-48 xl:px-80">
       <div className="mx-auto">
-        <div className="bg-base-100 shadow-sm rounded-none mx-auto py-1 ">
+        <div className="bg-base-100 shadow-sm rounded-none mx-auto py-1 max-h-screen">
           {/* grid untuk membagi bagian image dan detail */}
           <div className="grid grid-cols-10 bg-base-200 max-h-[80vh] overflow-y-visible">
             {/* image */}
-            <div className="col-span-12 lg:col-span-6 my-2 grid items-center">
+            <div className="col-span-12 my-2 grid items-center">
               {/* image json server */}
               {/* <img
                 className="object-contain w-auto h-full mx-auto "
@@ -246,9 +346,9 @@ function DetailPost(props) {
               />
             </div>
             {/* detail */}
-            <div className="col-span-12 lg:col-span-4 px-2 grid grid-rows lg:grid-rows-6 bg-base-200">
+            <div className="col-span-12 px-2 grid grid-rows bg-base-200">
               <div className="grid grid-cols-10 row-span-1">
-                <div className="avatar col-span-7 lg:col-span-6 flex items-center gap-2">
+                <div className="avatar col-span-7 flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full">
                     {/* image json server */}
                     {/* <img className="mt-0" src={post.profile_picture} /> */}
@@ -263,7 +363,7 @@ function DetailPost(props) {
                 <div className="mx-2 my-auto text-xs text-slate-500 col-span-2 text-right">
                   {createdDate}
                 </div>
-                <div className="my-auto text-sm col-span-1 grid justify-items-end lg:col-span-2">
+                <div className="my-auto text-sm col-span-1 grid justify-items-end">
                   <div className="dropdown dropdown-end ">
                     <label
                       tabIndex="0"
@@ -280,20 +380,10 @@ function DetailPost(props) {
                       {userIsPoster && (
                         <>
                           <li>
-                            <a
-                              // className={!userIsPoster && `hidden`}
-                              onClick={handleDelete}
-                            >
-                              Delete
-                            </a>
+                            <a onClick={() => toggleConfirm()}>Delete</a>
                           </li>
                           <li>
-                            <a
-                              // className={!userIsPoster && `hidden`}
-                              onClick={() => setEditVisible(true)}
-                            >
-                              Edit
-                            </a>
+                            <a onClick={() => setEditVisible(true)}>Edit</a>
                           </li>
                         </>
                       )}
@@ -303,15 +393,17 @@ function DetailPost(props) {
                     </ul>
                   </div>
                 </div>
-                <div className="col-span-10 py-1">{post.caption}</div>
+                <div className="col-span-10 py-1 break-words">
+                  {post.caption}
+                </div>
               </div>
-              <div className="row-auto lg:row-span-5 max-h-[65vh] overflow-y-auto">
+              <div className="row-auto max-h-[65vh] overflow-y-auto">
                 {printComment()}
               </div>
               <div>
                 {hasMoreComment && (
                   <div
-                    className="text-center"
+                    className="text-center cursor-pointer text-secondary-content underline"
                     onClick={() => getMoreComments()}
                   >
                     Load More Comments
@@ -345,9 +437,7 @@ function DetailPost(props) {
                       maxlength="300"
                       wrap="soft"
                     />
-                    <div className="text-right">
-                     {commentLength} / 300
-                    </div>
+                    <div className="text-right">{commentLength} / 300</div>
                   </div>
                   <button
                     type="button"
@@ -367,6 +457,21 @@ function DetailPost(props) {
         toggleVisible={() => setEditVisible(!editVisible)}
         postId={post.id}
         caption={post.caption}
+      />
+      <ModalConfirm
+        visible={openConfirm}
+        toggleVisible={() => toggleConfirm()}
+        title="Warning!"
+        text="Are you sure you want to delete this post?"
+        onClick={() => setConfirmDelete(true)}
+      />
+      <ModalAlert
+        visible={visible}
+        toggleVisible={() => toggleVisible()}
+        icon={modalContent.icon}
+        title={modalContent.title}
+        text={modalContent.text}
+        onClick={modalContent.onClick}
       />
     </div>
   );

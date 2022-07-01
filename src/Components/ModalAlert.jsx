@@ -24,9 +24,18 @@ const ModalAlert = (props) => {
     }
   }
 
+  console.log(props.width)
+  let width
+  if (props.width){
+    width = `w-${props.width}`
+  } else {
+    width = `w-1/2 lg:w-1/3`
+  }
+
+
   return (
     <Modal
-      className="bg-base-100 p-3 w-1/2"
+      className={`bg-base-100 p-3 ${width} z-10`}
       open={props.visible}
       onClickBackdrop={props.toggleVisible}
     >
