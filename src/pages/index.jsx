@@ -4,6 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 import { API_URL } from "../../helper";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { AiFillHeart } from "react-icons/ai";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -27,10 +28,11 @@ function HomePage(props) {
   let { users } = props;
   const [posts, setPosts] = useState(props.posts);
   const [hasMore, setHasMore] = useState(true);
-  const listInnerRef = React.useRef();
+  
 
   const printPosts = () => {
     return posts.map((val, idx) => {
+      let totalLikes = val.likes.length;
       let idxUser = users.findIndex((user) => {
         return user.id === val.user_id;
       });
@@ -39,7 +41,7 @@ function HomePage(props) {
         <>
           <div className="card rounded-md w-128 shadow-md">
             <div className="card-body p-0 gap-0 bg-base-300 ">
-              <Link href={`/profile?id=${users[idxUser].id}`}>
+              <div>
                 <div className="flex bg-base-200">
                   <label className="btn btn-ghost btn-circle avatar mx-2 my-1 flex-none">
                     <Link href={`/profile?id=${users[idxUser].id}`}>
@@ -50,16 +52,18 @@ function HomePage(props) {
                       />
                     </Link>
                   </label>
-                  <Link href={`/profile?id=${users[idxUser].id}`}>
-                    <div className="mx-2 my-auto grow font-bold">
-                      {users[idxUser].username}
-                    </div>
-                  </Link>
+                  <div className="mx-2 my-auto grow font-bold">
+                    <Link href={`/profile?id=${users[idxUser].id}`}>
+                      <span className="cursor-pointer">
+                        {users[idxUser].username}
+                      </span>
+                    </Link>
+                  </div>
                   <div className="mx-2 my-auto text-sm text-slate-500">
                     {createdDate}
                   </div>
                 </div>
-              </Link>
+              </div>
               <div className="min-h-fit">
                 <Link href={`/post?id=${val.id}`}>
                   <figure>
@@ -71,8 +75,16 @@ function HomePage(props) {
                   </figure>
                 </Link>
               </div>
-              <div className="flex justify-center py-1 bg-base-200 font-light break-normal">
-                {val.caption}
+              <div className="bg-base-200 p-2 space-y-1">
+                <div className="flex items-center gap-x-2">
+                  <AiFillHeart className="text-red-600" />{" "}
+                  {totalLikes > 1
+                    ? `${totalLikes} likes`
+                    : `${totalLikes} like`}
+                </div>
+                <div className="text-center font-light break-all">
+                  {val.caption}
+                </div>
               </div>
             </div>
           </div>
@@ -110,12 +122,9 @@ function HomePage(props) {
           >
             {printPosts()}
           </InfiniteScroll>
-        )
-          :
-          <div>
-            Nothing to see here...
-          </div>
-      }
+        ) : (
+          <div>Nothing to see here...</div>
+        )}
       </div>
     </div>
   );
