@@ -8,6 +8,7 @@ import ModalConfirm from "../../Components/ModalConfirm";
 import { useRouter } from "next/router";
 import { API_URL } from "../../../helper";
 import ModalAlert from "../../Components/ModalAlert";
+import Link from "next/link";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -52,7 +53,7 @@ function DetailPost(props) {
   const [hasMoreComment, setHasMoreComment] = useState(hasMoreComments);
   const [editVisible, setEditVisible] = useState(false);
   // poster => user who post the picture
-  const [poster, setPoster] = useState([]);
+  const [poster, setPoster] = useState();
   const [userIsPoster, setUserIsPoster] = useState(false);
 
   // to see if user has already liked the post
@@ -66,6 +67,8 @@ function DetailPost(props) {
   const toggleConfirm = () => {
     setOpenConfirm(!openConfirm);
   };
+
+  const [pageIsLoading, setPageIsLoading] = useState(true);
 
   // modal alert
   const [visible, setVisible] = useState(false);
@@ -84,12 +87,13 @@ function DetailPost(props) {
     let posterIdx = users.findIndex((val) => {
       if (val.id === post.user_id) {
         if (val.id === user.id) {
-          setUserIsPoster((current) => !current);
+          setUserIsPoster((current) => true);
         }
         return val;
       }
     });
     setPoster(users[posterIdx]);
+    console.log(users[posterIdx]);
   };
 
   const getIsLiked = () => {
@@ -107,6 +111,7 @@ function DetailPost(props) {
   React.useEffect(() => {
     getPoster();
     getIsLiked();
+    setPageIsLoading(false);
   }, [user]);
 
   const handleSubmitComment = async () => {
@@ -155,8 +160,14 @@ function DetailPost(props) {
           return val.user_id == user.id;
         });
         // let unlike = await axios.delete(`${API_URL}/likes/${tempArray[likeIndex].id}`)
-        let like = await axios.delete(
-          `${API_URL}/posts/unlike?user_id=${user.id}&post_id=${post.id}`
+        let unlike = await axios.delete(
+          `${API_URL}/posts/unlike?user_id=${user.id}&post_id=${post.id}`,
+
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         tempArray.splice(likeIndex, 1);
         setLikesList(tempArray);
@@ -182,10 +193,12 @@ function DetailPost(props) {
           >
             <div className="avatar col-span-1 self-start justify-self-center">
               <div className="w-7 rounded-full">
-                <img
-                  className="mt-0"
-                  src={`${API_URL}${commenter.profile_picture}`}
-                />
+                <Link href={`/profile?id=${commenter.id}`}>
+                  <img
+                    className="mt-0"
+                    src={`${API_URL}${commenter.profile_picture}`}
+                  />
+                </Link>
               </div>
             </div>
             <div className="col-span-9">
@@ -210,7 +223,6 @@ function DetailPost(props) {
         },
       })
       .then((res) => {
-        console.log(res)
         setModalContent({
           icon: "success",
           title: "Success!",
@@ -219,11 +231,10 @@ function DetailPost(props) {
             router.push(`/profile?id=${user.id}`);
           },
         });
-        toggleVisible()
+        toggleVisible();
         setConfirmDelete(false);
       })
       .catch((error) => {
-        console.log(error);
         setModalContent({
           icon: "error",
           title: "Error!",
@@ -262,41 +273,42 @@ function DetailPost(props) {
     //   setConfirmDelete(false);
     // }
   }
-  const handleDelete = () => {
-    try {
-      let token = localStorage.getItem("tokenIdUser");
-      console.log(confirmDelete);
-      console.log(confirmDelete);
 
-      if (confirmDelete) {
-        console.log("ok");
-        // let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`, {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // });
-        // if (res) {
-        //   setModalContent({
-        //     icon: "success",
-        //     title: "Success!",
-        //     text: "Your post is deleted",
-        //     onClick: () => {
-        //       window.location.reload();
-        //     },
-        //   });
-        //   router.push(`/profile?id=${user.id}`);
-        // }
-      }
-    } catch (error) {
-      console.log(error);
-      setModalContent({
-        icon: "error",
-        title: "Error!",
-        text: "Please try again",
-      });
-      toggleVisible();
-    }
-  };
+  // const handleDelete = () => {
+  //   try {
+  //     let token = localStorage.getItem("tokenIdUser");
+  //     console.log(confirmDelete);
+  //     console.log(confirmDelete);
+
+  //     if (confirmDelete) {
+  //       console.log("ok");
+  //       // let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`, {
+  //       //   headers: {
+  //       //     Authorization: `Bearer ${token}`,
+  //       //   },
+  //       // });
+  //       // if (res) {
+  //       //   setModalContent({
+  //       //     icon: "success",
+  //       //     title: "Success!",
+  //       //     text: "Your post is deleted",
+  //       //     onClick: () => {
+  //       //       window.location.reload();
+  //       //     },
+  //       //   });
+  //       //   router.push(`/profile?id=${user.id}`);
+  //       // }
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     setModalContent({
+  //       icon: "error",
+  //       title: "Error!",
+  //       text: "Please try again",
+  //     });
+  //     toggleVisible();
+  //   }
+  // };
 
   const getMoreComments = async () => {
     try {
@@ -326,132 +338,140 @@ function DetailPost(props) {
 
   return (
     <div className="px-10 md:px-32 lg:px-48 xl:px-80">
-      <div className="mx-auto">
-        <div className="bg-base-100 shadow-sm rounded-none mx-auto py-1 max-h-screen">
-          {/* grid untuk membagi bagian image dan detail */}
-          <div className="grid grid-cols-10 bg-base-200 max-h-[80vh] overflow-y-visible">
-            {/* image */}
-            <div className="col-span-12 my-2 grid items-center">
-              {/* image json server */}
-              {/* <img
+      {!pageIsLoading ? (
+        <div className="mx-auto">
+          <div className="bg-base-100 shadow-sm rounded-none mx-auto pt-1 max-h-screen">
+            {/* grid untuk membagi bagian image dan detail */}
+            <div className="grid grid-cols-10 bg-base-200 max-h-[80vh] overflow-y-visible">
+              {/* image */}
+              <div className="col-span-12 my-2 grid items-center">
+                {/* image json server */}
+                {/* <img
                 className="object-contain w-auto h-full mx-auto "
                 src={post.image}
                 alt="Movie"
               /> */}
-              {/* image backend */}
-              <img
-                className="object-contain w-auto h-full mx-auto "
-                src={`${API_URL}${post.image}`}
-                alt={`POST-${post.username}-${post.id}`}
-              />
-            </div>
-            {/* detail */}
-            <div className="col-span-12 px-2 grid grid-rows bg-base-200">
-              <div className="grid grid-cols-10 row-span-1">
-                <div className="avatar col-span-7 flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full">
-                    {/* image json server */}
-                    {/* <img className="mt-0" src={post.profile_picture} /> */}
-                    {/* image backend */}
-                    <img
-                      className="mt-0"
-                      src={`${API_URL}${post.profile_picture}`}
-                    />
-                  </div>
-                  {post.username}
-                </div>
-                <div className="mx-2 my-auto text-xs text-slate-500 col-span-2 text-right">
-                  {createdDate}
-                </div>
-                <div className="my-auto text-sm col-span-1 grid justify-items-end">
-                  <div className="dropdown dropdown-end ">
-                    <label
-                      tabIndex="0"
-                      className="w-10 btn rounded-sm bg-inherit border-transparent hover:bg-base-200 hover:border-transparent"
-                    >
-                      <div className="w-10 rounded-full text-center">
-                        <FiMoreVertical />
-                      </div>
-                    </label>
-                    <ul
-                      tabIndex="0"
-                      className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 w-52"
-                    >
-                      {userIsPoster && (
-                        <>
-                          <li>
-                            <a onClick={() => toggleConfirm()}>Delete</a>
-                          </li>
-                          <li>
-                            <a onClick={() => setEditVisible(true)}>Edit</a>
-                          </li>
-                        </>
-                      )}
-                      <li>
-                        <a>Share</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="col-span-10 py-1 break-words">
-                  {post.caption}
-                </div>
+                {/* image backend */}
+                <img
+                  className="object-contain w-auto h-full mx-auto "
+                  src={`${API_URL}${post.image}`}
+                  alt={`POST-${post.username}-${post.id}`}
+                />
               </div>
-              <div className="row-auto max-h-[65vh] overflow-y-auto">
-                {printComment()}
-              </div>
-              <div>
-                {hasMoreComment && (
-                  <div
-                    className="text-center cursor-pointer text-secondary-content underline"
-                    onClick={() => getMoreComments()}
-                  >
-                    Load More Comments
+              {/* detail */}
+              <div className="col-span-12 px-2 grid grid-rows bg-base-200">
+                <div className="grid grid-cols-10 row-span-1 border-b-2">
+                  <div className="avatar col-span-7 flex items-center gap-2">
+                    <div className="w-10 h-10 rounded-full">
+                      {/* image json server */}
+                      {/* <img className="mt-0" src={post.profile_picture} /> */}
+                      {/* image backend */}
+                      <Link href={`/profile?id=${poster.id}`}>
+                        <img
+                          className="mt-0 cursor-pointer"
+                          src={`${API_URL}${post.profile_picture}`}
+                        />
+                      </Link>
+                    </div>
+                    <Link href={`/profile?id=${poster.id}`}>
+                      <span className="font-bold">{post.username}</span>
+                    </Link>
                   </div>
-                )}
-              </div>
-              <div className="row-span-1">
-                <div className="flex">
-                  <div className="basis-5 align-middle">
-                    {isLiked === false ? (
-                      <AiOutlineHeart
-                        className="cursor-pointer"
-                        onClick={() => handleLikeButton("like")}
-                      />
-                    ) : (
-                      <AiFillHeart
-                        className="text-red-600 cursor-pointer"
-                        onClick={() => handleLikeButton("unlike")}
-                      />
-                    )}
+                  <div className="mx-2 my-auto text-xs text-slate-500 col-span-2 text-right">
+                    {createdDate}
                   </div>
-                  <div>{likesList.length} Likes</div>
+                  <div className="my-auto text-sm col-span-1 grid justify-items-end">
+                    <div className="dropdown dropdown-end ">
+                      <label
+                        tabIndex="0"
+                        className="w-10 btn rounded-sm bg-inherit border-transparent hover:bg-base-200 hover:border-transparent"
+                      >
+                        <div className="w-10 rounded-full text-center">
+                          <FiMoreVertical />
+                        </div>
+                      </label>
+                      <ul
+                        tabIndex="0"
+                        className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 w-52"
+                      >
+                        {userIsPoster && (
+                          <>
+                            <li>
+                              <a onClick={() => toggleConfirm()}>Delete</a>
+                            </li>
+                            <li>
+                              <a onClick={() => setEditVisible(true)}>Edit</a>
+                            </li>
+                          </>
+                        )}
+                        <li>
+                          <a>Share</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="col-span-10 py-1 break-words">
+                    {post.caption}
+                  </div>
+                </div>
+                <div className="row-auto max-h-[65vh] overflow-y-auto">
+                  {printComment()}
                 </div>
                 <div>
-                  <div>
-                    <textarea
-                      className="textarea textarea-bordered w-full rounded-sm"
-                      placeholder="Add comment..."
-                      value={comment}
-                      onChange={(e) => hanldeInputComment(e)}
-                      maxlength="300"
-                      wrap="soft"
-                    />
-                    <div className="text-right">{commentLength} / 300</div>
+                  {hasMoreComment && (
+                    <div
+                      className="text-center cursor-pointer text-secondary-content underline"
+                      onClick={() => getMoreComments()}
+                    >
+                      Load More Comments
+                    </div>
+                  )}
+                </div>
+                <div className="row-span-1">
+                  <div className="flex">
+                    <div className="basis-5 align-middle">
+                      {isLiked === false ? (
+                        <AiOutlineHeart
+                          className="cursor-pointer"
+                          onClick={() => handleLikeButton("like")}
+                        />
+                      ) : (
+                        <AiFillHeart
+                          className="text-red-600 cursor-pointer"
+                          onClick={() => handleLikeButton("unlike")}
+                        />
+                      )}
+                    </div>
+                    <div>{likesList.length} Likes</div>
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-sm rounded-sm"
-                    onClick={handleSubmitComment}
-                  >
-                    Submit
-                  </button>
+                  <div>
+                    <div>
+                      <textarea
+                        className="textarea textarea-bordered w-full rounded-sm"
+                        placeholder="Add comment..."
+                        value={comment}
+                        onChange={(e) => hanldeInputComment(e)}
+                        maxLength="300"
+                        wrap="soft"
+                      />
+                      <div className="text-right">{commentLength} / 300</div>
+                    </div>
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        className="btn btn-sm rounded-sm"
+                        onClick={handleSubmitComment}
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : null}
       <ModalEditPost
         visible={editVisible}
         toggleVisible={() => setEditVisible(!editVisible)}
