@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { editUser, loginAction } from "../../Redux/Actions/userAction";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { FaUserCircle, FaLock } from "react-icons/fa";
+import { FaUserCircle, FaLock, FaImage } from "react-icons/fa";
 import axios from "axios";
 import { API_URL } from "../../../helper";
 import { useRouter } from "next/router";
@@ -25,6 +25,7 @@ const EditProfilePage = (props) => {
 
   const [editFirstName, setEditFirstName] = useState("");
   const [editLastName, setEditLastName] = useState("");
+  const oldUsername = user.username;
   const [editUsername, setEditUsername] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -89,6 +90,7 @@ const EditProfilePage = (props) => {
     setEditFirstName(user.first_name);
     setEditLastName(user.last_name);
     setEditUsername(user.username);
+    oldUsername = user.username;
     setEditBio(user.bio);
     setSelectedFile(user.profile_picture);
   };
@@ -109,6 +111,7 @@ const EditProfilePage = (props) => {
           `${API_URL}/users/edit`,
           {
             id: user.id,
+            oldUsername,
             ...formEdit,
           },
           {
@@ -117,7 +120,7 @@ const EditProfilePage = (props) => {
             },
           }
         );
-        if (res) {
+        if (res.data.success) {
           dispatch(editUser({ user: { ...user, ...formEdit } }));
           localStorage.setItem("tokenIdUser", res.data.token);
           setModalContent({
@@ -125,6 +128,13 @@ const EditProfilePage = (props) => {
             title: "Success!",
             text: "Your profile has been updated",
             onClick: () => router.push(`/profile?id=${user.id}`),
+          });
+          toggleVisible();
+        } else {
+          setModalContent({
+            icon: "error",
+            title: "Error!",
+            text: "Username is already used",
           });
           toggleVisible();
         }
@@ -171,7 +181,6 @@ const EditProfilePage = (props) => {
             },
           }
         );
-        console.log(res);
         if (res.data.success) {
           setModalContent({
             icon: "success",
@@ -405,35 +414,41 @@ const EditProfilePage = (props) => {
   return (
     <>
       <div className="grid grid-cols-12 pt-4">
-        <div className="justify-center col-start-2 col-span-10 md:col-start-3 md:col-span-8">
-          <div className="tabs my-3 border-b-2 grid grid-cols-3 justify-items-center">
-            <a
-              className={`text-base tab ${
-                selectedTab === 1 && "tab-active text-secondary font-bold"
-              } gap-1`}
-              onClick={() => selectTab(1)}
-            >
-              <FaUserCircle />
-              Edit Profile
-            </a>
-            <a
-              className={`text-base tab ${
-                selectedTab === 2 && "tab-active text-secondary font-bold"
-              } gap-1`}
-              onClick={() => selectTab(2)}
-            >
-              <FaUserCircle />
-              Profile Picture
-            </a>
-            <a
-              className={`text-base tab ${
-                selectedTab === 3 && "tab-active text-secondary font-bold"
-              } gap-1`}
-              onClick={() => selectTab(3)}
-            >
-              <FaLock />
-              Change Password
-            </a>
+        <div className="justify-center col-start-2 col-span-10 md:col-start-3 md:col-span-8 border-b-2 h-20 sm:h-fit">
+          <div className="tabs my-3  grid grid-cols-3 justify-items-center">
+            <div>
+              <a
+                className={`text-base tab grid justify-items-center ${
+                  selectedTab === 1 && "tab-active text-secondary font-bold"
+                } gap-1`}
+                onClick={() => selectTab(1)}
+              >
+                <FaUserCircle />
+                Edit Profile
+              </a>
+            </div>
+            <div>
+              <a
+                className={`text-base tab grid justify-items-center ${
+                  selectedTab === 2 && "tab-active text-secondary font-bold"
+                } gap-1`}
+                onClick={() => selectTab(2)}
+              >
+                <FaImage />
+                Profile Picture
+              </a>
+            </div>
+            <div>
+              <a
+                className={`text-base tab grid justify-items-center ${
+                  selectedTab === 3 && "tab-active text-secondary font-bold"
+                } gap-1`}
+                onClick={() => selectTab(3)}
+              >
+                <FaLock />
+                Password
+              </a>
+            </div>
           </div>
           <ModalAlert
             visible={visible}
