@@ -11,6 +11,7 @@ const VerifyAccountPage = () => {
 
   // modal alert visiblity
   const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [modalContent, setModalContent] = useState({
     icon: "",
     title: "",
@@ -28,9 +29,17 @@ const VerifyAccountPage = () => {
     };
   });
 
+  const checkVerifiedStatus = () => {
+    if (user.verified_status === 0 || !user){
+      router.push("/")
+    } else {
+      handleVerify();
+    }
+  }
+
   const handleVerify = async () => {
     try {
-      console.log(user);
+      
       let res = await axios.patch(
         `${API_URL}/users/verify`,
         {},
@@ -57,15 +66,19 @@ const VerifyAccountPage = () => {
   };
 
   React.useEffect(() => {
-    handleVerify();
-  }, [token]);
+    checkVerifiedStatus();
+  }, [user]);
 
   return (
     <div className="px-10 md:px-32 lg:px-48 xl:px-80 pt-5 text-center space-y-4">
-      <div className="flex justify-center">
-        <FaSpinner className="icon-spin" size={56} />
-      </div>
-      <div>Verifying Your Account...</div>
+      {!isLoading ? (
+        <>
+          <div className="flex justify-center">
+            <FaSpinner className="icon-spin" size={56} />
+          </div>
+          <div>Verifying Your Account...</div>
+        </>
+      ) : null}
       <ModalAlert
         visible={visible}
         toggleVisible={() => toggleVisible()}
