@@ -24,7 +24,6 @@ const ModalAlert = (props) => {
     }
   }
 
-  console.log(props.width)
   let width
   if (props.width){
     width = `w-${props.width}`

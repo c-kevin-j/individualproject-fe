@@ -17,8 +17,6 @@ export default function CardResetPass(props) {
 
   const handleSubmit = async () => {
     try {
-      console.log(pass)
-      console.log(props.token)
       let res = await Axios.patch(`${API_URL}/users/reset/password`, {pass}, {
         headers: {
           Authorization: `Bearer ${props.token}`,

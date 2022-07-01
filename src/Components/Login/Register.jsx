@@ -35,9 +35,6 @@ function CardRegister(props) {
           let minute = `00${setDate.getMinutes()}`.slice(-2);
           let second = `00${setDate.getSeconds()}`.slice(-2);
           let millisecond = `000${setDate.getMilliseconds()}`.slice(-3);
-          console.log(
-            `${year}-${month}-${date} ${hour}:${minute}:${second}.${millisecond}`
-          );
           alert("Registration success");
           await Axios.post(`${API_URL}/users`, {
             username,
