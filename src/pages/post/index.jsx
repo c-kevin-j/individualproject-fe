@@ -89,8 +89,7 @@ function DetailPost(props) {
   const toggleShare = () => {
     setShareModal(!shareModal);
   };
-  const shareUrl = `https://b98b-202-80-218-63.ap.ngrok.io
-  ${router.asPath}`;
+  const shareUrl = `https://individualproject-fe.vercel.app${router.asPath}`;
 
   // to check if user can edit / delete the post
   const getPoster = () => {
