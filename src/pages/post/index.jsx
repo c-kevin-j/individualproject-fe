@@ -12,7 +12,7 @@ import ModalAlert from "../../Components/ModalAlert";
 import Link from "next/link";
 import MetaTag from "../../Components/HeadMeta";
 
-export const getServerSideProps = async (ctx) => {
+export const getStaticProps = async (ctx) => {
   try {
     // props backend
     let resPost = await axios.get(

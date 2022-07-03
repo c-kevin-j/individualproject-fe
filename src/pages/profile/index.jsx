@@ -9,7 +9,7 @@ import Link from "next/link";
 import AddButton from "../../Components/Atoms/AddButton";
 import ModalCreatePost from "../../Components/Posts/ModalCreatePost";
 
-export const getServerSideProps = async (ctx) => {
+export const getStaticProps = async (ctx) => {
   try {
     // // props json server
     // let resUser = await axios.get(`${API_URL}/users?id=${ctx.query.id}`);

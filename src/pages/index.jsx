@@ -6,7 +6,7 @@ import { API_URL } from "../../helper";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { AiFillHeart } from "react-icons/ai";
 
-export const getServerSideProps = async (ctx) => {
+export const getStaticProps = async (ctx) => {
   try {
     let resUsers = await axios.get(`${API_URL}/users/get`);
     let resPosts = await axios.get(`${API_URL}/posts/get/0`);
