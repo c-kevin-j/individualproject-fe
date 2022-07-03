@@ -33,6 +33,7 @@ function Navbar(props) {
 
   const keepLogin = async () => {
     let token = localStorage.getItem("tokenIdUser");
+    console.log(token)
     if (token) {
       try {
         // backend
