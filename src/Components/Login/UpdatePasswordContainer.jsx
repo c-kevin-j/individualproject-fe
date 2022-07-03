@@ -96,7 +96,7 @@ const UpdatePasswordContainer = (props) => {
             type={showPass ? "text" : "password"}
             placeholder="Input password..."
             value={passwordOne}
-            className="input input-bordered w-full"
+            className="input input-bordered w-full bg-white"
             onChange={(e) => setPasswordOne(e.target.value)}
             onKeyUp={validatePassword}
           />
@@ -122,7 +122,7 @@ const UpdatePasswordContainer = (props) => {
             <Input
               type={showConfirmedPass ? "text" : "password"}
               placeholder="Confirm password..."
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-white"
               value={passwordTwo}
               onChange={(e) => setPasswordTwo(e.target.value)}
               onKeyUp={validatePassword}

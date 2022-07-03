@@ -24,7 +24,7 @@ const VerifyAccountPage = () => {
       <div className="px-10 md:px-32 lg:px-48 xl:px-80 pt-5 text-center space-y-6">
         <div>Your account is not verified</div>
         <div>
-          <button type="button" className="btn" onClick={handleReverify}>
+          <button type="button" className="btn btn-secondary" onClick={handleReverify}>
             Re-send Verification
           </button>
         </div>

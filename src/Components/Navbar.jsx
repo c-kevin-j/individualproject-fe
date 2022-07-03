@@ -68,7 +68,9 @@ function Navbar(props) {
   };
 
   return (
-    <div className="px-10 md:px-32 lg:px-48 xl:px-80 bg-base-300 sticky top-0 left-0 right-0 z-10 border-b-4 border-double border-neutral-100">
+    <div>
+
+    <div className="px-10 md:px-32 lg:px-48 xl:px-80 bg-primary sticky top-0 left-0 right-0 z-10 border-b-4 border-double border-neutral-100">
       <div className="navbar">
         <div className="flex-1">
           <Link href="/">
@@ -79,7 +81,7 @@ function Navbar(props) {
                 height="40px"
                 alt="logo"
               />
-              <a className="normal-case text-xl">Boo</a>
+              <a className="normal-case text-3xl font-bold">Kartoffel</a>
             </div>
           </Link>
         </div>
@@ -103,7 +105,7 @@ function Navbar(props) {
             </label>
             <ul
               tabIndex="0"
-              className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-box w-52"
+              className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-secondary rounded-box w-52"
             >
               {user.verified_status === 0 && (
                 <>
@@ -128,6 +130,7 @@ function Navbar(props) {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

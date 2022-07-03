@@ -28,7 +28,7 @@ function HomePage(props) {
   let { users } = props;
   const [posts, setPosts] = useState(props.posts);
   const [hasMore, setHasMore] = useState(true);
-  
+  console.log(posts)
 
   const printPosts = () => {
     return posts.map((val, idx) => {
@@ -42,7 +42,7 @@ function HomePage(props) {
           <div className="card rounded-md w-128 shadow-md">
             <div className="card-body p-0 gap-0 bg-base-300 ">
               <div>
-                <div className="flex bg-base-200">
+                <div className="flex bg-accent">
                   <label className="btn btn-ghost btn-circle avatar mx-2 my-1 flex-none">
                     <Link href={`/profile?id=${users[idxUser].id}`}>
                       <img
@@ -59,9 +59,9 @@ function HomePage(props) {
                       </span>
                     </Link>
                   </div>
-                  <div className="mx-2 my-auto text-sm text-slate-500">
+                  {/* <div className="mx-2 my-auto text-sm text-slate-500 text-accent-content">
                     {createdDate}
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="min-h-fit">
@@ -75,14 +75,21 @@ function HomePage(props) {
                   </figure>
                 </Link>
               </div>
-              <div className="bg-base-200 p-2 space-y-1">
-                <div className="flex items-center gap-x-2">
+              <div className="bg-accent p-2 space-y-1">
+                <div className="grid grid-cols-3">
+                  <div className="col-span-1 flex items-center gap-x-2">
                   <AiFillHeart className="text-red-600" />{" "}
                   {totalLikes > 1
                     ? `${totalLikes} likes`
                     : `${totalLikes} like`}
                 </div>
-                <div className="text-center font-light break-all">
+                    {/* TODO: ubah jadi ke kanan */}
+                  <div className="col-span-2 mx-2 my-auto text-[11px] italic text-right text-accent-content">
+                    {createdDate}
+                  </div>
+
+                </div>
+                <div className="font-light break-all ml-6">
                   {val.caption}
                 </div>
               </div>
@@ -111,7 +118,7 @@ function HomePage(props) {
   };
 
   return (
-    <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-5">
+    <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-2">
       <div className="grid justify-items-center">
         {posts.length > 0 ? (
           <InfiniteScroll

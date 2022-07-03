@@ -48,7 +48,7 @@ const ModalAlert = (props) => {
       <div className="text-center pt-2">
         <button
           type="button"
-          className="btn btn-sm w-full rounded"
+          className="btn btn-sm btn-secondary w-full rounded"
           onClick={handleClick}
         >
           OK

@@ -10,11 +10,11 @@ function EditPage (props) {
           Input your email
       </div>
       <div className="basis-1">
-        <input type="text" className="input input-bordered" placeholder="Input Email..."></input>
+        <input type="text" className="input input-bordered bg-white" placeholder="Input Email..."></input>
       </div>
     </div>
     <div>
-      <button type="button" className="btn btn-sm">
+      <button type="button" className="btn btn-sm btn-secondary">
         Reset
       </button>
     </div>

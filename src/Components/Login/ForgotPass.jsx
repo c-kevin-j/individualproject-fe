@@ -68,7 +68,7 @@ export default function CardForgotPass(props) {
                   <Input
                     type="text"
                     placeholder="Input Email..."
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-white"
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>

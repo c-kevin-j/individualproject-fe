@@ -4,11 +4,13 @@ import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FiMoreVertical } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import ModalEditPost from "../../Components/Posts/ModalEditPost";
+import ModalSharePost from "../../Components/Posts/ModalSharePost";
 import ModalConfirm from "../../Components/ModalConfirm";
 import { useRouter } from "next/router";
 import { API_URL } from "../../../helper";
 import ModalAlert from "../../Components/ModalAlert";
 import Link from "next/link";
+import MetaTag from "../../Components/HeadMeta";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -81,6 +83,14 @@ function DetailPost(props) {
   const toggleVisible = () => {
     setVisible(!visible);
   };
+
+  // share modal
+  const [shareModal, setShareModal] = useState(false);
+  const toggleShare = () => {
+    setShareModal(!shareModal);
+  };
+  const shareUrl = `https://b98b-202-80-218-63.ap.ngrok.io
+  ${router.asPath}`;
 
   // to check if user can edit / delete the post
   const getPoster = () => {
@@ -189,7 +199,7 @@ function DetailPost(props) {
         return (
           <div
             key={`${value.id}-${commenter.id}`}
-            className="grid grid-cols-10 items-start p-2 gap-2"
+            className="grid grid-cols-10 items-start p-2 gap-2 "
           >
             <div className="avatar col-span-1 self-start justify-self-center">
               <div className="w-7 rounded-full">
@@ -334,15 +344,18 @@ function DetailPost(props) {
     setCommentLength(input.length);
   };
 
-  const handleShare = () => {};
-
   return (
     <div className="px-10 md:px-32 lg:px-48 xl:px-80">
       {!pageIsLoading ? (
         <div className="mx-auto">
+          <MetaTag
+            title="Kartoffel"
+            description={`Look at this image by ${post.username}`}
+            image={`${API_URL}${post.image}`}
+          />
           <div className="bg-base-100 shadow-sm rounded-none mx-auto pt-1 max-h-screen">
             {/* grid untuk membagi bagian image dan detail */}
-            <div className="grid grid-cols-10 bg-base-200 max-h-[80vh] overflow-y-visible">
+            <div className="grid grid-cols-10 overflow-y-visible bg-accent">
               {/* image */}
               <div className="col-span-12 my-2 grid items-center">
                 {/* image json server */}
@@ -359,8 +372,33 @@ function DetailPost(props) {
                 />
               </div>
               {/* detail */}
-              <div className="col-span-12 px-2 grid grid-rows bg-base-200">
-                <div className="grid grid-cols-10 row-span-1 border-b-2">
+              <div className="col-span-12 px-2 grid grid-rows bg-accent">
+                <div className="grid grid-cols-10 row-span-1 ">
+                  <div className="col-span-10  items-center grid grid-cols-2 border-b-2 border-accent-content">
+                    <div className="col-span-1 flex items-center">
+                      <div className="basis-5 align-middle">
+                        {isLiked === false ? (
+                          <AiOutlineHeart
+                            className="cursor-pointer"
+                            onClick={() => handleLikeButton("like")}
+                          />
+                        ) : (
+                          <AiFillHeart
+                            className="text-red-600 cursor-pointer"
+                            onClick={() => handleLikeButton("unlike")}
+                          />
+                        )}
+                      </div>
+                      <div>
+                        {likesList.length > 1
+                          ? `${likesList.length} Likes`
+                          : `${likesList.length} Like`}
+                      </div>
+                    </div>
+                    <div className="mx-2 my-auto text-[11px] italic text-accent-content col-span-1 text-right">
+                      {createdDate}
+                    </div>
+                  </div>
                   <div className="avatar col-span-7 flex items-center gap-2">
                     <div className="w-10 h-10 rounded-full">
                       {/* image json server */}
@@ -377,22 +415,19 @@ function DetailPost(props) {
                       <span className="font-bold">{post.username}</span>
                     </Link>
                   </div>
-                  <div className="mx-2 my-auto text-xs text-slate-500 col-span-2 text-right">
-                    {createdDate}
-                  </div>
-                  <div className="my-auto text-sm col-span-1 grid justify-items-end">
+                  <div className="my-auto text-sm col-span-3 grid justify-items-end">
                     <div className="dropdown dropdown-end ">
                       <label
                         tabIndex="0"
-                        className="w-10 btn rounded-sm bg-inherit border-transparent hover:bg-base-200 hover:border-transparent"
+                        className="w-10 btn rounded-lg bg-inherit border-transparent hover:bg-accent-focus hover:border-transparent"
                       >
                         <div className="w-10 rounded-full text-center">
-                          <FiMoreVertical />
+                          <FiMoreVertical className="text-secondary-content" size={28}/>
                         </div>
                       </label>
                       <ul
                         tabIndex="0"
-                        className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 w-52"
+                        className="mt-3 p-2 shadow menu menu-compact rounded dropdown-content bg-accent-focus w-52"
                       >
                         {userIsPoster && (
                           <>
@@ -405,16 +440,16 @@ function DetailPost(props) {
                           </>
                         )}
                         <li>
-                          <a>Share</a>
+                          <a onClick={() => setShareModal(true)}>Share</a>
                         </li>
                       </ul>
                     </div>
                   </div>
-                  <div className="col-span-10 py-1 break-words">
+                  <div className="col-span-10 pl-6 pb-2 break-words">
                     {post.caption}
                   </div>
                 </div>
-                <div className="row-auto max-h-[65vh] overflow-y-auto">
+                <div className="row-auto max-h-[65vh] overflow-y-auto ">
                   {printComment()}
                 </div>
                 <div>
@@ -428,7 +463,7 @@ function DetailPost(props) {
                   )}
                 </div>
                 <div className="row-span-1">
-                  <div className="flex">
+                  {/* <div className="flex my-2 items-center">
                     <div className="basis-5 align-middle">
                       {isLiked === false ? (
                         <AiOutlineHeart
@@ -443,11 +478,11 @@ function DetailPost(props) {
                       )}
                     </div>
                     <div>{likesList.length} Likes</div>
-                  </div>
+                  </div> */}
                   <div>
                     <div>
                       <textarea
-                        className="textarea textarea-bordered w-full rounded-sm"
+                        className="textarea textarea-bordered w-full rounded-sm bg-white"
                         placeholder="Add comment..."
                         value={comment}
                         onChange={(e) => hanldeInputComment(e)}
@@ -492,6 +527,11 @@ function DetailPost(props) {
         title={modalContent.title}
         text={modalContent.text}
         onClick={modalContent.onClick}
+      />
+      <ModalSharePost
+        visible={shareModal}
+        toggleVisible={() => toggleShare()}
+        shareUrl={shareUrl}
       />
     </div>
   );

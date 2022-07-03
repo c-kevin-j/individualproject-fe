@@ -85,7 +85,7 @@ const ModalEditPost = (props) => {
           <textarea
             type="text"
             placeholder="Insert caption"
-            className="input input-bordered w-full rounded h-[25vh]"
+            className="input input-bordered w-full rounded h-[25vh] bg-white"
             defaultValue={caption}
             onChange={(e) => setCaption(e.target.value)}
           />
@@ -93,7 +93,7 @@ const ModalEditPost = (props) => {
         <div className="text-right space-x-3">
           <button
             type="button"
-            className="btn btn-md btn-primary"
+            className="btn btn-md btn-secondary"
             onClick={handleSave}
           >
             Save

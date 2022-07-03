@@ -50,7 +50,7 @@ const ModalConfirm = (props) => {
       <div className="grid grid-cols-2 pt-2 gap-x-3">
         <button
           type="button"
-          className="btn btn-sm col-span-1 rounded btn-primary"
+          className="btn btn-sm col-span-1 rounded btn-secondary"
           onClick={handleClick}
         >
           Yes

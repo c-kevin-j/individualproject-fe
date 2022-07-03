@@ -117,7 +117,7 @@ function RegisterPage(props) {
                   <Input
                     type="text"
                     placeholder="Input Email..."
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-white"
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
@@ -128,7 +128,7 @@ function RegisterPage(props) {
                   <Input
                     type="text"
                     placeholder="Input Username..."
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-white"
                     onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>

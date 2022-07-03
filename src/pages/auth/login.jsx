@@ -12,6 +12,7 @@ import { API_URL } from "../../../helper.js";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../../Redux/Actions/userAction.js";
 import ModalAlert from "../../Components/ModalAlert.jsx";
+import MetaTag from "../../Components/HeadMeta.jsx";
 
 // import styles from '../styles/Home.module.css'
 
@@ -90,19 +91,30 @@ function LandingPage() {
     <div className="md:container md:mx-auto">
       <div className="grid justify-items-center mt-8">
         <div className="grid content-start mt-8">
+        <MetaTag
+        title="Kartoffel"
+        description="Look at this image"
+        image="https://apollo-singapore.akamaized.net/v1/files/3f7mz5xjs42v2-ID/image;s=850x0"
+      />
           <article className="prose">
             <h1>Welcome, you right there!</h1>
             <br></br>
           </article>
         </div>
-        <div className="card md:card-side bg-base-100 shadow-xl bg-base-200">
+        <div className="card md:card-side bg-primary shadow-xl">
           <figure>
-            <img
+            {/* <img
               src="https://api.lorem.space/image/album?w=400&h=400"
               alt="Album"
-            />
+            /> */}
+            <Image
+                src={require("../../../assets/Doge.png")}
+                width="400px"
+                height="400px"
+                alt="logo"
+              />
           </figure>
-          <div className="card-body">
+          <div className="card-body ">
             <h2 className="card-title">Sign in</h2>
             {/* <p>Sign up or die</p> */}
             <div className="form-control w-full max-w-md">
@@ -112,7 +124,7 @@ function LandingPage() {
               <input
                 type="text"
                 placeholder="Insert Email/Username..."
-                className="input input-bordered w-full max-w-xs"
+                className="input input-bordered w-full max-w-xs bg-white"
                 onChange={(e) => handleInput(e.target.value, "emailUsername")}
               />
             </div>
@@ -124,7 +136,7 @@ function LandingPage() {
                 <input
                   type={showPass ? "text" : "password"}
                   placeholder="Insert Password..."
-                  className="input input-bordered w-full max-w-xs"
+                  className="input input-bordered w-full max-w-xs bg-white"
                   onChange={(e) => handleInput(e.target.value, "password")}
                 />
                 <button
@@ -146,17 +158,17 @@ function LandingPage() {
             <div className="grid grid-cols-2 place-items-stretch">
               <div className="mt-4">
                 <Link href="/auth/forgot" passHref>
-                  <a className="link link-accent">Forgot password?</a>
+                  <a className="link text-accent-focus">Forgot password?</a>
                 </Link>
                 <br></br>
                 <Link href="/auth/register" passHref>
-                  <a className="link link-secondary">Register</a>
+                  <a className="link text-secondary-content">Register</a>
                 </Link>
               </div>
               <div className="mt-4">
                 <div className="card-actions justify-end">
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-secondary"
                     onClick={handleLogin}
                     disabled={!inputForm.emailUsername || !inputForm.password}
                   >

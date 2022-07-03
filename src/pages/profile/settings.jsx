@@ -229,7 +229,7 @@ const EditProfilePage = (props) => {
           <input
             type="text"
             placeholder="Username"
-            className="inline input input-bordered w-full"
+            className="inline input input-bordered w-full bg-white"
             defaultValue={editUsername}
             onChange={(e) => {
               setEditUsername(e.target.value);
@@ -245,7 +245,7 @@ const EditProfilePage = (props) => {
           <input
             type="text"
             placeholder="First Name"
-            className="inline input input-bordered w-full"
+            className="inline input input-bordered w-full bg-white"
             defaultValue={editFirstName}
             onChange={(e) => {
               setEditFirstName(e.target.value);
@@ -261,7 +261,7 @@ const EditProfilePage = (props) => {
           <input
             type="text"
             placeholder="Last Name"
-            className="inline input input-bordered w-full"
+            className="inline input input-bordered w-full bg-white"
             defaultValue={editLastName}
             onChange={(e) => {
               setEditLastName(e.target.value);
@@ -288,7 +288,7 @@ const EditProfilePage = (props) => {
             <span className="label-text">Bio</span>
           </label>
           <textarea
-            className="textarea textarea-bordered w-full"
+            className="textarea textarea-bordered w-full bg-white"
             placeholder="Bio"
             defaultValue={editBio}
             onChange={(e) => {
@@ -348,7 +348,7 @@ const EditProfilePage = (props) => {
         />
         <div className="">
           <button
-            className="btn"
+            className="btn btn-secondary"
             onClick={handleSubmit}
             disabled={!pictureChanged}
           >
@@ -376,7 +376,7 @@ const EditProfilePage = (props) => {
           <label className="input-group">
             <input
               type={showPass ? "text" : "password"}
-              className="inline input input-bordered w-full"
+              className="inline input input-bordered w-full bg-white"
               onChange={(e) => setOldPassword(e.target.value)}
               placeholder="Input your old Password..."
             />
@@ -414,12 +414,12 @@ const EditProfilePage = (props) => {
   return (
     <>
       <div className="grid grid-cols-12 pt-4">
-        <div className="justify-center col-start-2 col-span-10 md:col-start-3 md:col-span-8 border-b-2 h-20 sm:h-fit">
-          <div className="tabs my-3  grid grid-cols-3 justify-items-center">
+        <div className="justify-center col-start-2 col-span-10 md:col-start-3 md:col-span-8 border-b-2 border-primary-focus h-20 sm:h-fit">
+          <div className="tabs my-3 grid grid-cols-3 justify-items-center">
             <div>
               <a
                 className={`text-base tab grid justify-items-center ${
-                  selectedTab === 1 && "tab-active text-secondary font-bold"
+                  selectedTab === 1 && "tab-active text-secondary-content font-bold"
                 } gap-1`}
                 onClick={() => selectTab(1)}
               >
@@ -430,7 +430,7 @@ const EditProfilePage = (props) => {
             <div>
               <a
                 className={`text-base tab grid justify-items-center ${
-                  selectedTab === 2 && "tab-active text-secondary font-bold"
+                  selectedTab === 2 && "tab-active text-secondary-content font-bold"
                 } gap-1`}
                 onClick={() => selectTab(2)}
               >
@@ -441,7 +441,7 @@ const EditProfilePage = (props) => {
             <div>
               <a
                 className={`text-base tab grid justify-items-center ${
-                  selectedTab === 3 && "tab-active text-secondary font-bold"
+                  selectedTab === 3 && "tab-active text-secondary-content font-bold"
                 } gap-1`}
                 onClick={() => selectTab(3)}
               >

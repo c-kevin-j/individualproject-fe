@@ -79,6 +79,7 @@ function ModalCreatePost(props) {
         },
       });
       if (res) {
+        removeUploadedFile()
         setAlert(true)
         setModalContent({
           icon: "success",
@@ -140,7 +141,7 @@ function ModalCreatePost(props) {
           type="text"
           maxLength="150"
           placeholder="Insert your caption..."
-          className="my-4 border-none text-center w-full input-md focus:ring-0"
+          className="my-4 border-none text-center w-full input-md focus:ring-0 bg-white"
           onChange={(e) => setCaption(e.target.value)}
         />
 
@@ -171,6 +172,7 @@ function ModalCreatePost(props) {
           title={modalContent.title}
           text={modalContent.text}
           onClick={modalContent.onClick}
+          width="full"
         />
       </Modal>
     </>
