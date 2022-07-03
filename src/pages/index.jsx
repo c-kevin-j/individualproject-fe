@@ -15,6 +15,7 @@ export const getStaticProps = async (ctx) => {
         users: resUsers.data,
         posts: resPosts.data.posts,
       },
+      revalidate: 10
     };
   } catch (error) {
     return {
