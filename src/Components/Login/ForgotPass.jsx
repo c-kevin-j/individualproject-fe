@@ -78,7 +78,7 @@ export default function CardForgotPass(props) {
                   </Link>
                   <Button
                     onClick={handleForgotPassword}
-                    color="primary"
+                    className="w-24 btn-secondary"
                     disabled={!email || isSubmitting}
                   >
                     {!isSubmitting ? (

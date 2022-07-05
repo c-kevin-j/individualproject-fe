@@ -170,7 +170,7 @@ function RegisterPage(props) {
                   </Link>
                   <Button
                     onClick={handleRegister}
-                    color="primary"
+                    className="w-24 btn-secondary"
                     disabled={
                       !email || !username || !pass || !valid || isSubmitting
                     }
