@@ -395,7 +395,7 @@ function DetailPost(props) {
                       </div>
                     </div>
                     <div className="mx-2 my-auto text-[11px] italic text-accent-content col-span-1 text-right">
-                      {createdDate}
+                      Created Date: {createdDate}
                     </div>
                   </div>
                   <div className="avatar col-span-7 flex items-center gap-2">

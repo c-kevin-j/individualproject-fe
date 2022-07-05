@@ -85,7 +85,7 @@ function HomePage(props) {
                 </div>
                     {/* TODO: ubah jadi ke kanan */}
                   <div className="col-span-2 mx-2 my-auto text-[11px] italic text-right text-accent-content">
-                    {createdDate}
+                    Created Date: {createdDate}
                   </div>
 
                 </div>
