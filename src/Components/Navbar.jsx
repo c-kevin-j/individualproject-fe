@@ -30,10 +30,14 @@ function Navbar(props) {
     keepLogin();
     checkVerified();
   }, [router.pathname]);
-
+  
+  React.useEffect(()=>{
+    keepLogin();
+    checkVerified();
+  },[])
+  
   const keepLogin = async () => {
     let token = localStorage.getItem("tokenIdUser");
-    console.log(token);
     if (token) {
       try {
         // backend
