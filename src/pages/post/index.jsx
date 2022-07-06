@@ -352,7 +352,7 @@ function DetailPost(props) {
             description={`Look at this image by ${post.username}`}
             image={`${API_URL}${post.image}`}
           />
-          <div className="bg-base-100 shadow-sm rounded-none mx-auto pt-1 max-h-screen">
+          <div className="bg-base-100 drop-shadow-2xl rounded-none mx-auto pt-1 max-h-screen">
             {/* grid untuk membagi bagian image dan detail */}
             <div className="grid grid-cols-10 overflow-y-visible bg-accent">
               {/* image */}
@@ -398,7 +398,7 @@ function DetailPost(props) {
                       Created Date: {createdDate}
                     </div>
                   </div>
-                  <div className="avatar col-span-7 flex items-center gap-2">
+                  <div className="avatar col-span-7 py-2 flex items-center gap-2">
                     <div className="w-10 h-10 rounded-full">
                       {/* image json server */}
                       {/* <img className="mt-0" src={post.profile_picture} /> */}
@@ -448,36 +448,23 @@ function DetailPost(props) {
                     {post.caption}
                   </div>
                 </div>
-                <div className="row-auto max-h-[65vh] overflow-y-auto ">
+                <div className="row-auto max-h-[65vh] overflow-y-auto pt-1">
                   {printComment()}
                 </div>
                 <div>
                   {hasMoreComment && (
                     <div
-                      className="text-center cursor-pointer text-secondary-content underline"
+                      className="text-center cursor-pointer text-secondary-content pb-3 underline"
                       onClick={() => getMoreComments()}
                     >
-                      Load More Comments
+                      {/* Load More Comments */}
+                      <button type="button" className="btn-secondary text-sm rounded py-1 px-4 shadow">
+                      Load More Comments...
+                      </button>
                     </div>
                   )}
                 </div>
                 <div className="row-span-1">
-                  {/* <div className="flex my-2 items-center">
-                    <div className="basis-5 align-middle">
-                      {isLiked === false ? (
-                        <AiOutlineHeart
-                          className="cursor-pointer"
-                          onClick={() => handleLikeButton("like")}
-                        />
-                      ) : (
-                        <AiFillHeart
-                          className="text-red-600 cursor-pointer"
-                          onClick={() => handleLikeButton("unlike")}
-                        />
-                      )}
-                    </div>
-                    <div>{likesList.length} Likes</div>
-                  </div> */}
                   <div>
                     <div>
                       <textarea
@@ -488,13 +475,14 @@ function DetailPost(props) {
                         maxLength="300"
                         wrap="soft"
                       />
-                      <div className="text-right">{commentLength} / 300</div>
+                      <div className="text-right text-sm pb-1">{commentLength} / 300</div>
                     </div>
                     <div className="flex justify-end">
                       <button
                         type="button"
-                        className="btn btn-sm rounded-sm"
+                        className="btn btn-sm btn-secondary rounded-sm"
                         onClick={handleSubmitComment}
+                        disabled={!comment.length}
                       >
                         Submit
                       </button>
