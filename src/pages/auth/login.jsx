@@ -13,10 +13,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../../Redux/Actions/userAction.js";
 import ModalAlert from "../../Components/ModalAlert.jsx";
 import MetaTag from "../../Components/HeadMeta.jsx";
+import { FaSpinner } from "react-icons/fa";
 
 // import styles from '../styles/Home.module.css'
 
 function LandingPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [showPass, setShowPass] = useState(false);
   const [inputForm, setInputForm] = useState({
     emailUsername: "",
@@ -47,11 +49,43 @@ function LandingPage() {
     };
   });
 
-  React.useEffect(() => {
+  const checkUserLoggedIn = async () => {
     let token = localStorage.getItem("tokenIdUser");
     if (token) {
-      router.push("/");
+      try {
+        // backend
+        let res = await Axios.post(
+          `${API_URL}/users/keepLogin`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(res);
+        // res.headers["access-control-allow-origin"];
+        localStorage.setItem("tokenIdUser", res.data.token);
+        // memperbarui reducer
+        dispatch(loginAction(res.data));
+        if (user.verified_status === 1) {
+          router.push("/auth/resend-verification");
+        } else {
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error);
+        localStorage.removeItem("tokenIdUser");
+        setIsLoading(false);
+        // router.push("/auth/login");
+      }
+    } else {
+      setIsLoading(false);
     }
+  };
+
+  React.useEffect(() => {
+    checkUserLoggedIn();
   }, []);
 
   const handleLogin = async () => {
@@ -89,111 +123,114 @@ function LandingPage() {
 
   return (
     <div className="md:container md:mx-auto">
-      <div className="grid justify-items-center mt-8">
-        <div className="grid content-start mt-8">
-        <MetaTag
-        title="Kartoffel"
-        description="Look at this image"
-        image="https://apollo-singapore.akamaized.net/v1/files/3f7mz5xjs42v2-ID/image;s=850x0"
-      />
-          <article className="prose">
-            <h1>Welcome, you right there!</h1>
-            <br></br>
-          </article>
-        </div>
-        <div className="card md:card-side bg-primary shadow-xl">
-          <figure>
-            {/* <img
+      {isLoading ? (
+        <>
+          <div className="flex justify-center items-center h-screen">
+            <FaSpinner className="icon-spin" size={70} />
+          </div>
+        </>
+      ) : (
+        <div className="grid justify-items-center mt-8">
+          <div className="grid content-start mt-8">
+            <article className="prose">
+              <h1>Welcome, you right there!</h1>
+              <br></br>
+            </article>
+          </div>
+          <div className="card md:card-side bg-primary shadow-xl">
+            <figure>
+              {/* <img
               src="https://api.lorem.space/image/album?w=400&h=400"
               alt="Album"
             /> */}
-            <Image
+              <Image
                 src={require("../../../assets/Doge.png")}
                 width="400px"
                 height="400px"
                 alt="logo"
               />
-          </figure>
-          <div className="card-body ">
-            <h2 className="card-title">Sign in</h2>
-            {/* <p>Sign up or die</p> */}
-            <div className="form-control w-full max-w-md">
-              <label className="label">
-                <span className="label-text">Email/Username</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Insert Email/Username..."
-                className="input input-bordered w-full max-w-xs bg-white"
-                onChange={(e) => handleInput(e.target.value, "emailUsername")}
-              />
-            </div>
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <label className="input-group">
+            </figure>
+            <div className="card-body ">
+              <h2 className="card-title">Sign in</h2>
+              {/* <p>Sign up or die</p> */}
+              <div className="form-control w-full max-w-md">
+                <label className="label">
+                  <span className="label-text">Email/Username</span>
+                </label>
                 <input
-                  type={showPass ? "text" : "password"}
-                  placeholder="Insert Password..."
+                  type="text"
+                  placeholder="Insert Email/Username..."
                   className="input input-bordered w-full max-w-xs bg-white"
-                  onChange={(e) => handleInput(e.target.value, "password")}
+                  onChange={(e) => handleInput(e.target.value, "emailUsername")}
                 />
-                <button
-                  className="btn btn-active btn-ghost text-white"
-                  onClick={() => setShowPass(!showPass)}
-                >
-                  {showPass ? (
-                    <AiFillEyeInvisible className="text-white" />
-                  ) : (
-                    <AiFillEye className="text-white" />
-                  )}
-                </button>
-              </label>
-            </div>
-            {/* Passwords should contain at least 8 characters including an
+              </div>
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text">Password</span>
+                </label>
+                <label className="input-group">
+                  <input
+                    type={showPass ? "text" : "password"}
+                    placeholder="Insert Password..."
+                    className="input input-bordered w-full max-w-xs bg-white"
+                    onChange={(e) => handleInput(e.target.value, "password")}
+                  />
+                  <button
+                    className="btn btn-active btn-ghost text-white"
+                    onClick={() => setShowPass(!showPass)}
+                  >
+                    {showPass ? (
+                      <AiFillEyeInvisible className="text-white" />
+                    ) : (
+                      <AiFillEye className="text-white" />
+                    )}
+                  </button>
+                </label>
+              </div>
+              {/* Passwords should contain at least 8 characters including an
             uppercase letter, a symbol, and a number. Display proper error
             messages for cases such as weak password, used email or username,
             and other erros. */}
-            <div className="grid grid-cols-2 place-items-stretch">
-              <div className="mt-4">
-                <Link href="/auth/forgot" passHref>
-                  <a className="link text-accent-focus">Forgot password?</a>
-                </Link>
-                <br></br>
-                <Link href="/auth/register" passHref>
-                  <a className="link text-secondary-content">Register</a>
-                </Link>
-              </div>
-              <div className="mt-4">
-                <div className="card-actions justify-end">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={handleLogin}
-                    disabled={!inputForm.emailUsername || !inputForm.password}
-                  >
-                    Login
-                  </button>
-                  <ModalAlert
-                    visible={visible}
-                    toggleVisible={() => toggleVisible()}
-                    icon={modalContent.icon}
-                    title={modalContent.title}
-                    text={modalContent.text}
-                    onClick={modalContent.onClick}
-                  />
+              <div className="grid grid-cols-2 place-items-stretch">
+                <div className="mt-4">
+                  <Link href="/auth/forgot" passHref>
+                    <a className="link text-accent-focus">Forgot password?</a>
+                  </Link>
+                  <br></br>
+                  <Link href="/auth/register" passHref>
+                    <a className="link text-secondary-content">Register</a>
+                  </Link>
+                </div>
+                <div className="mt-4">
+                  <div className="card-actions justify-end">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={handleLogin}
+                      disabled={!inputForm.emailUsername || !inputForm.password}
+                    >
+                      Login
+                    </button>
+                    <ModalAlert
+                      visible={visible}
+                      toggleVisible={() => toggleVisible()}
+                      icon={modalContent.icon}
+                      title={modalContent.title}
+                      text={modalContent.text}
+                      onClick={modalContent.onClick}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="grid justify-items-center">
-          <div className="grow order-2">
-            <br></br>
-            <div className="flex flex-row-reverse"></div>
+          <div className="grid justify-items-center">
+            <div className="grow order-2">
+              <br></br>
+              <div className="flex flex-row-reverse"></div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
