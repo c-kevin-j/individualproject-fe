@@ -55,7 +55,7 @@ const VerifyAccountPage = () => {
         <div>
           <button
             type="button"
-            className="btn btn-secondary w-54"
+            className="btn btn-secondary w-48"
             onClick={handleReverify}
             disabled={isSubmitting}
           >
