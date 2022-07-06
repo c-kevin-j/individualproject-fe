@@ -124,11 +124,9 @@ function LandingPage() {
   return (
     <div className="md:container md:mx-auto">
       {isLoading ? (
-        <>
-          <div className="flex justify-center items-center h-screen">
-            <FaSpinner className="icon-spin" size={70} />
-          </div>
-        </>
+        <div className="flex justify-center items-center h-screen">
+          <FaSpinner className="icon-spin" size={70} />
+        </div>
       ) : (
         <div className="grid justify-items-center mt-8">
           <div className="grid content-start mt-8">
