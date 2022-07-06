@@ -97,7 +97,6 @@ const VerifyAccountPage = () => {
           onClick: () => router.push("/auth/login"),
         });
 
-
         toggleVisible();
       }
     } catch (error) {
@@ -105,8 +104,7 @@ const VerifyAccountPage = () => {
     }
   };
 
-
-  //to resend verification token 
+  //to resend verification token
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleReverify = async () => {
     let tokenUser = localStorage.getItem("tokenIdUser");
@@ -140,20 +138,24 @@ const VerifyAccountPage = () => {
 
   return (
     <div className="px-10 md:px-32 lg:px-48 xl:px-80 pt-5 text-center space-y-4">
-      {isLoading && tokenExist ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <FaSpinner className="icon-spin" size={70} />
+        </div>
+      ) : !isLoading && tokenExist ? (
         <>
           <div className="flex justify-center">
             <FaSpinner className="icon-spin" size={56} />
           </div>
           <div>Verifying Your Account...</div>
         </>
-      ) : !tokenExist ? (
+      ) : !isLoading && !tokenExist ? (
         <div className="font-bold text-xl pt-8 text-center">
           Your Token is Invalid or Has Expired
           <div>
             <button
               type="button"
-              className="btn btn-secondary w-54"
+              className="btn btn-secondary w-48"
               onClick={handleReverify}
               disabled={isSubmitting}
             >
