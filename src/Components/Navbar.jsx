@@ -47,13 +47,9 @@ function Navbar(props) {
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              // "Access-Control-Allow-Origin": "*",
-              // "Access-Control-Allow-Methods":
-              //   "GET,PUT,POST,DELETE,PATCH,OPTIONS",
             },
           }
         );
-        // res.headers["access-control-allow-origin"];
         localStorage.setItem("tokenIdUser", res.data.token);
         // memperbarui reducer
         dispatch(loginAction(res.data));
