@@ -7,9 +7,12 @@ import UpdatePasswordContainer from "../../Components/Login/UpdatePasswordContai
 import { useRouter } from "next/router";
 import { FaSpinner } from "react-icons/fa";
 import ModalAlert from "../../Components/ModalAlert";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAction } from "../../Redux/Actions/userAction";
 
 function RegisterPage(props) {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -18,6 +21,7 @@ function RegisterPage(props) {
   const [showPass, setShowPass] = useState(false);
   const [showConfPass, setShowConfPass] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // modal alert visiblity
   const [visible, setVisible] = useState(false);
@@ -31,11 +35,49 @@ function RegisterPage(props) {
     setVisible(!visible);
   };
 
-  React.useEffect(() => {
+  const { user } = useSelector((state) => {
+    return {
+      user: state.usersReducer.user,
+    };
+  });
+
+  const checkUserLoggedIn = async () => {
     let token = localStorage.getItem("tokenIdUser");
     if (token) {
-      router.push("/");
+      try {
+        // backend
+        let res = await Axios.post(
+          `${API_URL}/users/keepLogin`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(res);
+        // res.headers["access-control-allow-origin"];
+        localStorage.setItem("tokenIdUser", res.data.token);
+        // memperbarui reducer
+        dispatch(loginAction(res.data));
+        if (user.verified_status === 1) {
+          router.push("/auth/resend-verification");
+        } else {
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error);
+        localStorage.removeItem("tokenIdUser");
+        setIsLoading(false);
+        router.push("/auth/login");
+      }
+    } else {
+      setIsLoading(false);
     }
+  };
+
+  React.useEffect(() => {
+    checkUserLoggedIn();
   }, []);
 
   const handleRegister = async () => {
@@ -58,6 +100,8 @@ function RegisterPage(props) {
           });
           if (res.data.success) {
             setIsSubmitting(false);
+            // localStorage.setItem("tokenIdUser", res.data.user.token);
+            // dispatch(loginAction(res.data.user));
             setModalContent({
               icon: "success",
               title: "Success!",
@@ -105,95 +149,78 @@ function RegisterPage(props) {
   return (
     <>
       <div className="md:container md:mx-auto">
-        <div className="grid justify-items-center mt-8">
-          <div className="grid content-start mt-8">
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Register</h2>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Email</span>
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="Input Email..."
-                    className="input input-bordered w-full bg-white"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Username</span>
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="Input Username..."
-                    className="input input-bordered w-full bg-white"
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </div>
-                {/* <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Password</span>
-                  </label>
-                  <label className="input-group">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-screen">
+            <FaSpinner className="icon-spin" size={70} />
+          </div>
+        ) : (
+          <div className="grid justify-items-center mt-8">
+            <div className="grid content-start mt-8">
+              <div className="card w-96 bg-base-100 shadow-xl">
+                <div className="card-body">
+                  <h2 className="card-title">Register</h2>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Email</span>
+                    </label>
                     <Input
-                      type={showPass ? "text" : "password"}
-                      placeholder="Input password..."
-                      className="input input-bordered w-full"
-                      onChange={(e) => setPass(e.target.value)}
+                      type="text"
+                      placeholder="Input Email..."
+                      className="input input-bordered w-full bg-white"
+                      onChange={(e) => setEmail(e.target.value)}
                     />
-                    <button
-                      className="btn btn-active btn-ghost text-white"
-                      onClick={() => setShowPass(!showPass)}
-                    >
-                      {showPass ? (
-                        <AiFillEyeInvisible className="text-white" />
-                      ) : (
-                        <AiFillEye className="text-white" />
-                      )}
-                    </button>
-                  </label>
-                </div>{" "} */}
-                <UpdatePasswordContainer
-                  handlePassword={handlePassword}
-                  showPass={showPass}
-                  toggleShowPass={() => setShowPass(!showPass)}
-                  showConfPass={showConfPass}
-                  toggleShowConfPass={() => setShowConfPass(!showConfPass)}
-                ></UpdatePasswordContainer>
+                  </div>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Username</span>
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Input Username..."
+                      className="input input-bordered w-full bg-white"
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </div>
+                  <UpdatePasswordContainer
+                    handlePassword={handlePassword}
+                    showPass={showPass}
+                    toggleShowPass={() => setShowPass(!showPass)}
+                    showConfPass={showConfPass}
+                    toggleShowConfPass={() => setShowConfPass(!showConfPass)}
+                  ></UpdatePasswordContainer>
 
-                <div></div>
-                <div className="card-actions justify-end mt-6">
-                  <Link href="/auth/login" passHref>
-                    <Button>Cancel</Button>
-                  </Link>
-                  <Button
-                    onClick={handleRegister}
-                    className="w-24 btn-secondary"
-                    disabled={
-                      !email || !username || !pass || !valid || isSubmitting
-                    }
-                  >
-                    {!isSubmitting ? (
-                      "Register"
-                    ) : (
-                      <FaSpinner className="icon-spin" />
-                    )}
-                  </Button>
-                  <ModalAlert
-                    visible={visible}
-                    toggleVisible={() => toggleVisible()}
-                    icon={modalContent.icon}
-                    title={modalContent.title}
-                    text={modalContent.text}
-                    onClick={modalContent.onClick}
-                  />
+                  <div></div>
+                  <div className="card-actions justify-end mt-6">
+                    <Link href="/auth/login" passHref>
+                      <Button>Cancel</Button>
+                    </Link>
+                    <Button
+                      onClick={handleRegister}
+                      className="w-24 btn-secondary"
+                      disabled={
+                        !email || !username || !pass || !valid || isSubmitting
+                      }
+                    >
+                      {!isSubmitting ? (
+                        "Register"
+                      ) : (
+                        <FaSpinner className="icon-spin" />
+                      )}
+                    </Button>
+                    <ModalAlert
+                      visible={visible}
+                      toggleVisible={() => toggleVisible()}
+                      icon={modalContent.icon}
+                      title={modalContent.title}
+                      text={modalContent.text}
+                      onClick={modalContent.onClick}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
