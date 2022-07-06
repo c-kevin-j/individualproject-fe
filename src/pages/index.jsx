@@ -78,7 +78,7 @@ function HomePage(props) {
               <div className="bg-accent p-2 space-y-1">
                 <div className="grid grid-cols-3">
                   <div className="col-span-1 flex items-center gap-x-2">
-                  <AiFillHeart className="text-red-600" />{" "}
+                  <AiFillHeart />{" "}
                   {totalLikes > 1
                     ? `${totalLikes} likes`
                     : `${totalLikes} like`}
