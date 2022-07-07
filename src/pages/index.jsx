@@ -5,6 +5,10 @@ import axios from "axios";
 import { API_URL } from "../../helper";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { AiFillHeart } from "react-icons/ai";
+import { FiMoreVertical } from "react-icons/fi";
+import { useRouter } from "next/router";
+import ModalSharePost from "../Components/Posts/ModalSharePost";
+import MetaTag from "../Components/HeadMeta";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -25,10 +29,28 @@ export const getServerSideProps = async (ctx) => {
 
 function HomePage(props) {
   // const dispatch = useDispatch();
+  const router = useRouter();
   let { users } = props;
   const [posts, setPosts] = useState(props.posts);
   const [hasMore, setHasMore] = useState(true);
-  console.log(posts)
+  const [usernameShare,setUsernameShare] = useState("");
+  const [imageShare,setImageShare] = useState("");
+  // let usernameShare = ""
+  // let imageShare=""
+
+  // share modal
+  const [shareModal, setShareModal] = useState(false);
+  const toggleShare = () => {
+    setShareModal(!shareModal);
+  };
+  const [shareUrl,setShareUrl] = useState("")
+
+  const handleShareButton = (username, imageurl, id) =>{
+    setShareModal(true);
+    setUsernameShare(username)
+    setImageShare(imageurl)
+    setShareUrl(`https://individualproject-fe.vercel.app/post?id=${id}`)
+  }
 
   const printPosts = () => {
     return posts.map((val, idx) => {
@@ -42,7 +64,7 @@ function HomePage(props) {
           <div className="card rounded-md w-128 shadow-md">
             <div className="card-body p-0 gap-0 bg-base-300 ">
               <div>
-                <div className="flex bg-accent">
+                <div className="flex bg-accent items-center">
                   <label className="btn btn-ghost btn-circle avatar mx-2 my-1 flex-none">
                     <Link href={`/profile?id=${users[idxUser].id}`}>
                       <img
@@ -62,6 +84,27 @@ function HomePage(props) {
                   {/* <div className="mx-2 my-auto text-sm text-slate-500 text-accent-content">
                     {createdDate}
                   </div> */}
+                  <div className="dropdown dropdown-end ">
+                    <label
+                      tabIndex="0"
+                      className="w-10 btn rounded-lg bg-inherit border-transparent hover:bg-accent-focus hover:border-transparent"
+                    >
+                      <div className="w-10 rounded-full text-center">
+                        <FiMoreVertical
+                          className="text-secondary-content"
+                          size={28}
+                        />
+                      </div>
+                    </label>
+                    <ul
+                      tabIndex="0"
+                      className="mt-3 p-2 shadow menu menu-compact rounded dropdown-content bg-accent-focus w-52"
+                    >
+                      <li>
+                        <a onClick={() => handleShareButton(users[idxUser].username, val.image, val.id)}>Share</a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
               <div className="min-h-fit">
@@ -78,20 +121,17 @@ function HomePage(props) {
               <div className="bg-accent p-2 space-y-1">
                 <div className="grid grid-cols-3">
                   <div className="col-span-1 flex items-center gap-x-2">
-                  <AiFillHeart />{" "}
-                  {totalLikes > 1
-                    ? `${totalLikes} likes`
-                    : `${totalLikes} like`}
-                </div>
-                    {/* TODO: ubah jadi ke kanan */}
+                    <AiFillHeart />{" "}
+                    {totalLikes > 1
+                      ? `${totalLikes} likes`
+                      : `${totalLikes} like`}
+                  </div>
+                  {/* TODO: ubah jadi ke kanan */}
                   <div className="col-span-2 mx-2 my-auto text-[11px] italic text-right text-accent-content">
                     Created Date: {createdDate}
                   </div>
-
                 </div>
-                <div className="font-light break-all ml-6">
-                  {val.caption}
-                </div>
+                <div className="font-light break-all ml-6">{val.caption}</div>
               </div>
             </div>
           </div>
@@ -119,6 +159,11 @@ function HomePage(props) {
 
   return (
     <div className="mx-auto px-6 lg:px-36 xl:px-96 pt-2">
+      <MetaTag
+        title="Kartoffel"
+        description={`Look at this image by ${usernameShare}`}
+        image={`${API_URL}${imageShare}`}
+      />
       <div className="grid justify-items-center">
         {posts.length > 0 ? (
           <InfiniteScroll
@@ -133,6 +178,11 @@ function HomePage(props) {
           <div>Nothing to see here...</div>
         )}
       </div>
+      <ModalSharePost
+        visible={shareModal}
+        toggleVisible={() => toggleShare()}
+        shareUrl={shareUrl}
+      />
     </div>
   );
 }
