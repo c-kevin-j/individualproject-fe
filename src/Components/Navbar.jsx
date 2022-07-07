@@ -66,10 +66,6 @@ function Navbar(props) {
     }
   };
 
-  // React.useEffect(() => {
-  //   checkVerified();
-  // }, [user]);
-
   const checkVerified = () => {
     if (user.verified_status === 1) {
       router.push("/auth/resend-verification");

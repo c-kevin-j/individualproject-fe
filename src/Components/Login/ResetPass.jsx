@@ -72,17 +72,6 @@ export default function CardResetPass(props) {
             <div className="card w-96 bg-base-100 shadow-xl">
               <div className="card-body">
                 <h2 className="card-title">Reset Password</h2>
-                {/* <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">New Password</span>
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="Input Email..."
-                    className="input input-bordered w-full"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div> */}
                 <UpdatePasswordContainer
                   handlePassword={handlePassword}
                   showPass={showPass}

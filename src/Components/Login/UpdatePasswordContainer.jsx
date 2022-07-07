@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Card, Button, Input } from "react-daisyui";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
-//styling
-// import './UpdatePasswordContainer.css';
 import MustContainItem from "./MustContainItem";
 
 const UpdatePasswordContainer = (props) => {
@@ -78,10 +76,6 @@ const UpdatePasswordContainer = (props) => {
       props.handlePassword({'password':passwordOne, 'valid': false});
     }
   };
-  // const sendPasswordOne = (value) => {
-  //   setPasswordOne(value);
-  //   props.handlePassword(value);
-  // }
 
   return (
     <div>
@@ -143,7 +137,7 @@ const UpdatePasswordContainer = (props) => {
         {/* input button */}
       </form>
 
-      {/* create an MustContainItem for each password validation with props of label and boolean of state */}
+      {/* create a MustContainItem for each password validation with props of label and boolean of state */}
       <div className="mt-4">
       <h4>Must contain:</h4>
         {mustContainData.map((data) => (

@@ -14,7 +14,6 @@ import MetaTag from "../../Components/HeadMeta";
 
 export const getServerSideProps = async (ctx) => {
   try {
-    // props backend
     let resPost = await axios.get(
       `${API_URL}/posts/get/detail?id=${ctx.query.id}`
     );
@@ -102,7 +101,6 @@ function DetailPost(props) {
       }
     });
     setPoster(users[posterIdx]);
-    console.log(users[posterIdx]);
   };
 
   const getIsLiked = () => {
@@ -133,7 +131,6 @@ function DetailPost(props) {
         post_id: post.id,
       };
       tempCommentList.unshift(newComment);
-      // await axios.post(`${API_URL}/comments`, newComment);
       await axios.post(`${API_URL}/posts/comment`, newComment, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -168,7 +165,6 @@ function DetailPost(props) {
         let likeIndex = tempArray.findIndex((val) => {
           return val.user_id == user.id;
         });
-        // let unlike = await axios.delete(`${API_URL}/likes/${tempArray[likeIndex].id}`)
         let unlike = await axios.delete(
           `${API_URL}/posts/unlike?user_id=${user.id}&post_id=${post.id}`,
 
@@ -252,72 +248,7 @@ function DetailPost(props) {
         toggleVisible();
         setConfirmDelete(false);
       });
-
-    //   let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`, {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     });
-    //     console.log(res)
-    //     if (res) {
-    //       setModalContent({
-    //         icon: "success",
-    //         title: "Success!",
-    //         text: "Your post is deleted",
-    //         onClick: () => {
-    //           router.push(`/profile?id=${user.id}`);
-    //         },
-    //       });
-    //     }
-    //   setConfirmDelete(false);
-    // }
-    // catch (error) {
-    //   console.log(error)
-    //   setModalContent({
-    //     icon: "error",
-    //     title: "Error!",
-    //     text: "Please try again",
-    //   });
-    //   toggleVisible();
-    //   setConfirmDelete(false);
-    // }
   }
-
-  // const handleDelete = () => {
-  //   try {
-  //     let token = localStorage.getItem("tokenIdUser");
-  //     console.log(confirmDelete);
-  //     console.log(confirmDelete);
-
-  //     if (confirmDelete) {
-  //       console.log("ok");
-  //       // let res = axios.delete(`${API_URL}/posts/delete?id=${post.id}`, {
-  //       //   headers: {
-  //       //     Authorization: `Bearer ${token}`,
-  //       //   },
-  //       // });
-  //       // if (res) {
-  //       //   setModalContent({
-  //       //     icon: "success",
-  //       //     title: "Success!",
-  //       //     text: "Your post is deleted",
-  //       //     onClick: () => {
-  //       //       window.location.reload();
-  //       //     },
-  //       //   });
-  //       //   router.push(`/profile?id=${user.id}`);
-  //       // }
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     setModalContent({
-  //       icon: "error",
-  //       title: "Error!",
-  //       text: "Please try again",
-  //     });
-  //     toggleVisible();
-  //   }
-  // };
 
   const getMoreComments = async () => {
     try {
@@ -357,13 +288,6 @@ function DetailPost(props) {
             <div className="grid grid-cols-10 overflow-y-visible bg-accent">
               {/* image */}
               <div className="col-span-12 my-2 grid items-center">
-                {/* image json server */}
-                {/* <img
-                className="object-contain w-auto h-full mx-auto "
-                src={post.image}
-                alt="Movie"
-              /> */}
-                {/* image backend */}
                 <img
                   className="object-contain w-auto h-full mx-auto "
                   src={`${API_URL}${post.image}`}
@@ -400,9 +324,6 @@ function DetailPost(props) {
                   </div>
                   <div className="avatar col-span-7 py-2 flex items-center gap-2">
                     <div className="w-10 h-10 rounded-full">
-                      {/* image json server */}
-                      {/* <img className="mt-0" src={post.profile_picture} /> */}
-                      {/* image backend */}
                       <Link href={`/profile?id=${poster.id}`}>
                         <img
                           className="mt-0 cursor-pointer"

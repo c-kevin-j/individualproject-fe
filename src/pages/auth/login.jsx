@@ -4,18 +4,13 @@ import MyApp from "../_app.js";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-// import { Card, Button, Avatar } from "react-daisyui";
-import ModalForgotPass from "../../Components/Login/ForgotPass";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Axios from "axios";
 import { API_URL } from "../../../helper.js";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../../Redux/Actions/userAction.js";
 import ModalAlert from "../../Components/ModalAlert.jsx";
-import MetaTag from "../../Components/HeadMeta.jsx";
 import { FaSpinner } from "react-icons/fa";
-
-// import styles from '../styles/Home.module.css'
 
 function LandingPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -137,10 +132,6 @@ function LandingPage() {
           </div>
           <div className="card md:card-side bg-primary shadow-xl">
             <figure>
-              {/* <img
-              src="https://api.lorem.space/image/album?w=400&h=400"
-              alt="Album"
-            /> */}
               <Image
                 src={require("../../../assets/Doge.png")}
                 width="400px"

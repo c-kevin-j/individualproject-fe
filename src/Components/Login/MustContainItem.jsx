@@ -1,9 +1,6 @@
 import React, {useState} from "react";
 import { Checkbox, Form } from "react-daisyui";
 
-//styling
-// import './UpdatePasswordContainer.css';
-
 const MustContainItem = (props) => {
   const { data } = props;
   const label = data[0];

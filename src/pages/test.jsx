@@ -41,6 +41,20 @@ const VerifyAccountPage = () => {
   const [open, setOpen] = useState(false);
   const [modal2, setModal2] = useState(false);
 
+
+  let time = 
+    new Date().toLocaleString('en-US', {
+      timeZone:"Asia/Jakarta",
+    });
+  let time2 = 
+    new Date().toLocaleString('en-US', {
+      timeZone:"America/New_York",
+    });
+    let test=new Date("2022-06-26 10:14:05");
+  
+  console.log(time)
+  console.log(test)
+
   return (
     <>
       <MetaTag
@@ -50,6 +64,7 @@ const VerifyAccountPage = () => {
       />
       <div className="px-10 md:px-32 lg:px-48 xl:px-80 pt-5 text-center space-y-6">
         <div>Akun anda belum diverifikasi</div>
+        {time2-time}
         <div>
           <button type="button" className="btn" onClick={() => setOpen(true)}>
             alert

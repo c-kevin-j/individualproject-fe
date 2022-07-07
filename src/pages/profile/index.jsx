@@ -11,28 +11,9 @@ import ModalCreatePost from "../../Components/Posts/ModalCreatePost";
 
 export const getServerSideProps = async (ctx) => {
   try {
-    // // props json server
-    // let resUser = await axios.get(`${API_URL}/users?id=${ctx.query.id}`);
-    // let resAllPosts = await axios.get(`${API_URL}/posts`);
-    // let resPosts = await axios.get(`${API_URL}/posts?user_id=${ctx.query.id}`);
-    // let resLikedPosts = await axios.get(
-    //   `${API_URL}/likes?user_id=${ctx.query.id}`
-    // );
-    // return {
-    //   props: {
-    //     user: resUser.data[0],
-    //     allPosts: resAllPosts.data,
-    //     posts: resPosts.data.reverse(),
-    //     likedPosts: resLikedPosts.data.reverse(),
-    //   },
-    // };
-
-    // props backend
     let resUser = await axios.get(
       `${API_URL}/users/get/detail?id=${ctx.query.id}`
     );
-    console.log(resUser.data[0]);
-    // let resAllPosts = await axios.get(`${API_URL}/posts/get`);
     let resUserPosts = await axios.get(
       `${API_URL}/posts/get/userPost?id=${ctx.query.id}`
     );
@@ -42,7 +23,6 @@ export const getServerSideProps = async (ctx) => {
     return {
       props: {
         user: resUser.data[0],
-        // allPosts: resAllPosts.data,
         posts: resUserPosts.data.reverse(),
         likedPosts: resLikedPosts.data.reverse(),
       },
@@ -55,11 +35,6 @@ export const getServerSideProps = async (ctx) => {
 };
 
 function ProfilePage(props) {
-  // const { user } = useSelector((state)=>{
-  //   return{
-  //     user: state.usersReducer.user
-  //   }
-  // })
 
   let { user, posts, likedPosts } = props;
   const [selectedTab, setSelectedTab] = useState(1);
@@ -148,9 +123,6 @@ function ProfilePage(props) {
           <div className="container flex px-4">
             <div className="avatar m-auto basis-1/4 place-content-center image-full">
               <div className="w-40 rounded-full">
-                {/* image json server */}
-                {/* <img className="mt-0" src={user.profile_picture} /> */}
-                {/* image backend */}
                 <img
                   className="mt-0"
                   src={`${API_URL}${user.profile_picture}`}
