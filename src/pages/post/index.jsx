@@ -88,8 +88,11 @@ function DetailPost(props) {
   const toggleShare = () => {
     setShareModal(!shareModal);
   };
-  const shareUrl = `https://individualproject-fe.vercel.app${router.asPath}`;
-
+  
+  let path = router.asPath
+  path = path.replace("post","post/shared")
+  const shareUrl = `https://individualproject-fe.vercel.app${path}`;
+  
   // to check if user can edit / delete the post
   const getPoster = () => {
     let posterIdx = users.findIndex((val) => {

@@ -50,7 +50,7 @@ function HomePage(props) {
     setShareModal(true);
     setUsernameShare(username)
     setImageShare(imageurl)
-    setShareUrl(`https://individualproject-fe.vercel.app/post?id=${id}`)
+    setShareUrl(`https://individualproject-fe.vercel.app/post/shared?id=${id}`)
   }
 
   const printPosts = () => {
