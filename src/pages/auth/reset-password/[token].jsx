@@ -9,7 +9,7 @@ const ResetPasswordPage = () => {
   const { token } = router.query;
   const [isLoading, setIsLoading] = React.useState(true);
   const [tokenExist, setTokenExist] = React.useState(true);
-
+  
   const checkToken = async () => {
     try {
       let resCheck = await axios.patch(`${API_URL}/users/token/check`,{
