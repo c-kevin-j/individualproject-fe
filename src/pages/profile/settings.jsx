@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { editUser, loginAction } from "../../Redux/Actions/userAction";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { FaUserCircle, FaLock, FaImage } from "react-icons/fa";
+import { FaUserCircle, FaLock, FaImage, FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import { API_URL } from "../../../helper";
 import { useRouter } from "next/router";
@@ -11,6 +11,7 @@ import ModalAlert from "../../Components/ModalAlert";
 
 const EditProfilePage = (props) => {
   const [selectedTab, setSelectedTab] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
   const { user } = useSelector((state) => {
@@ -97,6 +98,7 @@ const EditProfilePage = (props) => {
 
   const handleSubmit = async () => {
     try {
+      setIsSubmitting(true);
       let token = localStorage.getItem("tokenIdUser");
       let formEdit = {};
       if (selectedTab === 1) {
@@ -130,6 +132,7 @@ const EditProfilePage = (props) => {
             onClick: () => router.push(`/profile?id=${user.id}`),
           });
           toggleVisible();
+          setIsSubmitting(false);
         } else {
           setModalContent({
             icon: "error",
@@ -137,6 +140,7 @@ const EditProfilePage = (props) => {
             text: "Username is already used",
           });
           toggleVisible();
+          setIsSubmitting(false);
         }
       } else if (selectedTab === 2) {
         // res backend
@@ -165,6 +169,7 @@ const EditProfilePage = (props) => {
             onClick: () => router.push(`/profile?id=${user.id}`),
           });
           toggleVisible();
+          setIsSubmitting(false);
         }
       } else if (selectedTab === 3) {
         // res backend
@@ -189,6 +194,7 @@ const EditProfilePage = (props) => {
             onClick: () => router.push(`/profile?id=${user.id}`),
           });
           toggleVisible();
+          setIsSubmitting(false);
         } else {
           setModalContent({
             icon: "error",
@@ -196,6 +202,7 @@ const EditProfilePage = (props) => {
             text: res.data.message,
           });
           toggleVisible();
+          setIsSubmitting(false);
         }
       }
     } catch (error) {
@@ -206,6 +213,7 @@ const EditProfilePage = (props) => {
         text: "Please try again",
       });
       toggleVisible();
+      setIsSubmitting(false);
     }
   };
 
@@ -301,11 +309,11 @@ const EditProfilePage = (props) => {
         <div className="col-start-10 text-end">
           <button
             type="button"
-            className="btn"
+            className="btn btn-secondary w-24"
             onClick={handleSubmit}
-            disabled={!formChanged}
+            disabled={!formChanged || isSubmitting}
           >
-            Submit
+            {isSubmitting ? <FaSpinner className="icon-spin" /> : "Submit"}
           </button>
         </div>
       </div>
@@ -350,9 +358,9 @@ const EditProfilePage = (props) => {
           <button
             className="btn btn-secondary"
             onClick={handleSubmit}
-            disabled={!pictureChanged}
+            disabled={!pictureChanged || isSubmitting}
           >
-            Submit
+            {isSubmitting ? <FaSpinner className="icon-spin" /> : "Submit"}
           </button>
         </div>
       </div>
@@ -385,9 +393,9 @@ const EditProfilePage = (props) => {
               onClick={() => setShowPass(!showPass)}
             >
               {showPass ? (
-                <AiFillEyeInvisible className="text-white" />
-              ) : (
                 <AiFillEye className="text-white" />
+              ) : (
+                <AiFillEyeInvisible className="text-white" />
               )}
             </button>
           </label>
@@ -400,11 +408,11 @@ const EditProfilePage = (props) => {
         <div className="col-start-10 text-end">
           <button
             type="button"
-            className="btn"
+            className="btn btn-secondary"
             onClick={handleSubmit}
-            disabled={!oldPassword || !newPassword || !valid}
+            disabled={!oldPassword || !newPassword || !valid || isSubmitting}
           >
-            Submit
+            {isSubmitting ? <FaSpinner className="icon-spin" /> : "Submit"}
           </button>
         </div>
       </div>
@@ -419,7 +427,8 @@ const EditProfilePage = (props) => {
             <div>
               <a
                 className={`text-base tab grid justify-items-center ${
-                  selectedTab === 1 && "tab-active text-secondary-content font-bold"
+                  selectedTab === 1 &&
+                  "tab-active text-secondary-content font-bold"
                 } gap-1`}
                 onClick={() => selectTab(1)}
               >
@@ -430,7 +439,8 @@ const EditProfilePage = (props) => {
             <div>
               <a
                 className={`text-base tab grid justify-items-center ${
-                  selectedTab === 2 && "tab-active text-secondary-content font-bold"
+                  selectedTab === 2 &&
+                  "tab-active text-secondary-content font-bold"
                 } gap-1`}
                 onClick={() => selectTab(2)}
               >
@@ -441,7 +451,8 @@ const EditProfilePage = (props) => {
             <div>
               <a
                 className={`text-base tab grid justify-items-center ${
-                  selectedTab === 3 && "tab-active text-secondary-content font-bold"
+                  selectedTab === 3 &&
+                  "tab-active text-secondary-content font-bold"
                 } gap-1`}
                 onClick={() => selectTab(3)}
               >

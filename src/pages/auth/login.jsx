@@ -14,6 +14,7 @@ import { FaSpinner } from "react-icons/fa";
 
 function LandingPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [inputForm, setInputForm] = useState({
     emailUsername: "",
@@ -85,6 +86,7 @@ function LandingPage() {
 
   const handleLogin = async () => {
     try {
+      setIsSubmitting(true);
       let queryBy = "";
       if (inputForm.emailUsername.includes("@")) {
         queryBy = "email";
@@ -99,11 +101,14 @@ function LandingPage() {
         password: inputForm.password,
       };
       let res = await Axios.post(`${API_URL}/users/login`, reqLogin);
+
       if (res.data.success) {
         localStorage.setItem("tokenIdUser", res.data.user.token);
         dispatch(loginAction(res.data.user));
         router.push("/");
+        setIsSubmitting(false);
       } else {
+        setIsSubmitting(false);
         setModalContent({
           icon: "error",
           title: "Error!",
@@ -112,6 +117,7 @@ function LandingPage() {
         toggleVisible();
       }
     } catch (error) {
+      setIsSubmitting(false);
       console.log(error);
     }
   };
@@ -169,9 +175,9 @@ function LandingPage() {
                     onClick={() => setShowPass(!showPass)}
                   >
                     {showPass ? (
-                      <AiFillEyeInvisible className="text-white" />
-                    ) : (
                       <AiFillEye className="text-white" />
+                    ) : (
+                      <AiFillEyeInvisible className="text-white" />
                     )}
                   </button>
                 </label>
@@ -193,11 +199,19 @@ function LandingPage() {
                 <div className="mt-4">
                   <div className="card-actions justify-end">
                     <button
-                      className="btn btn-secondary"
+                      className="btn btn-secondary w-24"
                       onClick={handleLogin}
-                      disabled={!inputForm.emailUsername || !inputForm.password}
+                      disabled={
+                        !inputForm.emailUsername ||
+                        !inputForm.password ||
+                        isSubmitting
+                      }
                     >
-                      Login
+                      {isSubmitting ? (
+                        <FaSpinner className="icon-spin" />
+                      ) : (
+                        "Login"
+                      )}
                     </button>
                     <ModalAlert
                       visible={visible}

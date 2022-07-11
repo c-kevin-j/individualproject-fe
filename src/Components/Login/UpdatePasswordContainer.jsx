@@ -99,9 +99,9 @@ const UpdatePasswordContainer = (props) => {
             onClick={() => setShowPass(!showPass)}
           >
             {showPass ? (
-              <AiFillEyeInvisible className="text-white" />
-            ) : (
               <AiFillEye className="text-white" />
+              ) : (
+              <AiFillEyeInvisible className="text-white" />
             )}
           </button>
         </label>
@@ -126,9 +126,9 @@ const UpdatePasswordContainer = (props) => {
               onClick={() => setShowConfirmedPass(!showConfirmedPass)}
             >
               {showConfirmedPass ? (
-                <AiFillEyeInvisible className="text-white" />
-              ) : (
                 <AiFillEye className="text-white" />
+                ) : (
+                <AiFillEyeInvisible className="text-white" />
               )}
             </button>
           </label>
