@@ -367,7 +367,7 @@ function DetailPost(props) {
                         className="text-center cursor-pointer text-secondary-content pb-3 underline"
                         onClick={() => getMoreComments()}
                       >
-                        Load More Comments
+                        {/* Load More Comments */}
                         <button
                           type="button"
                           className="btn-secondary text-sm rounded py-1 px-4 shadow"
