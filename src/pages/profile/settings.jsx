@@ -389,7 +389,7 @@ const EditProfilePage = (props) => {
               placeholder="Input your old Password..."
             />
             <button
-              className="btn btn-active btn-ghost text-white"
+              className="btn btn-active btn-primary text-white"
               onClick={() => setShowPass(!showPass)}
             >
               {showPass ? (
@@ -421,7 +421,7 @@ const EditProfilePage = (props) => {
 
   return (
     <>
-      <div className="grid grid-cols-12 pt-4">
+      <div className="grid grid-cols-12 pb-5">
         <div className="justify-center col-start-2 col-span-10 md:col-start-3 md:col-span-8 border-b-2 border-primary-focus h-20 sm:h-fit">
           <div className="tabs my-3 grid grid-cols-3 justify-items-center">
             <div>

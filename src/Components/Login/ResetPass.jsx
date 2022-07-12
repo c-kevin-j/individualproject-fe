@@ -69,7 +69,7 @@ export default function CardResetPass(props) {
       <div className="md:container md:mx-auto">
         <div className="grid justify-items-center mt-8">
           <div className="grid content-start mt-8">
-            <div className="card w-96 bg-base-100 shadow-xl">
+            <div className="card w-96 bg-base-200 shadow-xl">
               <div className="card-body">
                 <h2 className="card-title">Reset Password</h2>
                 <UpdatePasswordContainer

@@ -12,6 +12,7 @@ import ModalAlert from "../../Components/ModalAlert";
 import Link from "next/link";
 import MetaTag from "../../Components/HeadMeta";
 import NavbarShare from "../../Components/NavbarShare";
+import { FaSpinner } from "react-icons/fa";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -251,7 +252,9 @@ function DetailPost(props) {
   //     });
   // }
 
+  const [loadComments, setLoadComments] = React.useState(false)
   const getMoreComments = async () => {
+    setLoadComments(true)
     try {
       let lastId = commentList[commentList.length - 1].id;
       let res = await axios.get(
@@ -263,8 +266,10 @@ function DetailPost(props) {
         }
         let newComments = [...res.data.comments];
         setCommentList((comments) => [...comments, ...newComments]);
+        setLoadComments(false)
       }
     } catch (error) {
+      setLoadComments(false)
       console.log(error);
     }
   };
@@ -278,15 +283,15 @@ function DetailPost(props) {
   return (
     <div>
       <NavbarShare />
-      <div className="px-10 md:px-32 lg:px-48 xl:px-80">
+      <div className="px-10 md:px-32 lg:px-48 xl:px-80 pb-1">
         {!pageIsLoading ? (
-          <div className="mx-auto">
+          <div className="mx-auto mb-5">
             <MetaTag
               title="Kartoffel"
               description={`Look at this image by ${post.username}`}
               image={`${API_URL}${post.image}`}
             />
-            <div className="bg-base-100 drop-shadow-2xl rounded-none mx-auto pt-1 max-h-screen">
+            <div className="bg-base-100 drop-shadow-2xl rounded-none mx-auto pt-1 h-fit">
               {/* grid untuk membagi bagian image dan detail */}
               <div className="grid grid-cols-10 overflow-y-visible bg-accent">
                 {/* image */}
@@ -364,16 +369,24 @@ function DetailPost(props) {
                   <div>
                     {hasMoreComment && (
                       <div
-                        className="text-center cursor-pointer text-secondary-content pb-3 underline"
+                      className="flex justify-center text-secondary-content pb-3 underline"
+                    >
+                      <button
+                        type="button"
+                        className="btn-secondary text-sm rounded py-1 px-4 h-8 shadow w-48 flex justify-center items-center"
                         onClick={() => getMoreComments()}
-                      >
-                        <button
-                          type="button"
-                          className="btn-secondary text-sm rounded py-1 px-4 shadow"
+                        disabled={
+                          loadComments
+                        }
                         >
-                          Load More Comments...
-                        </button>
-                      </div>
+                        {
+                          !loadComments ? 
+                          "Load More Comments..."
+                          :
+                          <FaSpinner className="icon-spin"/>
+                        }
+                      </button>
+                    </div>
                     )}
                   </div>
                   {/* <div className="row-span-1">

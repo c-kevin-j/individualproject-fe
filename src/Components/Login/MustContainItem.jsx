@@ -22,14 +22,13 @@ const MustContainItem = (props) => {
           </Form.Label>
         </Form> */}
         <div className="form-control">
-          <label className="label cursor-pointer">
+          <label className="label">
             <span className="label-text text-xs">{label}</span>
             <input
               type="checkbox"
-              disabled
               checked={meetsReq}
               readOnly
-              className="checkbox-primary checkbox-xs"
+              className="checkbox checkbox-xs checkbox-primary"
             />
           </label>
         </div>

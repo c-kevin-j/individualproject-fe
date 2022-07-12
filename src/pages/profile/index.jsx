@@ -118,7 +118,7 @@ function ProfilePage(props) {
 
   return (
     <>
-      <div className="px-10 md:px-32 lg:px-48 xl:px-80 pt-5">
+      <div className="px-10 md:px-32 lg:px-48 xl:px-80 pb-5">
         <div>
           <div className="container flex px-4">
             <div className="avatar m-auto basis-1/4 place-content-center image-full">

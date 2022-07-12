@@ -11,6 +11,7 @@ import { API_URL } from "../../../helper";
 import ModalAlert from "../../Components/ModalAlert";
 import Link from "next/link";
 import MetaTag from "../../Components/HeadMeta";
+import { FaSpinner } from "react-icons/fa";
 
 export const getServerSideProps = async (ctx) => {
   try {
@@ -88,11 +89,11 @@ function DetailPost(props) {
   const toggleShare = () => {
     setShareModal(!shareModal);
   };
-  
-  let path = router.asPath
-  path = path.replace("post","post/shared")
+
+  let path = router.asPath;
+  path = path.replace("post", "post/shared");
   const shareUrl = `https://individualproject-fe.vercel.app${path}`;
-  
+
   // to check if user can edit / delete the post
   const getPoster = () => {
     let posterIdx = users.findIndex((val) => {
@@ -197,20 +198,22 @@ function DetailPost(props) {
         return (
           <div
             key={`${value.id}-${commenter.id}`}
-            className="grid grid-cols-10 items-start p-2 gap-2 "
+            className="grid grid-cols-10 items-start p-2 pt-1 gap-2 "
           >
             <div className="avatar col-span-1 self-start justify-self-center">
               <div className="w-7 rounded-full">
                 <Link href={`/profile?id=${commenter.id}`}>
                   <img
-                    className="mt-0"
+                    className="mt-0 cursor-pointer"
                     src={`${API_URL}${commenter.profile_picture}`}
                   />
                 </Link>
               </div>
             </div>
             <div className="col-span-9">
-              <a className="font-bold">{commenter.username}</a>
+              <Link href={`/profile?id=${commenter.id}`}>
+                <a className="font-bold">{commenter.username}</a>
+              </Link>
               <label className="pl-1 break-words">{value.comment}</label>
               <div className="text-sm text-slate-500">{commentDate}</div>
             </div>
@@ -253,20 +256,25 @@ function DetailPost(props) {
       });
   }
 
+  const [loadComments, setLoadComments] = React.useState(false)
+
   const getMoreComments = async () => {
+    setLoadComments(true)
     try {
       let lastId = commentList[commentList.length - 1].id;
       let res = await axios.get(
         `${API_URL}/posts/get/comments/${post.id}/${lastId}`
-      );
-      if (res) {
-        if (!res.data.hasMore) {
-          setHasMoreComment(!hasMoreComments);
+        );
+        if (res) {
+          if (!res.data.hasMore) {
+            setHasMoreComment(!hasMoreComments);
+          }
+          let newComments = [...res.data.comments];
+          setCommentList((comments) => [...comments, ...newComments]);
+          setLoadComments(false)
         }
-        let newComments = [...res.data.comments];
-        setCommentList((comments) => [...comments, ...newComments]);
-      }
-    } catch (error) {
+      } catch (error) {
+      setLoadComments(false)
       console.log(error);
     }
   };
@@ -278,15 +286,15 @@ function DetailPost(props) {
   };
 
   return (
-    <div className="px-10 md:px-32 lg:px-48 xl:px-80">
+    <div className="px-10 md:px-32 lg:px-48 xl:px-80 pb-1">
       {!pageIsLoading ? (
-        <div className="mx-auto">
+        <div className="mx-auto mb-5">
           <MetaTag
             title="Kartoffel"
             description={`Look at this image by ${post.username}`}
             image={`${API_URL}${post.image}`}
           />
-          <div className="bg-base-100 drop-shadow-2xl rounded-none mx-auto pt-1 max-h-screen">
+          <div className="bg-base-100 drop-shadow-2xl rounded-none mx-auto pt-1 h-fit">
             {/* grid untuk membagi bagian image dan detail */}
             <div className="grid grid-cols-10 overflow-y-visible bg-accent">
               {/* image */}
@@ -300,7 +308,7 @@ function DetailPost(props) {
               {/* detail */}
               <div className="col-span-12 px-2 grid grid-rows bg-accent">
                 <div className="grid grid-cols-10 row-span-1 ">
-                  <div className="col-span-10  items-center grid grid-cols-2 border-b-2 border-accent-content">
+                  <div className="col-span-10 items-center grid grid-cols-2 border-b-2 border-accent-content">
                     <div className="col-span-1 flex items-center">
                       <div className="basis-5 align-middle">
                         {isLiked === false ? (
@@ -335,7 +343,9 @@ function DetailPost(props) {
                       </Link>
                     </div>
                     <Link href={`/profile?id=${poster.id}`}>
-                      <span className="font-bold">{post.username}</span>
+                      <span className="font-bold cursor-pointer">
+                        {post.username}
+                      </span>
                     </Link>
                   </div>
                   <div className="my-auto text-sm col-span-3 grid justify-items-end">
@@ -345,7 +355,10 @@ function DetailPost(props) {
                         className="w-10 btn rounded-lg bg-inherit border-transparent hover:bg-accent-focus hover:border-transparent"
                       >
                         <div className="w-10 rounded-full text-center">
-                          <FiMoreVertical className="text-secondary-content" size={28}/>
+                          <FiMoreVertical
+                            className="text-secondary-content"
+                            size={28}
+                          />
                         </div>
                       </label>
                       <ul
@@ -378,17 +391,27 @@ function DetailPost(props) {
                 <div>
                   {hasMoreComment && (
                     <div
-                      className="text-center cursor-pointer text-secondary-content pb-3 underline"
-                      onClick={() => getMoreComments()}
+                      className="flex justify-center text-secondary-content pb-3 underline"
                     >
-                      {/* Load More Comments */}
-                      <button type="button" className="btn-secondary text-sm rounded py-1 px-4 shadow">
-                      Load More Comments...
+                      <button
+                        type="button"
+                        className="btn-secondary text-sm rounded py-1 px-4 h-8 shadow w-48 flex justify-center items-center"
+                        onClick={() => getMoreComments()}
+                        disabled={
+                          loadComments
+                        }
+                        >
+                        {
+                          !loadComments ? 
+                          "Load More Comments..."
+                          :
+                          <FaSpinner className="icon-spin"/>
+                        }
                       </button>
                     </div>
                   )}
                 </div>
-                <div className="row-span-1">
+                <div className="row-span-1 pb-3">
                   <div>
                     <div>
                       <textarea
@@ -399,12 +422,14 @@ function DetailPost(props) {
                         maxLength="300"
                         wrap="soft"
                       />
-                      <div className="text-right text-sm pb-1">{commentLength} / 300</div>
+                      <div className="text-right text-sm pb-1">
+                        {commentLength} / 300
+                      </div>
                     </div>
                     <div className="flex justify-end">
                       <button
                         type="button"
-                        className="btn btn-sm btn-secondary rounded-sm"
+                        className="btn btn-sm btn-secondary rounded-lg"
                         onClick={handleSubmitComment}
                         disabled={!comment.length}
                       >

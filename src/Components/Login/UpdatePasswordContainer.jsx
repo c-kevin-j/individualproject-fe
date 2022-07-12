@@ -95,7 +95,7 @@ const UpdatePasswordContainer = (props) => {
             onKeyUp={validatePassword}
           />
           <button type="button"
-            className="btn btn-active btn-ghost text-white"
+            className="btn btn-active btn-primary text-white"
             onClick={() => setShowPass(!showPass)}
           >
             {showPass ? (
@@ -122,7 +122,7 @@ const UpdatePasswordContainer = (props) => {
               onKeyUp={validatePassword}
             />
             <button type="button"
-              className="btn btn-active btn-ghost text-white"
+              className="btn btn-active btn-primary text-white"
               onClick={() => setShowConfirmedPass(!showConfirmedPass)}
             >
               {showConfirmedPass ? (

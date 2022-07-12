@@ -59,7 +59,6 @@ function LandingPage() {
             },
           }
         );
-        console.log(res);
         // res.headers["access-control-allow-origin"];
         localStorage.setItem("tokenIdUser", res.data.token);
         // memperbarui reducer
@@ -106,7 +105,7 @@ function LandingPage() {
         localStorage.setItem("tokenIdUser", res.data.user.token);
         dispatch(loginAction(res.data.user));
         router.push("/");
-        setIsSubmitting(false);
+        // setIsSubmitting(false);
       } else {
         setIsSubmitting(false);
         setModalContent({
@@ -146,11 +145,11 @@ function LandingPage() {
               />
             </figure>
             <div className="card-body ">
-              <h2 className="card-title">Sign in</h2>
+              <h2 className="card-title font-bold">Sign in</h2>
               {/* <p>Sign up or die</p> */}
               <div className="form-control w-full max-w-md">
                 <label className="label">
-                  <span className="label-text">Email/Username</span>
+                  <span className="label-text font-bold">Email/Username</span>
                 </label>
                 <input
                   type="text"
@@ -161,7 +160,7 @@ function LandingPage() {
               </div>
               <div className="form-control w-full max-w-xs">
                 <label className="label">
-                  <span className="label-text">Password</span>
+                  <span className="label-text font-bold">Password</span>
                 </label>
                 <label className="input-group">
                   <input
@@ -171,7 +170,7 @@ function LandingPage() {
                     onChange={(e) => handleInput(e.target.value, "password")}
                   />
                   <button
-                    className="btn btn-active btn-ghost text-white"
+                    className="btn btn-active btn-secondary text-white"
                     onClick={() => setShowPass(!showPass)}
                   >
                     {showPass ? (
@@ -189,17 +188,17 @@ function LandingPage() {
               <div className="grid grid-cols-2 place-items-stretch">
                 <div className="mt-4">
                   <Link href="/auth/forgot" passHref>
-                    <a className="link text-accent-focus">Forgot password?</a>
+                    <a className="link label-text text-accent">Forgot password?</a>
                   </Link>
                   <br></br>
                   <Link href="/auth/register" passHref>
-                    <a className="link text-secondary-content">Register</a>
+                    <a className="link label-text text-accent">Register</a>
                   </Link>
                 </div>
                 <div className="mt-4">
                   <div className="card-actions justify-end">
                     <button
-                      className="btn btn-secondary w-24"
+                      className="btn btn-secondary disabled:bg-[#799983] w-24"
                       onClick={handleLogin}
                       disabled={
                         !inputForm.emailUsername ||

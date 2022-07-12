@@ -171,7 +171,7 @@ function HomePage(props) {
             dataLength={posts.length}
             next={getMorePosts}
             hasMore={hasMore}
-            loader={<h3>Loading...</h3>}
+            loader={<h3 className="text-center pb-4">Loading More Posts...</h3>}
           >
             {printPosts()}
           </InfiniteScroll>
