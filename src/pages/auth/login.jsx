@@ -198,7 +198,7 @@ function LandingPage() {
                 <div className="mt-4">
                   <div className="card-actions justify-end">
                     <button
-                      className="btn btn-secondary disabled:bg-[#799983] w-24"
+                      className="btn btn-active btn-secondary disabled:bg-[#ECF4E6] w-24"
                       onClick={handleLogin}
                       disabled={
                         !inputForm.emailUsername ||
