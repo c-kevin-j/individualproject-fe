@@ -154,8 +154,8 @@ function RegisterPage(props) {
             <FaSpinner className="icon-spin" size={70} />
           </div>
         ) : (
-          <div className="grid justify-items-center mt-8">
-            <div className="grid content-start mt-8">
+          <div className="grid justify-items-center">
+            <div className="grid content-start my-8">
               <div className="card w-96 bg-base-200 shadow-xl">
                 <div className="card-body">
                   <h2 className="card-title">Register</h2>
